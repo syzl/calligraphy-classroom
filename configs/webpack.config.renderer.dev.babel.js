@@ -12,6 +12,7 @@ import fs from 'fs';
 import webpack from 'webpack';
 import chalk from 'chalk';
 import merge from 'webpack-merge';
+// import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { spawn, execSync } from 'child_process';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
@@ -43,6 +44,7 @@ export default merge.smart(baseConfig, {
 
   mode: 'development',
 
+  // target: 'web',
   target: 'electron-renderer',
 
   entry: [
@@ -55,6 +57,7 @@ export default merge.smart(baseConfig, {
   output: {
     publicPath: `http://localhost:${port}/dist/`,
     filename: 'renderer.dev.js'
+    // ,libraryTarget: 'var'
   },
 
   module: {
@@ -222,6 +225,10 @@ export default merge.smart(baseConfig, {
     new webpack.LoaderOptionsPlugin({
       debug: true
     })
+
+    // ,new HtmlWebpackPlugin({
+    //   template: path.resolve(__dirname, '..', 'app', 'dev.html')
+    // })
   ],
 
   node: {
@@ -230,6 +237,7 @@ export default merge.smart(baseConfig, {
   },
 
   devServer: {
+    // host: '0.0.0.0',
     port,
     publicPath,
     compress: true,

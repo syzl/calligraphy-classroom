@@ -10971,10 +10971,10 @@ rc@^1.2.1, rc@^1.2.7, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-dom@^16.10.2:
+"react-dom@npm:@hot-loader/react-dom":
   version "16.10.2"
-  resolved "https://registry.npm.taobao.org/react-dom/download/react-dom-16.10.2.tgz#4840bce5409176bc3a1f2bd8cb10b92db452fda6"
-  integrity sha1-SEC85UCRdrw6HyvYyxC5LbRS/aY=
+  resolved "https://registry.npm.taobao.org/@hot-loader/react-dom/download/@hot-loader/react-dom-16.10.2.tgz#91920442252acac6f343eef5df41aca333f7dcea"
+  integrity sha1-kZIEQiUqysbzQ+7130GsozP33Oo=
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"

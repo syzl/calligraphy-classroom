@@ -12,7 +12,11 @@ import {
   Empty
 } from 'antd';
 
-import Nav from '../Nav';
+import fscreen from 'fscreen';
+
+import { Link } from 'react-router-dom';
+
+const routes = require('../../constants/routes.json');
 // import CustomController from './CustomController';
 import CopyFrame from './CopyFrame';
 
@@ -49,6 +53,7 @@ export default function Page() {
   const [videoUrl, setVideoUrl] = useState('');
   const [cpFrameUrl, setCpFrameUrl] = useState('');
   const [showMenu, toggleMenu] = useState(false);
+  const [isFull, setIsFull] = useState(false);
 
   // useThrottleFn(
   //   value => {
@@ -81,17 +86,43 @@ export default function Page() {
 
   return (
     <div className={styles.container}>
-      <Nav>
-        <Dropdown
-          overlay={menu}
-          placement="bottomLeft"
-          trigger={['click']}
-          visible={showMenu}
-          onVisibleChange={toggleMenu}
-        >
-          <Button>课程列表 {showMenu}</Button>
-        </Dropdown>
-      </Nav>
+      <Row
+        type="flex"
+        style={{ flex: '0 0 auto', padding: '26px 3px 3px 3px' }}
+      >
+        <Col span={6}>
+          <Link to={routes.HOME}>首页</Link>
+        </Col>
+        <Col span={6}>
+          <Dropdown
+            overlay={menu}
+            placement="bottomLeft"
+            trigger={['click']}
+            visible={showMenu}
+            onVisibleChange={toggleMenu}
+          >
+            <Button>课程列表 </Button>
+          </Dropdown>
+          <Button
+            onClick={() => {
+              if (fscreen.fullscreenEnabled) {
+                // fscreen.addEventListener('fullscreenchange', handler, false);
+                if (!isFull) {
+                  fscreen.requestFullscreen(document.documentElement);
+                } else {
+                  fscreen.exitFullscreen();
+                }
+                setIsFull(!isFull);
+              }
+            }}
+          >
+            {isFull ? '退出全屏' : '全屏'}
+          </Button>
+        </Col>
+        <Col span={6}></Col>
+        <Col span={6}></Col>
+      </Row>
+
       <Row type="flex" style={{ flex: 1, fontSize: '1em' }}>
         <Col
           span={12}
@@ -176,7 +207,7 @@ export default function Page() {
           <CopyFrame src={cpFrameUrl} scale={scale} />
         </Col>
       </Row>
-      <Row className="debug" type="flex" style={{ flex: 0 }}>
+      <Row className="debug" type="flex" style={{ flex: '0 0 auto' }}>
         <Col span={12} style={{ textAlign: 'left' }}>
           <Button
             onClick={() => {

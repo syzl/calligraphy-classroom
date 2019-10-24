@@ -263,6 +263,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
+    "antd": "^3.24.2",
     "core-js": "3",
     "devtron": "^1.4.0",
     "electron-debug": "^3.0.1",
@@ -272,6 +273,7 @@
     "html-webpack-plugin": "^3.2.0",
     "react": "^16.10.2",
     "react-dom": "npm:@hot-loader/react-dom",
+    "react-draggable": "^4.0.3",
     "react-hot-loader": "^4.12.15",
     "react-player": "^1.13.0",
     "react-redux": "^7.1.1",

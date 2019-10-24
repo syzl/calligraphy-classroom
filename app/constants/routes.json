@@ -1,5 +1,6 @@
 {
   "HOME": "/",
   "COUNTER": "/counter",
-  "FRAME": "/frame"
+  "FRAME": "/frame",
+  "TODO": "/todo"
 }

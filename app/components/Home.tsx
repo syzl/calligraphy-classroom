@@ -12,14 +12,14 @@ export default function Home() {
         <div className={styles.title}>书法课堂 · 快速导航</div>
         <div className={styles.nav}>
           <div>
-            <Link to={routes.TODO}>
+            <Link to={routes.CLASS_ROOMS}>
               <div className={styles.navimg}>
                 <img
                   src="https://gw.alipayobjects.com/zos/rmsportal/URIeCOKLMAbRXaeXoNqN.svg"
                   alt="icon"
                 />
               </div>
-              <h3>[TODO]</h3>
+              <h3>课堂</h3>
             </Link>
           </div>
           <div>

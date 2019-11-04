@@ -1,0 +1,18 @@
+# build output
+dist
+.next
+
+# dependencies
+node_modules
+
+# logs & pids
+*.log
+
+# test output
+.DS_Store
+
+# Editors
+.idea
+
+# example output
+out

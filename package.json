@@ -5,11 +5,12 @@
   "main": "main/index.js",
   "scripts": {
     "dev": "next dev renderer",
-    "start": "electron .",
-    "build-renderer": "next build renderer && next export renderer",
-    "build-electron": "tsc -p electron-src",
-    "build": "yarn build-renderer && yarn build-electron",
-    "dist": "npm run build && electron-builder --dir",
+    "dev:desktop": "electron .",
+    "build:web": "next build renderer && next export renderer",
+    "start": "next start renderer",
+    "build:electron": "tsc -p electron-src",
+    "build:all": "yarn build:web && yarn build:electron",
+    "dist": "npm run build:all && electron-builder --dir",
     "dist:alone": "electron-builder --dir",
     "type-check": "tsc"
   },

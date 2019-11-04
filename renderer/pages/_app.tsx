@@ -1,7 +1,8 @@
-import React from "react";
-import App from "next/app";
+import React from 'react';
+import App from 'next/app';
 
-import DynamicWrapper from "../components/DynamicWrapper";
+import DynamicWrapper from '../components/DynamicWrapper';
+import '../assets/global.less';
 
 export default class MyApp extends App {
   render() {

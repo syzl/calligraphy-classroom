@@ -1,33 +1,12 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { Form, Tooltip, Icon, Input, Button, message } from 'antd';
+import { Button, message, Tooltip, Icon } from 'antd';
+import { Form, Input } from 'formik-antd';
 import { useMutation } from '@apollo/react-hooks';
 import * as GQL from '../../lib/gql';
 import { Course } from '../../interfaces';
-import { hasErrors, getDepCache } from '../../lib/utils';
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 16 },
-    sm: { span: 6 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
-  },
-};
+import { getDepCache } from '../../lib/utils';
+import { formItemLayout } from './constant';
 
 export default function CreateCourse({
   onCompleted,
@@ -77,38 +56,24 @@ export default function CreateCourse({
         createCourse({ variables: { input: values } });
       }}
     >
-      {({ values, errors, handleChange, handleBlur, handleSubmit }) => (
-        <Form {...formItemLayout} onSubmit={handleSubmit}>
+      {() => (
+        <Form {...formItemLayout}>
           <Form.Item
+            name="name"
             label={
               <span>
                 名称&nbsp;
-                <Tooltip title="不可重名">
+                <Tooltip title="不可重名" placement="left">
                   <Icon type="question-circle-o" />
                 </Tooltip>
               </span>
             }
-            validateStatus={errors.name ? 'error' : ''}
-            help={errors.name || ''}
           >
-            <Input
-              name="name"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.name}
-              placeholder="课堂名称"
-            />
+            <Input name="name" placeholder="课堂名称" />
           </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              disabled={hasErrors(errors)}
-            >
-              添加
-            </Button>
-          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            添加
+          </Button>
         </Form>
       )}
     </Formik>

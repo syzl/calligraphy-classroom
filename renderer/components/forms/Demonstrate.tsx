@@ -1,36 +1,15 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { Form, Tooltip, Icon, Button, message } from 'antd';
-import { Input, Select } from 'formik-antd';
+import { Button, message, Tooltip, Icon } from 'antd';
+import { Form, Input, Select } from 'formik-antd';
 import { useMutation } from '@apollo/react-hooks';
 import * as GQL from '../../lib/gql';
 import { Demonstrate } from '../../interfaces';
-import { hasErrors, getDepCache } from '../../lib/utils';
+import { getDepCache } from '../../lib/utils';
+
+import { formItemLayout } from './constant';
 
 const { Option } = Select;
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 16 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
-  },
-};
 
 export default function CreateDemonstrate({
   onCompleted,
@@ -80,9 +59,10 @@ export default function CreateDemonstrate({
         createDemonstrate({ variables: { input: values } });
       }}
     >
-      {({ values, errors, handleChange, handleBlur, handleSubmit }) => (
-        <Form {...formItemLayout} onSubmit={handleSubmit}>
+      {() => (
+        <Form {...formItemLayout}>
           <Form.Item
+            name="title"
             label={
               <span>
                 名称&nbsp;
@@ -91,41 +71,16 @@ export default function CreateDemonstrate({
                 </Tooltip>
               </span>
             }
-            validateStatus={errors.title ? 'error' : ''}
-            help={errors.title || ''}
           >
-            <Input
-              name="title"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.title}
-              placeholder="演示名称"
-            />
+            <Input name="title" placeholder="演示名称" />
           </Form.Item>
-          <Form.Item
-            label={<span>介绍</span>}
-            validateStatus={errors.desc ? 'error' : ''}
-            help={errors.desc || ''}
-          >
-            <Input.TextArea
-              name="desc"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.desc}
-              placeholder="详细介绍"
-            />
+          <Form.Item name="desc" label="介绍">
+            <Input.TextArea name="desc" placeholder="详细介绍" />
           </Form.Item>
 
-          <Form.Item
-            label="类型"
-            validateStatus={errors.type ? 'error' : ''}
-            help={errors.type || ''}
-          >
+          <Form.Item name="type" label="类型">
             <Select
               name="type"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.type}
               placeholder="选择类型"
               showSearch
               style={{ width: 200 }}
@@ -148,42 +103,15 @@ export default function CreateDemonstrate({
               <Option value="other">其他</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            label="更多类型"
-            validateStatus={errors.subType ? 'error' : ''}
-            help={errors.subType || ''}
-          >
-            <Input
-              name="subType"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.subType}
-              placeholder="更多类型"
-            />
+          <Form.Item name="subType" label="更多类型">
+            <Input name="subType" placeholder="更多类型" />
           </Form.Item>
-          <Form.Item
-            label="作者"
-            validateStatus={errors.author ? 'error' : ''}
-            help={errors.author || ''}
-          >
-            <Input
-              name="author"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.author}
-              placeholder="作者"
-            />
+          <Form.Item name="author" label="作者">
+            <Input name="author" placeholder="作者" />
           </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              disabled={hasErrors(errors)}
-            >
-              添加
-            </Button>
-          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            添加
+          </Button>
         </Form>
       )}
     </Formik>

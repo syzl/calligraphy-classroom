@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Card, Button, message, Icon, Divider, Table } from 'antd';
+import {
+  Button,
+  message,
+  Icon,
+  Divider,
+  Table,
+  notification,
+  Drawer,
+  Row,
+  Col,
+  Typography,
+  Tooltip,
+} from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -9,8 +21,12 @@ import { withApollo } from '../../../lib/apollo';
 import { GQL } from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
 import { Course, PagedResult } from '../../../interfaces';
+import CreateCourse from '../../../components/forms/Course';
+
+const key = 'create-course';
 
 const Courses: NextPage = function() {
+  const [showDrawer, setShowDrawer] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const { push } = useRouter();
@@ -23,6 +39,12 @@ const Courses: NextPage = function() {
       page,
     },
   });
+  const refetchWithMarking = async () => {
+    if (refetching) return;
+    setRefetching(true);
+    await Promise.all([wait(1000), refetch()]);
+    setRefetching(false);
+  };
   const [deleteCourse, { loading: deleting }] = useMutation<{
     deleteCourse: Course | null;
   }>(GQL.DELETE_COURSE, {
@@ -54,6 +76,7 @@ const Courses: NextPage = function() {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      width: 50,
     },
     {
       title: '课程名称',
@@ -65,6 +88,7 @@ const Courses: NextPage = function() {
       title: '讲师',
       dataIndex: 'teacher',
       key: 'teacher',
+      width: 150,
     },
     {
       title: '操作',
@@ -75,14 +99,24 @@ const Courses: NextPage = function() {
         <span>
           <Button type="link">进入课堂</Button>
           <Divider type="vertical" />
-          <Button
-            type="link"
-            icon="delete"
-            loading={deleting}
-            onClick={() => {
-              deleteCourse({ variables: { id: record.id } });
-            }}
-          />
+          <Tooltip
+            trigger="click"
+            placement="left"
+            title={
+              <Button
+                type="danger"
+                icon="delete"
+                loading={deleting}
+                onClick={() => {
+                  deleteCourse({ variables: { id: record.id } });
+                }}
+              >
+                确定删除
+              </Button>
+            }
+          >
+            <Icon type="delete" />
+          </Tooltip>
         </span>
       ),
     },
@@ -95,49 +129,51 @@ const Courses: NextPage = function() {
     (data && data.api_courses) || ({} as PagedResult<Course>);
 
   return (
-    <div style={{ height: '100%', display: 'flex' }}>
-      <Card
-        loading={loading}
-        title="课程"
-        bordered={false}
-        extra={
-          <div>
-            <Icon
-              style={{ padding: 5 }}
-              type="reload"
-              spin={refetching}
-              onClick={async () => {
-                if (refetching) return;
-                setRefetching(true);
-                await Promise.all([wait(1000), refetch()]);
-                setRefetching(false);
-              }}
-            />
-            <Button
-              type="primary"
-              icon="plus"
-              shape="round"
-              onClick={() => {
-                push('/dashboard/course/add');
-              }}
-            >
-              添加
-            </Button>
-          </div>
-        }
-        style={{ flex: 1, margin: '-10px -10px 0 -24px' }}
-      >
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Row type="flex" style={{ flex: '0 0 auto' }}>
+        <Col style={{ flex: 1 }}>
+          <Typography.Title level={3}>课程</Typography.Title>
+        </Col>
+        <Col>
+          <Icon
+            style={{ padding: 5 }}
+            type="reload"
+            spin={refetching}
+            onClick={refetchWithMarking}
+          />
+          <Divider type="vertical" />
+          <Button
+            shape="round"
+            onClick={() => {
+              push('/dashboard/course/add');
+            }}
+          >
+            添加
+          </Button>
+          <Divider type="vertical" />
+          <Button
+            icon="plus"
+            type="primary"
+            shape="circle"
+            onClick={() => setShowDrawer(true)}
+          />
+        </Col>
+      </Row>
+      <div style={{ flex: 1, overflow: 'auto' }}>
         <Table
+          size="small"
+          loading={loading || refetching}
           rowKey="id"
           columns={columns}
           dataSource={courses}
+          // scroll={{ y: 360 }}
           pagination={{
             size: 'small',
             total: totalItems,
             pageSize: limit,
             current: page,
             showSizeChanger: true,
-            pageSizeOptions: ['2', '4', '8', '16'],
+            pageSizeOptions: ['6', '10', '30', '50'],
             onChange(page, pageSize) {
               setPage(page);
               pageSize && setLimit(pageSize);
@@ -148,8 +184,25 @@ const Courses: NextPage = function() {
             },
           }}
         />
-      </Card>
+      </div>
+      <Drawer
+        width="360"
+        title="Course"
+        placement="right"
+        closable={false}
+        onClose={() => {
+          setShowDrawer(false);
+        }}
+        visible={showDrawer}
+      >
+        <CreateCourse
+          onCompleted={() => {
+            refetchWithMarking();
+            notification.close(key);
+          }}
+        />
+      </Drawer>
     </div>
   );
 };
-export default withApollo(Courses);
+export default withApollo(Courses, { ssr: false });

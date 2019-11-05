@@ -5,10 +5,7 @@ import cookie from 'cookie';
 import redirect from '../../lib/redirect';
 import { GQL } from '../../lib/gql';
 import { SignInReturn } from '../../interfaces';
-
-export function hasErrors(fieldsError: any) {
-  return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
+import { hasErrors } from '../../lib/utils';
 
 export const LoginForm = function({ onSubmit }: { onSubmit?: any }) {
   const client = useApolloClient();

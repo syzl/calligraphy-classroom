@@ -13,9 +13,14 @@ const DefaultWrapper: FunctionComponent = function({ children }) {
   return <>{children}</>;
 };
 
+const getTopRoute = (pathname: string) => {
+  pathname = `${pathname}/`;
+  return pathname.slice(0, pathname.indexOf('/', 1));
+};
 const DynamicWrapper: FunctionComponent = function({ children }) {
   const { pathname } = useRouter();
-  const WrapperComponent = wrappers[pathname] || DefaultWrapper;
+  const topRoute = getTopRoute(pathname);
+  const WrapperComponent = wrappers[topRoute] || DefaultWrapper;
   return <WrapperComponent>{children}</WrapperComponent>;
 };
 

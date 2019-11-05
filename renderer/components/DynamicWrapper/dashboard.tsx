@@ -99,7 +99,7 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                   </span>
                 }
               >
-                <Menu.Item key="11">范字管理</Menu.Item>
+                <Menu.Item key="/dashboard/copy-board">字帖管理</Menu.Item>
                 <Menu.Item key="12">随堂范字录制管理</Menu.Item>
               </SubMenu>
             </Menu>

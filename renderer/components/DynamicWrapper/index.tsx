@@ -1,22 +1,16 @@
-import { useState, FunctionComponent } from "react";
+import { FunctionComponent } from 'react';
+import { useRouter } from 'next/router';
 
-import AppAbout from "./about";
-import { useRouter } from "next/router";
+import AppAbout from './about';
+import AppDashboard from './dashboard';
 
 const wrappers: { [key: string]: FunctionComponent<any> } = {
-  "/about": AppAbout
+  '/about': AppAbout,
+  '/dashboard': AppDashboard,
 };
 
 const DefaultWrapper: FunctionComponent = function({ children }) {
-  const [state, setstate] = useState(1);
-  return (
-    <div className="layout">
-      <h2>Main _app.js{state}</h2>
-      <button onClick={() => setstate(state + 1)}>count</button>
-      <hr />
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 };
 
 const DynamicWrapper: FunctionComponent = function({ children }) {

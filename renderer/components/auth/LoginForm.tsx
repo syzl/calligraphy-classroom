@@ -4,7 +4,7 @@ import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import cookie from 'cookie';
 import redirect from '../../lib/redirect';
 import { GQL } from '../../lib/gql';
-import { SignInReturn } from '../../lib/query-data.interface';
+import { SignInReturn } from '../../interfaces';
 
 export function hasErrors(fieldsError: any) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);

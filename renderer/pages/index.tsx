@@ -6,9 +6,15 @@ import { Dropdown, Icon } from 'antd';
 import { LoginForm } from '../components/auth/LoginForm';
 import { UserMenu } from '../components/auth/UserMenu';
 import { withApollo } from '../lib/apollo';
+import checkLoggedIn from '../lib/checkLoggedIn';
+import { WhoAmI } from '../interfaces';
 
-const IndexPage: NextPage = () => {
-  const [username, setUsername] = useState('');
+type Props = {
+  whoami: WhoAmI;
+};
+
+const IndexPage: NextPage<Props> = ({ whoami }) => {
+  const [username, setUsername] = useState(whoami.username);
   const [showMenu, setShowMenu] = useState(false);
   return (
     <div className="container">
@@ -21,7 +27,12 @@ const IndexPage: NextPage = () => {
             overlay={
               <div>
                 {username ? (
-                  <UserMenu />
+                  <UserMenu
+                    onLogout={() => {
+                      setUsername('');
+                      setShowMenu(false);
+                    }}
+                  />
                 ) : (
                   <LoginForm
                     onSubmit={() => {
@@ -157,6 +168,10 @@ const IndexPage: NextPage = () => {
       `}</style>
     </div>
   );
+};
+IndexPage.getInitialProps = async (context: any) => {
+  const { whoami } = await checkLoggedIn(context.apolloClient);
+  return { whoami };
 };
 
 export default withApollo(IndexPage, { ssr: false });

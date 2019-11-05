@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import * as _ from 'lodash';
 
-import { SignInReturn } from './query-data.interface';
+import { SignInReturn } from '../interfaces';
 
 export class GQLFragments {
   static base = gql`
@@ -24,6 +24,17 @@ export class GQL {
       signinUser(username: $username, password: $password) {
         accessToken
         expiresIn
+      }
+    }
+  `;
+  // WhoAmI
+  static WHOAMI = gql`
+    {
+      auth_whoami {
+        username
+        id
+        email
+        isActive
       }
     }
   `;

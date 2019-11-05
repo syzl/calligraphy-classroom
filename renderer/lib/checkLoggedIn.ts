@@ -1,23 +1,17 @@
-import gql from 'graphql-tag';
 import ApolloClient from 'apollo-client';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { GQL } from './gql';
+import { WhoAmI } from '../interfaces';
 
 export default (apolloClient: ApolloClient<NormalizedCacheObject>) =>
   apolloClient
-    .query({
-      query: gql`
-        query getUser {
-          user {
-            id
-            name
-          }
-        }
-      `,
+    .query<{ auth_whoami: WhoAmI }>({
+      query: GQL.WHOAMI,
     })
-    .then(({ data }) => {
-      return { loggedInUser: data };
+    .then(({ data: { auth_whoami: whoami } }) => {
+      return { whoami };
     })
     .catch(() => {
       // Fail gracefully
-      return { loggedInUser: {} };
+      return { whoami: {} as WhoAmI };
     });

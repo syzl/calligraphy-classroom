@@ -18,6 +18,16 @@ export interface Course {
   teacher?: string;
 }
 
+export interface Demonstrate {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  title: string;
+  desc?: string;
+  type?: string;
+  subType?: string;
+}
+
 export interface PagedResult<T> {
   items: [T];
   itemCount: number;

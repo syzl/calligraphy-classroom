@@ -5,8 +5,8 @@ import { GQLFragments, SelfFrags } from './fragments';
 
 export const CREATE_DEMOSTRATE = gql`
   ${GQLFragments.demonstrate}
-  mutation CreateDemonstrate($name: String!) {
-    createDemonstrate(data: { name: $name }) {
+  mutation CreateDemonstrate($input: CreateDemonstrateInput!) {
+    createDemonstrate(input: $input) {
       id
       ...DemonstrateFragment
     }

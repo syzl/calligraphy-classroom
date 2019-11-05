@@ -5,8 +5,8 @@ import { GQLFragments, SelfFrags } from './fragments';
 
 export const CREATE_COURSE = gql`
   ${GQLFragments.course}
-  mutation CreateCourse($name: String!) {
-    createCourse(data: { name: $name }) {
+  mutation CreateCourse($input: CreateCourseInput!) {
+    createCourse(input: $input) {
       id
       ...CourseFragment
     }

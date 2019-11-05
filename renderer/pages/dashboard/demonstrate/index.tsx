@@ -195,7 +195,7 @@ const Demonstrates: NextPage = function() {
       </div>
       <Drawer
         width="360"
-        title="Demonstrate"
+        title="范字演示"
         placement="right"
         closable={false}
         onClose={() => {

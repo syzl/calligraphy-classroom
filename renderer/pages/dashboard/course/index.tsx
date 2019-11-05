@@ -184,7 +184,7 @@ const Courses: NextPage = function() {
       </div>
       <Drawer
         width="360"
-        title="Course"
+        title="课程"
         placement="right"
         closable={false}
         onClose={() => {

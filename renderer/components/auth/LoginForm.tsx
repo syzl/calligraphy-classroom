@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import cookie from 'cookie';
 import redirect from '../../lib/redirect';
-import { GQL } from '../../lib/gql';
+import * as GQL from '../../lib/gql';
 import { SignInReturn } from '../../interfaces';
 import { hasErrors } from '../../lib/utils';
 

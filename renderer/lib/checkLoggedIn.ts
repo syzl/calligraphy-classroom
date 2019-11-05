@@ -1,6 +1,6 @@
 import ApolloClient from 'apollo-client';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { GQL } from './gql';
+import * as GQL from './gql';
 import { WhoAmI } from '../interfaces';
 
 export default (apolloClient: ApolloClient<NormalizedCacheObject>) =>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import { Form, Tooltip, Icon, Input, Button, message } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
-import { GQL } from '../../lib/gql';
+import * as GQL from '../../lib/gql';
 import { Course } from '../../interfaces';
 import { hasErrors, getDepCache } from '../../lib/utils';
 

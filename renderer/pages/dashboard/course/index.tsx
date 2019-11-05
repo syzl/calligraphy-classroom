@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import * as _ from 'lodash';
 import { withApollo } from '../../../lib/apollo';
-import { GQL } from '../../../lib/gql';
+import * as GQL from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
 import { Course, PagedResult } from '../../../interfaces';
 import CreateCourse from '../../../components/forms/Course';
@@ -33,7 +33,7 @@ const Courses: NextPage = function() {
   const [refetching, setRefetching] = useState(false);
   const { loading, error, data, refetch, updateQuery } = useQuery<{
     api_courses: PagedResult<Course>;
-  }>(GQL.API_COURCES, {
+  }>(GQL.API_COURSES, {
     variables: {
       limit,
       page,

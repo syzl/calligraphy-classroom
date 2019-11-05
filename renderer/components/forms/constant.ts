@@ -11,12 +11,12 @@ export const formItemLayout = {
 export const tailFormItemLayout = {
   wrapperCol: {
     xs: {
-      span: 24,
+      span: 6,
       offset: 0,
     },
     sm: {
-      span: 16,
-      offset: 8,
+      span: 24,
+      offset: 6,
     },
   },
 };

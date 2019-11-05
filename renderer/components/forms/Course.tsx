@@ -6,7 +6,7 @@ import { useMutation } from '@apollo/react-hooks';
 import * as GQL from '../../lib/gql';
 import { Course } from '../../interfaces';
 import { getDepCache } from '../../lib/utils';
-import { formItemLayout } from './constant';
+import { formItemLayout, tailFormItemLayout } from './constant';
 
 export default function CreateCourse({
   onCompleted,
@@ -71,9 +71,11 @@ export default function CreateCourse({
           >
             <Input name="name" placeholder="课堂名称" />
           </Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            添加
-          </Button>
+          <Form.Item name="~" {...tailFormItemLayout}>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              添加
+            </Button>
+          </Form.Item>
         </Form>
       )}
     </Formik>

@@ -7,7 +7,7 @@ import * as GQL from '../../lib/gql';
 import { Demonstrate } from '../../interfaces';
 import { getDepCache } from '../../lib/utils';
 
-import { formItemLayout } from './constant';
+import { formItemLayout, tailFormItemLayout } from './constant';
 
 const { Option } = Select;
 
@@ -109,9 +109,12 @@ export default function CreateDemonstrate({
           <Form.Item name="author" label="作者">
             <Input name="author" placeholder="作者" />
           </Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            添加
-          </Button>
+
+          <Form.Item name="~" {...tailFormItemLayout}>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              添加
+            </Button>
+          </Form.Item>
         </Form>
       )}
     </Formik>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { withApollo } from '../../../lib/apollo';
-import CreateCourse from '../../../components/forms/Course';
+import CreateForm from '../../../components/forms/Course';
 
 export default withApollo(function Add() {
   const { push } = useRouter();
@@ -9,7 +9,7 @@ export default withApollo(function Add() {
     <div>
       <h1>添加</h1>
       <div>
-        <CreateCourse
+        <CreateForm
           clearCache={true} // 默认 true
           onCompleted={() => {
             push('/dashboard/course');

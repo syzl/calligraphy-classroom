@@ -5,7 +5,6 @@ import {
   Icon,
   Divider,
   Table,
-  notification,
   Drawer,
   Row,
   Col,
@@ -22,8 +21,6 @@ import * as GQL from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
 import { Course, PagedResult } from '../../../interfaces';
 import CreateCourse from '../../../components/forms/Course';
-
-const key = 'create-course';
 
 const Courses: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -198,7 +195,6 @@ const Courses: NextPage = function() {
         <CreateCourse
           onCompleted={() => {
             refetchWithMarking();
-            notification.close(key);
           }}
         />
       </Drawer>

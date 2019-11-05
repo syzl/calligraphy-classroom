@@ -38,7 +38,7 @@ export default function CreateCourse({
 }) {
   const [createCourse, { loading }] = useMutation<
     { createCourse: Course },
-    { name: string }
+    { input: { name: string } }
   >(GQL.CREATE_COURSE, {
     onCompleted() {
       // 清空查询的缓存
@@ -74,7 +74,7 @@ export default function CreateCourse({
         return errors;
       }}
       onSubmit={values => {
-        createCourse({ variables: values });
+        createCourse({ variables: { input: values } });
       }}
     >
       {({ values, errors, handleChange, handleBlur, handleSubmit }) => (

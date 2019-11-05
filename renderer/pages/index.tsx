@@ -1,11 +1,42 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { NextPage } from 'next';
+import { Dropdown, Icon } from 'antd';
+
+import { LoginForm } from '../components/auth/LoginForm';
+import { UserMenu } from '../components/auth/UserMenu';
+import { withApollo } from '../lib/apollo';
 
 const IndexPage: NextPage = () => {
+  const [username, setUsername] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
   return (
     <div className="container">
       <div className="band">
+        <div className="top">
+          <Dropdown.Button
+            trigger={['click']}
+            visible={showMenu}
+            onVisibleChange={setShowMenu}
+            overlay={
+              <div>
+                {username ? (
+                  <UserMenu />
+                ) : (
+                  <LoginForm
+                    onSubmit={() => {
+                      setUsername(localStorage.getItem('__username') || '');
+                      setShowMenu(false);
+                    }}
+                  />
+                )}
+              </div>
+            }
+            icon={<Icon type="user" />}
+          >
+            {username || '未登陆'}
+          </Dropdown.Button>
+        </div>
         <div className="title">书法课堂 · 快速导航</div>
         <div className="nav">
           <div>
@@ -81,13 +112,14 @@ const IndexPage: NextPage = () => {
         .container .band {
           margin: 2em 0;
           background: #533fdc;
+          background: linear-gradient(180deg, #70f, #40f);
           color: #fff;
           min-height: 100px;
           flex: 1;
         }
 
         .band .title {
-          margin: 140px auto 100px;
+          margin: 140px auto 10px;
           font-weight: 400;
           font-size: 38px;
           line-height: 46px;
@@ -116,9 +148,15 @@ const IndexPage: NextPage = () => {
         .debug {
           display: none;
         }
+
+        .top {
+          display: flex;
+          justify-content: flex-end;
+          padding: 0.5em;
+        }
       `}</style>
     </div>
   );
 };
 
-export default IndexPage;
+export default withApollo(IndexPage, { ssr: false });

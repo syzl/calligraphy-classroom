@@ -8,3 +8,21 @@ export interface WhoAmI {
   email: string;
   isActive: string;
 }
+
+export interface Course {
+  id: number;
+  name: string;
+  desc?: string;
+  createdAt: string;
+  updatedAt: string;
+  teacher?: string;
+}
+
+export interface PagedResult<T> {
+  items: [T];
+  itemCount: number;
+  totalItems: number;
+  pageCount: number;
+  next: string;
+  previous: string;
+}

@@ -11,6 +11,15 @@ export class GQLFragments {
       updatedAt
     }
   `;
+  static course = `
+    fragment CourseFragment on Course {
+      name
+      desc
+      teacher
+      updatedAt
+      createdAt
+    }
+  `;
 }
 
 export class GQL {
@@ -35,6 +44,40 @@ export class GQL {
         id
         email
         isActive
+      }
+    }
+  `;
+  static CREATE_COURSE = gql`
+    ${GQLFragments.course}
+    mutation CreateCourse($name: String!) {
+      createCourse(data: { name: $name }) {
+        id
+        ...CourseFragment
+      }
+    }
+  `;
+  static DELETE_COURSE = gql`
+    ${GQLFragments.course}
+    mutation DeleteCourse($id: Int!) {
+      deleteCourse(id: $id) {
+        id
+        ...CourseFragment
+      }
+    }
+  `;
+  static API_COURCES = gql`
+    ${GQLFragments.course}
+    query Courses($limit: Int, $page: Int) {
+      api_courses(limit: $limit, page: $page) {
+        items {
+          id
+          ...CourseFragment
+        }
+        itemCount
+        totalItems
+        pageCount
+        next
+        previous
       }
     }
   `;

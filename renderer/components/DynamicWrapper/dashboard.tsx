@@ -66,13 +66,13 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                 title={
                   <span>
                     <Icon type="user" />
-                    课堂
+                    演示
                   </span>
                 }
               >
-                <Menu.Item key="1">管理</Menu.Item>
-                <Menu.Item key="2">关联范字</Menu.Item>
-                <Menu.Item key="3">关联作业</Menu.Item>
+                <Menu.Item key="/dashboard/demonstrate">列表</Menu.Item>
+                <Menu.Item key="/dashboard/demonstrate/add">添加</Menu.Item>
+                <Menu.Item key="3">关联作业｜ 关联范字</Menu.Item>
               </SubMenu>
               <SubMenu
                 key="sub2"

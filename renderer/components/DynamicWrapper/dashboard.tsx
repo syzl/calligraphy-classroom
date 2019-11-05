@@ -1,22 +1,37 @@
 import React, { FunctionComponent } from 'react';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import { useRouter } from 'next/router';
+import { ClickParam } from 'antd/lib/menu';
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 const CaLayout: FunctionComponent<any> = function({ children }) {
-  const { push } = useRouter();
+  const { push, pathname } = useRouter();
+  const handleClick = (e: ClickParam) => {
+    if (e.key.startsWith('/dashboard')) {
+      push(e.key);
+    }
+  };
+  const topMenuClick = (e: ClickParam) => {
+    if (e.key.startsWith('/dashboard')) {
+      if (!pathname.startsWith(e.key)) {
+        push(e.key);
+      }
+    }
+  };
+  const defaultSelectedKeys = [pathname];
   return (
     <Layout style={{ height: '100%' }}>
       <Header className="header">
         <div className="logo" onClick={() => push('/')} />
         <Menu
+          onClick={topMenuClick}
           theme="dark"
           mode="horizontal"
           defaultSelectedKeys={['1']}
           style={{ lineHeight: '64px' }}
         >
-          <Menu.Item key="1">课堂</Menu.Item>
+          <Menu.Item key="/dashboard">管理面板</Menu.Item>
           <Menu.Item key="2">学生管理</Menu.Item>
           <Menu.Item key="3">作业管理</Menu.Item>
           <Menu.Item key="4">公共课堂</Menu.Item>
@@ -39,11 +54,13 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
         >
           <Sider width={200} style={{ background: '#fff', overflow: 'auto' }}>
             <Menu
+              onClick={handleClick}
               mode="inline"
-              defaultSelectedKeys={['1']}
+              defaultSelectedKeys={defaultSelectedKeys}
               defaultOpenKeys={['sub1', 'sub2', 'sub3']}
               style={{ height: '100%' }}
             >
+              <Menu.Item key="/dashboard">管理</Menu.Item>
               <SubMenu
                 key="sub1"
                 title={
@@ -66,6 +83,8 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                   </span>
                 }
               >
+                <Menu.Item key="/dashboard/course">列表</Menu.Item>
+                <Menu.Item key="/dashboard/course/add">添加</Menu.Item>
                 <Menu.Item key="5">硬笔课程</Menu.Item>
                 <Menu.Item key="6">毛笔课程</Menu.Item>
                 <Menu.Item key="7">义务教育课程</Menu.Item>
@@ -76,7 +95,7 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                 title={
                   <span>
                     <Icon type="notification" />
-                    管理
+                    更多
                   </span>
                 }
               >

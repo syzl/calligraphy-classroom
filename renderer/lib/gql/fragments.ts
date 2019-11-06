@@ -34,4 +34,18 @@ export const GQLFragments = {
       createdAt
     }
   `,
+  upload: `\
+    fragment UploadFragment on Upload {
+      fieldname
+      originalname
+      encoding
+      mimetype
+      destination
+      filename
+      path
+      size
+      updatedAt
+      createdAt
+    }
+  `,
 };

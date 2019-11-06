@@ -35,7 +35,7 @@ export const GQLFragments = {
     }
   `,
   upload: `\
-    fragment UploadFragment on Upload {
+    fragment UploadFragment on UploadRaw {
       fieldname
       originalname
       encoding

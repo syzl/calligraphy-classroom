@@ -21,6 +21,7 @@ import * as GQL from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
 import { Demonstrate, PagedResult } from '../../../interfaces';
 import CreateDemonstrate from '../../../components/forms/Demonstrate';
+import Link from 'next/link';
 
 const Demonstrates: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -79,12 +80,24 @@ const Demonstrates: NextPage = function() {
       title: '名称',
       dataIndex: 'title',
       key: 'title',
-      render: (text: string) => <a>{text}</a>,
+      render: (text: string, record) => (
+        <Link
+          href="/dashboard/demonstrate/detail/[id]"
+          as={`/dashboard/demonstrate/detail/${record.id}`}
+        >
+          <a>{text}</a>
+        </Link>
+      ),
     },
     {
       title: '详情',
       dataIndex: 'desc',
       key: 'desc',
+      render: text => (
+        <Typography.Text type="secondary" style={{ whiteSpace: 'pre-wrap' }}>
+          {text}
+        </Typography.Text>
+      ),
     },
     {
       title: '类型',
@@ -105,7 +118,16 @@ const Demonstrates: NextPage = function() {
       width: 180,
       render: (_: any, record: any) => (
         <span>
-          <Button type="link">学习演示</Button>
+          <Button
+            type="link"
+            onClick={() =>
+              push('/dashboard/demonstrate/detail/[id]', {
+                query: { id: record.id },
+              })
+            }
+          >
+            学习演示
+          </Button>
           <Divider type="vertical" />
           <Popover
             trigger="click"

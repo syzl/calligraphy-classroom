@@ -21,6 +21,15 @@ export const DELETE_DEMOSTRATE = gql`
     }
   }
 `;
+export const UPDATE_DEMOSTRATE = gql`
+  ${GQLFragments.demonstrate}
+  mutation UpdateDemonstrate($id: Int!, $input: UpdateDemonstrateInput!) {
+    updateDemonstrate(id: $id, input: $input) {
+      id
+      ...DemonstrateFragment
+    }
+  }
+`;
 export const API_DEMOSTRATES = gql`
     ${GQLFragments.demonstrate}
     query Demonstrates($limit: Int, $page: Int) {
@@ -33,3 +42,12 @@ export const API_DEMOSTRATES = gql`
       }
     }
   `;
+export const API_DEMOSTRATE = gql`
+  ${GQLFragments.demonstrate}
+  query Demonstrate($id: Int!) {
+    api_demonstrate(id: $id) {
+      id
+      ...DemonstrateFragment
+    }
+  }
+`;

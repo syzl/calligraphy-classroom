@@ -1,0 +1,13 @@
+{
+  "name": "calli",
+  "version": 2,
+  "build": {
+    "env": {
+      "BUILDING_FOR_NOW": "true",
+      "SERVER_URL": "https://calli.songlairui.cn/",
+      "WS_SERVER_URL": "wss://calli.songlairui.cn/",
+      "GQL_URI": "https://calli.songlairui.cn/graphql",
+      "GQL_WS_URI": "wss://calli.songlairui.cn/graphql"
+    }
+  }
+}

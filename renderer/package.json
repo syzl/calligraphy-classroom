@@ -1,27 +1,10 @@
 {
   "name": "calligraphy-classroom",
-  "productName": "Calligraphy Classroom Frontend",
   "version": "1.0.0",
-  "main": "main/index.js",
   "scripts": {
-    "dev": "next dev renderer",
-    "dev:desktop": "electron .",
-    "build": "next build renderer && next export renderer",
-    "start": "next start renderer",
-    "build:electron": "tsc -p electron-src",
-    "build:all": "yarn build && yarn build:electron",
-    "dist": "npm run build:all && electron-builder --dir",
-    "dist:alone": "electron-builder --dir",
-    "type-check": "tsc"
-  },
-  "build": {
-    "asar": false,
-    "extraResources": [
-      {
-        "from": "renderer/out",
-        "to": "app/renderer"
-      }
-    ]
+    "dev": "next dev -p 4000",
+    "build": "next build",
+    "start": "next start"
   },
   "devDependencies": {
     "@types/cookie": "^0.3.3",
@@ -30,8 +13,6 @@
     "@types/node": "^12.12.5",
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.9.3",
-    "electron": "^7.0.1",
-    "electron-builder": "^22.1.0",
     "next": "latest",
     "typescript": "^3.6.4"
   },
@@ -46,8 +27,6 @@
     "apollo-link-http": "1.5.15",
     "babel-plugin-import": "^1.12.2",
     "cookie": "^0.3.1",
-    "electron-is-dev": "^1.1.0",
-    "electron-next": "^3.1.5",
     "formik": "^2.0.3",
     "formik-antd": "^1.6.0",
     "framer-motion": "^1.6.15",
@@ -63,5 +42,6 @@
     "prop-types": "^15.6.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0"
-  }
+  },
+  "license": "ISC"
 }

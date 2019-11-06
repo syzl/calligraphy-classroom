@@ -27,6 +27,20 @@ export interface Demonstrate {
   type?: string;
   subType?: string;
 }
+export interface Upload {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+}
 
 export interface PagedResult<T> {
   items: [T];

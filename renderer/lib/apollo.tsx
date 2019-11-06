@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cookie from 'cookie';
 import Head from 'next/head';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
@@ -11,6 +10,8 @@ import fetch from 'isomorphic-unfetch';
 import { NextPage } from 'next';
 import { GQL_URI } from './constant';
 import { MixedNextPageContext } from './lib.interface';
+import { getToken } from './utils';
+import { auth } from './api/auth';
 /**
  * Creates and provides the apolloContext
  * to a next.js PageTree. Use it by wrapping
@@ -19,7 +20,10 @@ import { MixedNextPageContext } from './lib.interface';
  * @param {Object} [config]
  * @param {Boolean} [config.ssr=true]
  */
-export function withApollo(PageComponent: NextPage<any>, { ssr = true } = {}) {
+export function withApollo(
+  PageComponent: NextPage<any>,
+  { ssr = true, needAuth = true } = {},
+) {
   const WithApollo = ({
     apolloClient,
     apolloState,
@@ -57,8 +61,10 @@ export function withApollo(PageComponent: NextPage<any>, { ssr = true } = {}) {
 
   if (ssr || PageComponent.getInitialProps) {
     WithApollo.getInitialProps = async (ctx: MixedNextPageContext) => {
+      if (needAuth) {
+        auth(ctx); // 统一 getToken 逻辑
+      }
       const { AppTree } = ctx;
-
       // Run all GraphQL queries in the component tree
       // and extract the resulting data
       const apolloClient = (ctx.apolloClient = initApolloClient(
@@ -183,15 +189,4 @@ function createApolloClient(
     link: authLink.concat(httpLink),
     cache: new InMemoryCache().restore(initialState),
   });
-}
-
-/**
- * Get the user token from cookie
- * @param {Object} req
- */
-function getToken(req: any) {
-  const cookies = cookie.parse(
-    req ? req.headers.cookie || '' : document.cookie,
-  );
-  return cookies.token;
 }

@@ -9,7 +9,7 @@ import {
   Row,
   Col,
   Typography,
-  Tooltip,
+  Popover,
 } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { NextPage } from 'next';
@@ -107,10 +107,10 @@ const Demonstrates: NextPage = function() {
         <span>
           <Button type="link">学习演示</Button>
           <Divider type="vertical" />
-          <Tooltip
+          <Popover
             trigger="click"
             placement="left"
-            title={
+            content={
               <Button
                 type="danger"
                 icon="delete"
@@ -124,7 +124,7 @@ const Demonstrates: NextPage = function() {
             }
           >
             <Icon type="delete" />
-          </Tooltip>
+          </Popover>
         </span>
       ),
     },

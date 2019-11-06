@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Icon, Modal } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
+import cookie from 'js-cookie';
 import { SERVER_URL } from '../../lib/constant';
-import { deleteUpload } from '../../lib/api';
+import { deleteUploadRaw } from '../../lib/api';
 
 function getBase64(file: File | Blob | undefined): Promise<string> {
   if (!file) {
@@ -31,9 +32,14 @@ export default function CreateUploads({
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('initialState');
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+  const [token, setToken] = useState('');
+  useEffect(() => {
+    setToken(cookie.get('token') || '');
+  }, []);
   return (
     <>
       <Upload
+        headers={{ Authorization: `Bearer ${token}` }}
         multiple={true}
         action={`${SERVER_URL}/api/v1/upload/antd`}
         listType="picture-card"
@@ -58,7 +64,7 @@ export default function CreateUploads({
         onRemove={async file => {
           const { id } = file.response || {};
           if (id) {
-            await deleteUpload(file.response.id);
+            await deleteUploadRaw(file.response.id);
             return true;
           } else {
             return true;

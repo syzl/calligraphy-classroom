@@ -9,7 +9,7 @@ import {
   Row,
   Col,
   Typography,
-  Tooltip,
+  Popover,
 } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { NextPage } from 'next';
@@ -21,6 +21,7 @@ import * as GQL from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
 import { Upload, PagedResult } from '../../../interfaces';
 import CreateUploadRaw from '../../../components/forms/UploadRaw';
+import { SERVER_URL } from '../../../lib/constant';
 
 const Uploads: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -42,20 +43,20 @@ const Uploads: NextPage = function() {
     await Promise.all([wait(1000), refetch()]);
     setRefetching(false);
   };
-  const [deleteUpload, { loading: deleting }] = useMutation<{
-    deleteUpload: Upload | null;
+  const [deleteUploadRaw, { loading: deleting }] = useMutation<{
+    deleteUploadRaw: Upload | null;
   }>(GQL.DELETE_UPLOAD_RAW, {
-    update(proxy, { data: { deleteUpload } }) {
-      if (deleteUpload) {
+    update(proxy, { data: { deleteUploadRaw } }) {
+      if (deleteUploadRaw) {
         // 优化内存占用, 效果不大, 无法撤销
         const cache = getDepCache(proxy);
-        cache.delete(`Upload：${deleteUpload.id}`);
+        cache.delete(`Upload：${deleteUploadRaw.id}`);
         updateQuery(prev => {
           const {
             api_upload_raws: { ...api_upload_raws },
           } = prev;
           const idx = api_upload_raws.items.findIndex(
-            item => item.id === deleteUpload.id,
+            item => item.id === deleteUploadRaw.id,
           );
           if (idx > -1) {
             api_upload_raws.items.splice(idx, 1);
@@ -77,14 +78,35 @@ const Uploads: NextPage = function() {
     },
     {
       title: '名称',
-      dataIndex: 'title',
-      key: 'title',
-      render: (text: string) => <a>{text}</a>,
+      dataIndex: 'originalname',
+      key: 'originalname',
     },
     {
-      title: '详情',
-      dataIndex: 'desc',
-      key: 'desc',
+      title: 'mime',
+      dataIndex: 'mimetype',
+      key: 'mimetype',
+      render(mime, record) {
+        if (mime.startsWith('image/')) {
+          return (
+            <Popover
+              trigger="click"
+              placement="bottom"
+              content={
+                <img
+                  style={{ width: 240 }}
+                  alt={record.originalname}
+                  src={`${SERVER_URL}/${record.path.replace(/^_static/, '')}`}
+                />
+              }
+            >
+              <Button type="link" icon="eye">
+                图片
+              </Button>
+            </Popover>
+          );
+        }
+        return mime;
+      },
     },
     {
       title: '类型',
@@ -93,9 +115,9 @@ const Uploads: NextPage = function() {
       width: 100,
     },
     {
-      title: '作者',
-      dataIndex: 'author',
-      key: 'author',
+      title: '大小',
+      dataIndex: 'size',
+      key: 'size',
       width: 100,
     },
     {
@@ -105,18 +127,28 @@ const Uploads: NextPage = function() {
       width: 180,
       render: (_: any, record: any) => (
         <span>
-          <Button type="link">学习演示</Button>
+          <Button
+            type="link"
+            onClick={() => {
+              window.open(
+                `${SERVER_URL}${record.path.replace(/^_static/, '')}`,
+                '_blank',
+              );
+            }}
+          >
+            下载
+          </Button>
           <Divider type="vertical" />
-          <Tooltip
+          <Popover
             trigger="click"
             placement="left"
-            title={
+            content={
               <Button
                 type="danger"
                 icon="delete"
                 loading={deleting}
                 onClick={() => {
-                  deleteUpload({ variables: { id: record.id } });
+                  deleteUploadRaw({ variables: { id: record.id } });
                 }}
               >
                 确定删除
@@ -124,7 +156,7 @@ const Uploads: NextPage = function() {
             }
           >
             <Icon type="delete" />
-          </Tooltip>
+          </Popover>
         </span>
       ),
     },
@@ -140,7 +172,7 @@ const Uploads: NextPage = function() {
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Row type="flex" style={{ flex: '0 0 auto' }}>
         <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>范字演示管理</Typography.Title>
+          <Typography.Title level={3}>上传内容管理</Typography.Title>
         </Col>
         <Col>
           <Icon

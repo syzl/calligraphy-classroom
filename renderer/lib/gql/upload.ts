@@ -5,8 +5,8 @@ import { GQLFragments, SelfFrags } from './fragments';
 
 export const DELETE_UPLOAD_RAW = gql`
   ${GQLFragments.upload}
-  mutation DeleteUpload($id: Int!) {
-    deleteUpload(id: $id) {
+  mutation deleteUploadRaw($id: Int!) {
+    deleteUploadRaw(id: $id) {
       id
       ...UploadFragment
     }

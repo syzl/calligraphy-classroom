@@ -61,6 +61,7 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
               style={{ height: '100%' }}
             >
               <Menu.Item key="/dashboard">管理</Menu.Item>
+              <Menu.Item key="/dashboard/upload">上传</Menu.Item>
               <SubMenu
                 key="sub1"
                 title={

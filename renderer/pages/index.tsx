@@ -174,4 +174,4 @@ IndexPage.getInitialProps = async (context: any) => {
   return { whoami };
 };
 
-export default withApollo(IndexPage, { ssr: false });
+export default withApollo(IndexPage, { ssr: false, needAuth: false });

@@ -212,4 +212,4 @@ const Demonstrates: NextPage = function() {
     </div>
   );
 };
-export default withApollo(Demonstrates, { ssr: false });
+export default withApollo(Demonstrates);

@@ -19,18 +19,18 @@ import * as _ from 'lodash';
 import { withApollo } from '../../../lib/apollo';
 import * as GQL from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
-import { Course, PagedResult } from '../../../interfaces';
-import CreateCourse from '../../../components/forms/Course';
+import { Upload, PagedResult } from '../../../interfaces';
+import CreateUploadRaw from '../../../components/forms/UploadRaw';
 
-const Courses: NextPage = function() {
+const Uploads: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const { push } = useRouter();
   const [refetching, setRefetching] = useState(false);
   const { loading, error, data, refetch, updateQuery } = useQuery<{
-    api_courses: PagedResult<Course>;
-  }>(GQL.API_COURSES, {
+    api_upload_raws: PagedResult<Upload>;
+  }>(GQL.API_UPLOAD_RAWS, {
     variables: {
       limit,
       page,
@@ -42,25 +42,25 @@ const Courses: NextPage = function() {
     await Promise.all([wait(1000), refetch()]);
     setRefetching(false);
   };
-  const [deleteCourse, { loading: deleting }] = useMutation<{
-    deleteCourse: Course | null;
-  }>(GQL.DELETE_COURSE, {
-    update(proxy, { data: { deleteCourse } }) {
-      if (deleteCourse) {
+  const [deleteUpload, { loading: deleting }] = useMutation<{
+    deleteUpload: Upload | null;
+  }>(GQL.DELETE_UPLOAD_RAW, {
+    update(proxy, { data: { deleteUpload } }) {
+      if (deleteUpload) {
         // 优化内存占用, 效果不大, 无法撤销
         const cache = getDepCache(proxy);
-        cache.delete(`Course：${deleteCourse.id}`);
+        cache.delete(`Upload：${deleteUpload.id}`);
         updateQuery(prev => {
           const {
-            api_courses: { ...api_courses },
+            api_upload_raws: { ...api_upload_raws },
           } = prev;
-          const idx = api_courses.items.findIndex(
-            item => item.id === deleteCourse.id,
+          const idx = api_upload_raws.items.findIndex(
+            item => item.id === deleteUpload.id,
           );
           if (idx > -1) {
-            api_courses.items.splice(idx, 1);
-            api_courses.totalItems -= 1;
-            return { ...prev, api_courses };
+            api_upload_raws.items.splice(idx, 1);
+            api_upload_raws.totalItems -= 1;
+            return { ...prev, api_upload_raws };
           }
           return prev;
         });
@@ -68,7 +68,7 @@ const Courses: NextPage = function() {
     },
   });
 
-  const columns: ColumnProps<Course>[] = [
+  const columns: ColumnProps<Upload>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -76,16 +76,27 @@ const Courses: NextPage = function() {
       width: 50,
     },
     {
-      title: '课程名称',
-      dataIndex: 'name',
-      key: 'name',
+      title: '名称',
+      dataIndex: 'title',
+      key: 'title',
       render: (text: string) => <a>{text}</a>,
     },
     {
-      title: '讲师',
-      dataIndex: 'teacher',
-      key: 'teacher',
-      width: 150,
+      title: '详情',
+      dataIndex: 'desc',
+      key: 'desc',
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+      width: 100,
+    },
+    {
+      title: '作者',
+      dataIndex: 'author',
+      key: 'author',
+      width: 100,
     },
     {
       title: '操作',
@@ -94,7 +105,7 @@ const Courses: NextPage = function() {
       width: 180,
       render: (_: any, record: any) => (
         <span>
-          <Button type="link">进入课堂</Button>
+          <Button type="link">学习演示</Button>
           <Divider type="vertical" />
           <Tooltip
             trigger="click"
@@ -105,7 +116,7 @@ const Courses: NextPage = function() {
                 icon="delete"
                 loading={deleting}
                 onClick={() => {
-                  deleteCourse({ variables: { id: record.id } });
+                  deleteUpload({ variables: { id: record.id } });
                 }}
               >
                 确定删除
@@ -122,14 +133,14 @@ const Courses: NextPage = function() {
   if (error) {
     message.error(error.message);
   }
-  const { items: courses, totalItems } =
-    (data && data.api_courses) || ({} as PagedResult<Course>);
+  const { items: uploads, totalItems } =
+    (data && data.api_upload_raws) || ({} as PagedResult<Upload>);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Row type="flex" style={{ flex: '0 0 auto' }}>
         <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>课程</Typography.Title>
+          <Typography.Title level={3}>范字演示管理</Typography.Title>
         </Col>
         <Col>
           <Icon
@@ -162,7 +173,7 @@ const Courses: NextPage = function() {
           loading={loading || refetching}
           rowKey="id"
           columns={columns}
-          dataSource={courses}
+          dataSource={uploads}
           // scroll={{ y: 360 }}
           pagination={{
             size: 'small',
@@ -184,7 +195,7 @@ const Courses: NextPage = function() {
       </div>
       <Drawer
         width="360"
-        title="课程"
+        title="上传"
         placement="right"
         closable={false}
         onClose={() => {
@@ -192,7 +203,7 @@ const Courses: NextPage = function() {
         }}
         visible={showDrawer}
       >
-        <CreateCourse
+        <CreateUploadRaw
           onCompleted={() => {
             refetchWithMarking();
           }}
@@ -201,4 +212,4 @@ const Courses: NextPage = function() {
     </div>
   );
 };
-export default withApollo(Courses);
+export default withApollo(Uploads);

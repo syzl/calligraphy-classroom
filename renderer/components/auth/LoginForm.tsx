@@ -1,22 +1,19 @@
 import { Icon, Form, Input, Button, message } from 'antd';
 import { Formik } from 'formik';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
-import cookie from 'cookie';
 import redirect from '../../lib/redirect';
 import * as GQL from '../../lib/gql';
 import { SignInReturn } from '../../interfaces';
 import { hasErrors } from '../../lib/utils';
+import { login } from '../../lib/api/auth';
 
 export const LoginForm = function({ onSubmit }: { onSubmit?: any }) {
   const client = useApolloClient();
 
   const onCompleted: (data: { signinUser: SignInReturn }) => any = data => {
     // Store the token in cookie
-    document.cookie = cookie.serialize('token', data.signinUser.accessToken, {
-      sameSite: true,
-      path: '/',
-      maxAge: 1 * 24 * 60 * 60, // 30 days
-    });
+    const { accessToken: token, expiresIn } = data.signinUser;
+    login({ token, expires: expiresIn / 60 / 60 / 24 });
     // Force a reload of all the current queries now that the user is
     // logged in
     client.cache.reset().then(() => {

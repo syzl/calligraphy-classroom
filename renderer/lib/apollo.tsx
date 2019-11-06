@@ -8,14 +8,9 @@ import { HttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { ApolloProvider } from '@apollo/react-hooks';
 import fetch from 'isomorphic-unfetch';
-import { NextPageContext, NextPage } from 'next';
+import { NextPage } from 'next';
 import { GQL_URI } from './constant';
-
-export interface MixedNextPageContext extends NextPageContext {
-  apolloClient: ApolloClient<NormalizedCacheObject>;
-  apolloState: any;
-}
-
+import { MixedNextPageContext } from './lib.interface';
 /**
  * Creates and provides the apolloContext
  * to a next.js PageTree. Use it by wrapping

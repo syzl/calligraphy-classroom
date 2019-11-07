@@ -14,11 +14,14 @@ export const DELETE_UPLOAD_RAW = gql`
 `;
 export const API_UPLOAD_RAWS = gql`
     ${GQLFragments.upload}
-    query UploadRaws($limit: Int, $page: Int) {
-      api_upload_raws(limit: $limit, page: $page) {
+    query UploadRaws($limit: Int, $page: Int, $by: Int) {
+      api_upload_raws(limit: $limit, page: $page, by: $by) {
         items {
           id
           ...UploadFragment
+          video {
+            id
+          }
         }
         ${SelfFrags.pagedResultMeta}
       }

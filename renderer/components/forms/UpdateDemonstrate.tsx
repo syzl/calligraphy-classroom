@@ -114,16 +114,17 @@ export default function UpdateDemonstrate({
                   value={relateId}
                 />
               )}
-              onSelected={async (selectedId: string) => {
+              onSelected={async (selectedId, refetch) => {
                 setRelateId(`${selectedId}`);
                 await updateRecord({
                   variables: {
                     id: data.id,
                     input: {
-                      videos: [{ upload: { id: +relateId } }],
+                      videos: [{ upload: { id: +selectedId } }],
                     },
                   },
                 });
+                await refetch();
               }}
             />
           </Row>

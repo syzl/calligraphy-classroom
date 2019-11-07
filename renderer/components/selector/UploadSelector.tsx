@@ -5,20 +5,19 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import { API_UPLOAD_RAWS } from '../../lib/gql';
 import { PagedResult, Upload } from '../../interfaces';
+import { wait } from '../../lib/utils';
 
-export default function UploadSelector({
-  selector,
-  onSelected,
-}: {
+interface Props {
   selector?: FunctionComponent<{ open?: Function }>;
-  onSelected?: Function;
-}) {
+  onSelected?: (selectedId: string | number, refetch: Function) => void;
+}
+
+export default function UploadSelector({ selector, onSelected }: Props) {
   const [visible, setVisible] = useState(false);
-  // const [page, setPage] = useState(1);
-  // const [limit, setLimit] = useState(10);
-  const { data, loading, error, fetchMore } = useQuery<{
+  const [completing, setCompleting] = useState(false);
+  const { data, loading, error, fetchMore, refetch } = useQuery<{
     api_upload_raws: PagedResult<Upload>;
-  }>(API_UPLOAD_RAWS, { variables: { page: 1, limit: 10 } });
+  }>(API_UPLOAD_RAWS, { variables: { page: 1, limit: 10, by: -1 } });
   const { items = [] as Upload[], next, totalItems } =
     (data && data.api_upload_raws) || ({} as PagedResult<Upload>);
   const Component =
@@ -32,14 +31,16 @@ export default function UploadSelector({
     <>
       <Component open={() => setVisible(true)} />
       <Modal
-        title={`选择资源 ${totalItems}个`}
+        title={
+          <span onClick={() => refetch()}>{`选择资源 ${totalItems}个`}</span>
+        }
         centered
         visible={visible}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         footer={null}
       >
-        <Spin spinning={loading}>
+        <Spin spinning={loading || completing}>
           {error ? (
             <Alert
               message={error.message}
@@ -78,9 +79,12 @@ export default function UploadSelector({
                 <div key={idx} style={{ lineHeight: '2em' }}>
                   <Button
                     type="link"
-                    onClick={() => {
+                    onClick={async () => {
+                      setCompleting(true);
+                      await (onSelected && onSelected(item.id, refetch));
+                      setCompleting(false);
+                      await wait(20);
                       setVisible(false);
-                      onSelected && onSelected(item.id);
                     }}
                   >
                     {`${item.id}. ${item.mimetype.split('/')[0]} ${

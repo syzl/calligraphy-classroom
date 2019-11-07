@@ -18,6 +18,13 @@ export interface Course {
   teacher?: string;
 }
 
+export interface DemonstrateVideo {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  upload: Upload;
+}
+
 export interface Demonstrate {
   id: number;
   createdAt: string;
@@ -26,6 +33,7 @@ export interface Demonstrate {
   desc?: string;
   type?: string;
   subType?: string;
+  videos?: DemonstrateVideo[];
 }
 export interface Upload {
   id: number;
@@ -43,7 +51,7 @@ export interface Upload {
 }
 
 export interface PagedResult<T> {
-  items: [T];
+  items: T[];
   itemCount: number;
   totalItems: number;
   pageCount: number;

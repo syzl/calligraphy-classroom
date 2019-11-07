@@ -34,6 +34,23 @@ export const GQLFragments = {
       createdAt
     }
   `,
+  demonstrate_detail: `\
+    fragment DemonstrateFragment on Demonstrate {
+      title
+      desc
+      type
+      subType
+      updatedAt
+      createdAt
+      videos {
+        id
+        upload {
+          id
+          ...UploadFragment
+        }
+      }
+    }
+  `,
   upload: `\
     fragment UploadFragment on UploadRaw {
       fieldname

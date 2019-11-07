@@ -22,7 +22,8 @@ export const DELETE_DEMOSTRATE = gql`
   }
 `;
 export const UPDATE_DEMOSTRATE = gql`
-  ${GQLFragments.demonstrate}
+  ${GQLFragments.upload}
+  ${GQLFragments.demonstrate_detail}
   mutation UpdateDemonstrate($id: Int!, $input: UpdateDemonstrateInput!) {
     updateDemonstrate(id: $id, input: $input) {
       id
@@ -31,19 +32,20 @@ export const UPDATE_DEMOSTRATE = gql`
   }
 `;
 export const API_DEMOSTRATES = gql`
-    ${GQLFragments.demonstrate}
-    query Demonstrates($limit: Int, $page: Int) {
-      api_demonstrates(limit: $limit, page: $page) {
-        items {
-          id
-          ...DemonstrateFragment
-        }
-        ${SelfFrags.pagedResultMeta}
-      }
-    }
-  `;
-export const API_DEMOSTRATE = gql`
   ${GQLFragments.demonstrate}
+  query Demonstrates($limit: Int, $page: Int) {
+    api_demonstrates(limit: $limit, page: $page) {
+      items {
+        id
+        ...DemonstrateFragment
+      }
+      ${SelfFrags.pagedResultMeta}
+    }
+  }
+`;
+export const API_DEMOSTRATE = gql`
+  ${GQLFragments.upload}
+  ${GQLFragments.demonstrate_detail}
   query Demonstrate($id: Int!) {
     api_demonstrate(id: $id) {
       id

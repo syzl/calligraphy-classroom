@@ -42,6 +42,7 @@ export default function UpdateDemonstrate({
 }) {
   const videos = data.videos || ([] as DemonstrateVideo[]);
   const [relateId, setRelateId] = useState('');
+  const [cbA, setcbA] = useState<Function>(() => {});
   const formItems = fields.map((field, idx) => {
     const [loading, setloading] = useState(false);
     const [state, setstate] = useState(data[field] || '');
@@ -61,7 +62,6 @@ export default function UpdateDemonstrate({
     { updateDemonstrate: Demonstrate },
     { id: number; input: any }
   >(GQL.UPDATE_DEMOSTRATE);
-
   return (
     <div>
       <Form {...formItemLayout}>
@@ -107,6 +107,8 @@ export default function UpdateDemonstrate({
         <Col style={{ flex: 1 }}>
           <Row>
             <UploadSelector
+              by={+data.id}
+              mark={setcbA}
               selector={({ open }) => (
                 <Input.Search
                   placeholder="选中资源已关联"
@@ -129,7 +131,7 @@ export default function UpdateDemonstrate({
               }}
             />
           </Row>
-          <Divider>已关联视频</Divider>
+          <Divider>已关联资料</Divider>
           <List
             dataSource={videos}
             renderItem={({
@@ -145,6 +147,7 @@ export default function UpdateDemonstrate({
                     style={{ color: 'red' }}
                     onClick={async () => {
                       await deleteVideoRelation(videoId);
+                      cbA && (await cbA());
                       onDeleteVideo && onDeleteVideo(videoId);
                     }}
                   />,
@@ -166,7 +169,6 @@ export default function UpdateDemonstrate({
             )}
           />
         </Col>
-        <Col style={{ flex: 1 }}></Col>
       </Row>
     </div>
   );

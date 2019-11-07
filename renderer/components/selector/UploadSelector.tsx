@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, FunctionComponent, useEffect } from 'react';
 import { Button, Modal, Alert, Spin } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -8,16 +8,26 @@ import { PagedResult, Upload } from '../../interfaces';
 import { wait } from '../../lib/utils';
 
 interface Props {
+  by?: number | string;
+  mark?: (p: any) => unknown;
   selector?: FunctionComponent<{ open?: Function }>;
   onSelected?: (selectedId: string | number, refetch: Function) => void;
 }
 
-export default function UploadSelector({ selector, onSelected }: Props) {
+export default function UploadSelector({
+  mark,
+  by,
+  selector,
+  onSelected,
+}: Props) {
   const [visible, setVisible] = useState(false);
   const [completing, setCompleting] = useState(false);
   const { data, loading, error, fetchMore, refetch } = useQuery<{
     api_upload_raws: PagedResult<Upload>;
-  }>(API_UPLOAD_RAWS, { variables: { page: 1, limit: 10, by: -1 } });
+  }>(API_UPLOAD_RAWS, { variables: { page: 1, limit: 10, by } });
+  useEffect(() => {
+    mark && mark(() => refetch);
+  }, []);
   const { items = [] as Upload[], next, totalItems } =
     (data && data.api_upload_raws) || ({} as PagedResult<Upload>);
   const Component =
@@ -78,6 +88,7 @@ export default function UploadSelector({ selector, onSelected }: Props) {
               {items.map((item, idx) => (
                 <div key={idx} style={{ lineHeight: '2em' }}>
                   <Button
+                    disabled={!!item.video}
                     type="link"
                     onClick={async () => {
                       setCompleting(true);

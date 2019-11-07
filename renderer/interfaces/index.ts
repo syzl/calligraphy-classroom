@@ -48,6 +48,8 @@ export interface Upload {
   filename: string;
   path: string;
   size: number;
+
+  video?: DemonstrateVideo;
 }
 
 export interface PagedResult<T> {

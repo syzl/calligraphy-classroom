@@ -11,11 +11,18 @@ const themeVariables = lessToJS(
 );
 
 module.exports = withLess({
+  env: {
+    SERVER_URL: process.env.SERVER_URL,
+    WS_SERVER_URL: process.env.WS_SERVER_URL,
+    GQL_URI: process.env.GQL_URI,
+    GQL_WS_URI: process.env.GQL_WS_URI,
+  },
   lessLoaderOptions: {
     javascriptEnabled: true,
     modifyVars: themeVariables, // make your antd custom effective
   },
   webpack: (config, { isServer }) => {
+    console.info('SERVER_URL', process.env.SERVER_URL)
     if (isServer) {
       const antStyles = /antd\/.*?\/style.*?/;
       const origExternals = [...config.externals];

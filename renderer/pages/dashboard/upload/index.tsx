@@ -95,7 +95,7 @@ const Uploads: NextPage = function() {
                 <img
                   style={{ width: 240 }}
                   alt={record.originalname}
-                  src={`${SERVER_URL}/${record.path.replace(/^_static/, '')}`}
+                  src={`${SERVER_URL}/${record.path.replace(/^_static\/?/, '')}`}
                 />
               }
             >

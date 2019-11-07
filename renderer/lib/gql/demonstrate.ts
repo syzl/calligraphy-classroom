@@ -21,13 +21,18 @@ export const DELETE_DEMOSTRATE = gql`
     }
   }
 `;
+export const DELETE_DEMOSTRATE_VIDEO = gql`
+  mutation DeleteDemonstrateVideo($id: Int!) {
+    deleteDemonstrate(id: $id)
+  }
+`;
 export const UPDATE_DEMOSTRATE = gql`
   ${GQLFragments.upload}
   ${GQLFragments.demonstrate_detail}
   mutation UpdateDemonstrate($id: Int!, $input: UpdateDemonstrateInput!) {
     updateDemonstrate(id: $id, input: $input) {
       id
-      ...DemonstrateFragment
+      ...DemonstrateFragmentD
     }
   }
 `;
@@ -49,7 +54,7 @@ export const API_DEMOSTRATE = gql`
   query Demonstrate($id: Int!) {
     api_demonstrate(id: $id) {
       id
-      ...DemonstrateFragment
+      ...DemonstrateFragmentD
     }
   }
 `;

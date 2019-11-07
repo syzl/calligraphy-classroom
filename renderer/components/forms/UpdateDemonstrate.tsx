@@ -4,11 +4,11 @@ import {
   Input,
   Spin,
   Row,
-  Icon,
-  Button,
-  Collapse,
   Col,
   Divider,
+  List,
+  Button,
+  Avatar,
 } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import * as GQL from '../../lib/gql';
@@ -17,8 +17,7 @@ import { Demonstrate, DemonstrateVideo } from '../../interfaces';
 import { formItemLayout } from './constant';
 import { SERVER_URL } from '../../lib/constant';
 import UploadSelector from '../selector/UploadSelector';
-
-const { Panel } = Collapse;
+import { deleteVideoRelation } from '../../lib/api';
 
 const fields: (keyof (Omit<Demonstrate, 'videos' | 'id'>))[] = [
   'title',
@@ -32,10 +31,12 @@ const componentProps = [, { autoSize: { minRows: 2, maxRows: 6 } }];
 
 export default function UpdateDemonstrate({
   data,
+  onDeleteVideo,
 }: //   onCompleted,
 //   clearCache = true,
 {
   data: Demonstrate;
+  onDeleteVideo?: (id: number | string) => void;
   //   clearCache?: Boolean;
   //   onCompleted?: Function;
 }) {
@@ -129,49 +130,41 @@ export default function UpdateDemonstrate({
             />
           </Row>
           <Divider>已关联视频</Divider>
-          <Collapse
-            bordered={false}
-            defaultActiveKey={['1']}
-            expandIcon={({ isActive }) => (
-              <Icon type="caret-right" rotate={isActive ? 90 : 0} />
-            )}
-          >
-            {videos.map(
-              ({ upload: { id, originalname, path, mimetype = '' } }) => (
-                <Panel
-                  key={id}
-                  header={`${id} [${mimetype.split('/')[0]}] ${originalname}`}
-                  className="video-item"
-                  extra={
-                    <>
-                      <Button
-                        onClick={() => {
-                          const href = `${SERVER_URL}/${path.replace(
-                            /^_static\/?/,
-                            '',
-                          )}`;
-                          window.open(href, '_blank');
-                        }}
-                        type="link"
-                        icon="monitor"
+          <List
+            dataSource={videos}
+            renderItem={({
+              id: videoId,
+              upload: { originalname, path, mimetype = '' },
+            }) => (
+              <List.Item
+                actions={[
+                  <a key="list-loadmore-edit">edit</a>,
+                  <Button
+                    icon="delete"
+                    type="link"
+                    style={{ color: 'red' }}
+                    onClick={async () => {
+                      await deleteVideoRelation(videoId);
+                      onDeleteVideo && onDeleteVideo(videoId);
+                    }}
+                  />,
+                ]}
+              >
+                <List.Item.Meta
+                  title={originalname}
+                  avatar={
+                    mimetype.startsWith('image/') ? (
+                      <Avatar
+                        shape="square"
+                        size={64}
+                        src={`${SERVER_URL}/${path.replace(/^_static\/?/, '')}`}
                       />
-                      <Button
-                        type="link"
-                        icon="delete"
-                        style={{ color: 'red' }}
-                        onClick={event => {
-                          // If you don't want click extra trigger collapse, you can prevent this:
-                          event.stopPropagation();
-                        }}
-                      />
-                    </>
+                    ) : null
                   }
-                >
-                  <div></div>
-                </Panel>
-              ),
+                />
+              </List.Item>
             )}
-          </Collapse>
+          />
         </Col>
         <Col style={{ flex: 1 }}></Col>
       </Row>

@@ -35,7 +35,7 @@ export const GQLFragments = {
     }
   `,
   demonstrate_detail: `\
-    fragment DemonstrateFragment on Demonstrate {
+    fragment DemonstrateFragmentD on Demonstrate {
       title
       desc
       type

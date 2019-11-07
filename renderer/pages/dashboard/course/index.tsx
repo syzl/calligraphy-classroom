@@ -10,6 +10,7 @@ import {
   Col,
   Typography,
   Tooltip,
+  Tag,
 } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { NextPage } from 'next';
@@ -130,6 +131,13 @@ const Courses: NextPage = function() {
       <Row type="flex" style={{ flex: '0 0 auto' }}>
         <Col style={{ flex: 1 }}>
           <Typography.Title level={3}>课程</Typography.Title>
+        </Col>
+        <Col style={{ paddingTop: 5 }}>
+          {['硬笔', '毛笔', '义务教育', '自选'].map(type => (
+            <Tag color="#2db7f5" key={type}>
+              {type}
+            </Tag>
+          ))}
         </Col>
         <Col>
           <Icon

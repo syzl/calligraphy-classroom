@@ -77,6 +77,9 @@ export default withApollo(function DemonStrateDetail() {
         )}
       </Card>
       <Divider />
+      <Row>
+        <Alert type="info" message="TODO: 关联的范字, 关联的作业" />
+      </Row>
     </div>
   );
 });

@@ -22,7 +22,7 @@ module.exports = withLess({
     modifyVars: themeVariables, // make your antd custom effective
   },
   webpack: (config, { isServer }) => {
-    console.info('SERVER_URL', process.env.SERVER_URL)
+    console.info('next building ~ SERVER_URL:', process.env.SERVER_URL)
     if (isServer) {
       const antStyles = /antd\/.*?\/style.*?/;
       const origExternals = [...config.externals];

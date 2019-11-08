@@ -19,6 +19,8 @@ ENV WS_SERVER_URL $WS_SERVER_URL
 ENV GQL_URI $GQL_URI
 ENV GQL_WS_URI $GQL_WS_URI
 
+RUN echo "Oh dang look at SERVER_URL: $SERVER_URL"
+
 RUN yarn build && yarn --production
 
 # And then copy over node_modules, etc from that stage to the smaller base image

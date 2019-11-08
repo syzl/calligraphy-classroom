@@ -9,15 +9,10 @@ RUN yarn install
 
 COPY . .
 
-ARG SERVER_URL
-ARG WS_SERVER_URL
-ARG GQL_URI
-ARG GQL_WS_URI
-
-ENV SERVER_URL $SERVER_URL
-ENV WS_SERVER_URL $WS_SERVER_URL
-ENV GQL_URI $GQL_URI
-ENV GQL_WS_URI $GQL_WS_URI
+ENV SERVER_URL https://calli.songlairui.cn
+ENV WS_SERVER_URL wss://calli.songlairui.cn
+ENV GQL_URI https://calli.songlairui.cn/graphql
+ENV GQL_WS_URI wss://calli.songlairui.cn/graphql
 
 RUN echo "Oh dang look at SERVER_URL: $SERVER_URL"
 

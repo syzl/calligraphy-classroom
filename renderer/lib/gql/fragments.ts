@@ -51,6 +51,12 @@ export const GQLFragments = {
       subType
       updatedAt
       createdAt
+      course {
+        id
+        name
+        desc
+        teacher
+      }
       videos {
         id
         upload {

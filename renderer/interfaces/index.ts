@@ -35,6 +35,7 @@ export interface Demonstrate {
   type?: string;
   subType?: string;
   videos?: DemonstrateVideo[];
+  course?: Course;
 }
 export interface Upload {
   id: number;

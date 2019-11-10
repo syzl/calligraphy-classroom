@@ -19,7 +19,7 @@ import { SERVER_URL } from '../../lib/constant';
 import UploadSelector from '../selector/UploadSelector';
 import { deleteVideoRelation } from '../../lib/api';
 
-const fields: (keyof (Omit<Demonstrate, 'videos' | 'id'>))[] = [
+const fields: (keyof (Omit<Demonstrate, 'videos' | 'id' | 'course'>))[] = [
   'title',
   'desc',
   'type',
@@ -61,7 +61,7 @@ export default function UpdateDemonstrate({
   const [updateRecord] = useMutation<
     { updateDemonstrate: Demonstrate },
     { id: number; input: any }
-  >(GQL.UPDATE_DEMOSTRATE);
+  >(GQL.UPDATE_DEMONSTRATE);
   return (
     <div>
       <Form {...formItemLayout}>

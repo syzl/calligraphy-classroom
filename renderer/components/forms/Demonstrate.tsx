@@ -21,7 +21,7 @@ export default function CreateDemonstrate({
   const [createDemonstrate, { loading }] = useMutation<
     { createDemonstrate: Demonstrate },
     { input: { title: string } }
-  >(GQL.CREATE_DEMOSTRATE, {
+  >(GQL.CREATE_DEMONSTRATE, {
     onCompleted() {
       // 清空查询的缓存
     },

@@ -3,18 +3,23 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 import { API_COURSE } from '../../../lib/gql';
 import { Course } from '../../../interfaces';
-import { Alert, Row, Col, Typography, Icon, Divider, Spin, Table } from 'antd';
+import { Alert, Row, Col, Typography, Divider, Spin, List, Button } from 'antd';
 import { withApollo } from '../../../lib/apollo';
 import Link from 'next/link';
+import IconWithLoading from '../../../components/IconWithLoading';
+import DemonSelector from '../../../components/selector/DemonSelector';
+import { relateCourse } from '../../../lib/api';
 
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();
+  const id = +query.id;
 
   const { loading, error, data, refetch } = useQuery<{ api_course: Course }>(
     API_COURSE,
     {
+      notifyOnNetworkStatusChange: true,
       variables: {
-        id: +query.id,
+        id,
       },
     },
   );
@@ -31,37 +36,54 @@ export default withApollo(function CourseDetail() {
         </Col>
         <Col>
           <Divider type="vertical" />
-          <Icon style={{ padding: 5 }} type="reload" onClick={refetch} />
+          <IconWithLoading
+            style={{ padding: 5 }}
+            type="reload"
+            onClick={() => refetch()}
+          />
         </Col>
       </Row>
       {error ? <Alert type="error" message={error.message} /> : null}
       <Spin spinning={loading}>
         <p>{JSON.stringify(detail)}</p>
         <Typography.Title level={4}>关联的范字演示</Typography.Title>
-        <Table
-          rowKey="id"
-          dataSource={detail.demonstrates}
-          columns={[
-            {
-              title: '演示名称',
-              dataIndex: 'title',
-              key: 'title',
-              render: (text, record) => (
-                <Link
-                  href="/dashboard/demonstrate/detail/[id]"
-                  as={`/dashboard/demonstrate/detail/${record.id}`}
+        <Row type="flex" gutter={10}>
+          <Col style={{ flex: 1 }}>
+            <List
+              bordered
+              dataSource={detail.demonstrates || []}
+              renderItem={item => (
+                <List.Item
+                  actions={[
+                    <Link
+                      href="/dashboard/demonstrate/detail/[id]"
+                      as={`/dashboard/demonstrate/detail/${item.id}`}
+                    >
+                      <a>详情</a>
+                    </Link>,
+                    <Button
+                      type="link"
+                      icon="disconnect"
+                      onClick={() => {
+                        relateCourse(item.id, -1);
+                      }}
+                    />,
+                  ]}
                 >
-                  <a>{text}</a>
-                </Link>
-              ),
-            },
-            {
-              title: '详细描述',
-              dataIndex: 'desc',
-              key: 'desc',
-            },
-          ]}
-        />
+                  <List.Item.Meta title={item.title} description={item.desc} />
+                </List.Item>
+              )}
+            ></List>
+          </Col>
+          <Col style={{ flex: 1 }}>
+            <DemonSelector
+              by={+query.id}
+              onSelected={demonstrateId => {
+                relateCourse(demonstrateId, id);
+              }}
+            />
+          </Col>
+        </Row>
       </Spin>
     </div>
   );

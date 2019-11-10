@@ -7,6 +7,8 @@ import { API_UPLOAD_RAWS } from '../../lib/gql';
 import { PagedResult, Upload } from '../../interfaces';
 import { wait } from '../../lib/utils';
 
+// TODO 优化，移除 actions 互传
+
 interface Props {
   by?: number | string;
   mark?: (p: any) => unknown;

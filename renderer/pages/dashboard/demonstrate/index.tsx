@@ -31,7 +31,7 @@ const Demonstrates: NextPage = function() {
   const [refetching, setRefetching] = useState(false);
   const { loading, error, data, refetch, updateQuery } = useQuery<{
     api_demonstrates: PagedResult<Demonstrate>;
-  }>(GQL.API_DEMOSTRATES, {
+  }>(GQL.API_DEMONSTRATES, {
     variables: {
       limit,
       page,
@@ -45,7 +45,7 @@ const Demonstrates: NextPage = function() {
   };
   const [deleteDemonstrate, { loading: deleting }] = useMutation<{
     deleteDemonstrate: Demonstrate | null;
-  }>(GQL.DELETE_DEMOSTRATE, {
+  }>(GQL.DELETE_DEMONSTRATE, {
     update(proxy, { data: { deleteDemonstrate } }) {
       if (deleteDemonstrate) {
         // 优化内存占用, 效果不大, 无法撤销

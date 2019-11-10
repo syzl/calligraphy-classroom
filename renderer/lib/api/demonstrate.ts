@@ -5,3 +5,13 @@ export const deleteVideoRelation = (id: string | number, req?: any) =>
     method: 'DELETE',
     headers: getHeader(req),
   });
+
+export const relateCourse = (
+  id: string | number,
+  courseId: string | number,
+  req?: any,
+) =>
+  http(v1(`demonstrate/${id}/course/${courseId}`), {
+    method: 'PUT',
+    headers: getHeader(req),
+  });

@@ -14,7 +14,7 @@ export default withApollo(function DemonStrateDetail() {
   const [refetching, setRefetching] = useState(false);
   const { data, loading, error, refetch, updateQuery } = useQuery<{
     api_demonstrate: Demonstrate;
-  }>(GQL.API_DEMOSTRATE, {
+  }>(GQL.API_DEMONSTRATE, {
     variables: { id: Number(query.id) },
   });
   const refetchWithMarking = async () => {

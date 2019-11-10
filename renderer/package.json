@@ -29,6 +29,7 @@
     "apollo-client": "2.6.4",
     "apollo-link-context": "^1.0.8",
     "apollo-link-http": "1.5.15",
+    "babel-plugin-import": "^1.12.2",
     "cookie": "^0.3.1",
     "formik": "^2.0.3",
     "formik-antd": "^1.6.0",

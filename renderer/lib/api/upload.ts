@@ -5,3 +5,10 @@ export const deleteUploadRaw = (id: string, req?: any) =>
     method: 'DELETE',
     headers: getHeader(req),
   });
+
+export const uploadRaw = (payload: string | FormData, req?: any) =>
+  http(v1(`upload/video-record`), {
+    method: 'POST',
+    headers: getHeader(req, null),
+    body: payload,
+  });

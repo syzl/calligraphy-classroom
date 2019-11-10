@@ -20,7 +20,13 @@ const IndexPage: NextPage = () => {
           </div>
         </Link>
       </Card.Grid>
-      <Card.Grid className="nav-grid">Content</Card.Grid>
+      <Card.Grid className="nav-grid">
+        <Link href="/dashboard/copy-board">
+          <div className="inner">
+            <a>演示上传</a>
+          </div>
+        </Link>
+      </Card.Grid>
       <Card.Grid className="nav-grid">Content</Card.Grid>
       <Card.Grid className="nav-grid">Content</Card.Grid>
       <Card.Grid className="nav-grid">Content</Card.Grid>

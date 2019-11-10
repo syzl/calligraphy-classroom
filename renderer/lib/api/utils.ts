@@ -7,10 +7,13 @@ export function v1(path: string): string {
   return `${SERVER_URL}${normalize(`/api/v1/${path}`)}`;
 }
 
-export function getHeader(req?: any) {
+export function getHeader(
+  req?: any,
+  contentType: string | null = 'application/json',
+) {
   const token = getToken(req);
   return {
-    'content-type': 'application/json',
+    ...(contentType ? { 'content-type': contentType } : null),
     Authorization: `Bearer ${token}`,
   };
 }

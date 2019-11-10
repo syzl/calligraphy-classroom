@@ -77,7 +77,7 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
             </Link>
           </div>
           <div>
-            <Link href="/">
+            <Link href="/student">
               <a>
                 <div className="navimg">
                   <img
@@ -85,12 +85,12 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
                     alt="icon"
                   />
                 </div>
-                <h3>[TODO]</h3>
+                <h3>学生</h3>
               </a>
             </Link>
           </div>
           <div>
-            <Link href="/">
+            <Link href="/teacher">
               <a>
                 <div className="navimg">
                   <img
@@ -98,7 +98,7 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
                     alt="icon"
                   />
                 </div>
-                <h3>[TODO]</h3>
+                <h3>讲师</h3>
               </a>
             </Link>
           </div>

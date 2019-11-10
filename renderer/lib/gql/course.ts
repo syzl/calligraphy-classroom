@@ -35,3 +35,13 @@ export const API_COURSES = gql`
       }
     }
   `;
+
+export const API_COURSE = gql`
+  ${GQLFragments.course}
+  query Course($id: Int!) {
+    api_course(id: $id) {
+      id
+      ...CourseFragment
+    }
+  }
+`;

@@ -16,6 +16,7 @@ export interface Course {
   createdAt: string;
   updatedAt: string;
   teacher?: string;
+  demonstrates?: Demonstrate[];
 }
 
 export interface DemonstrateVideo {

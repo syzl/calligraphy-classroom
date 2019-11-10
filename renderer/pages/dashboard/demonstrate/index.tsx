@@ -121,9 +121,10 @@ const Demonstrates: NextPage = function() {
           <Button
             type="link"
             onClick={() =>
-              push('/dashboard/demonstrate/detail/[id]', {
-                query: { id: record.id },
-              })
+              push(
+                '/dashboard/demonstrate/detail/[id]',
+                `/dashboard/demonstrate/detail/${record.id}`,
+              )
             }
           >
             学习演示

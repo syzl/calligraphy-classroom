@@ -22,6 +22,15 @@ export const GQLFragments = {
       teacher
       updatedAt
       createdAt
+      demonstrates {
+        id
+        title
+        desc
+        type
+        subType
+        updatedAt
+        createdAt
+      }
     }
   `,
   demonstrate: `\

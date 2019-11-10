@@ -22,6 +22,7 @@ import * as GQL from '../../../lib/gql';
 import { wait, getDepCache } from '../../../lib/utils';
 import { Course, PagedResult } from '../../../interfaces';
 import CreateCourse from '../../../components/forms/Course';
+import Link from 'next/link';
 
 const Courses: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -80,7 +81,14 @@ const Courses: NextPage = function() {
       title: '课程名称',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => <a>{text}</a>,
+      render: (text, record) => (
+        <Link
+          href="/dashboard/course/[id]"
+          as={`/dashboard/course/${record.id}`}
+        >
+          <a>{text}</a>
+        </Link>
+      ),
     },
     {
       title: '讲师',
@@ -95,7 +103,14 @@ const Courses: NextPage = function() {
       width: 180,
       render: (_: any, record: any) => (
         <span>
-          <Button type="link">进入课堂</Button>
+          <Button
+            type="link"
+            onClick={() => {
+              push('/dashboard/course/[id]', `/dashboard/course/${record.id}`);
+            }}
+          >
+            进入课堂
+          </Button>
           <Divider type="vertical" />
           <Tooltip
             trigger="click"

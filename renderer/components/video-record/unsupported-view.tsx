@@ -1,7 +1,7 @@
 import React from 'react'
 
 const UnsupportedView = () => (
-  <div>This browser is uncapable of recording video</div>
+  <div>软件版本不支持录制视频</div>
 )
 
 export default UnsupportedView

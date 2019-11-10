@@ -2,10 +2,10 @@ import React from 'react'
 
 const ErrorView = () => (
   <div>
-    Oh snap! Your browser failed to record your video.
+    录制视频失败
     <br />
     <br />
-    Please restart it and try again 👍
+    请重启重试 👍
   </div>
 )
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Switch } from 'antd';
 import styled from 'styled-components';
 import Button from './button';
 import RecordButton from './record-button';
@@ -18,7 +19,13 @@ const ActionsWrapper = styled.div`
   padding-bottom: 80px;
 `;
 
-const Actions = ({
+const createActions = ({
+  setUseVideoInput,
+}: // setIsOnInitially,
+{
+  // setIsOnInitially?: any;
+  setUseVideoInput?: any;
+}) => ({
   isVideoInputSupported,
   isInlineRecordingSupported,
   thereWasAnError,
@@ -31,7 +38,6 @@ const Actions = ({
   timeLimit,
   isReplayingVideo,
   useVideoInput,
-
   onTurnOnCamera,
   // onTurnOffCamera,
   onOpenVideoInput,
@@ -52,7 +58,6 @@ const Actions = ({
   timeLimit: number;
   isReplayingVideo: boolean;
   useVideoInput: boolean;
-
   onTurnOnCamera?: any;
   onTurnOffCamera?: any;
   onOpenVideoInput?: any;
@@ -76,9 +81,24 @@ const Actions = ({
 
     if (isReplayingVideo) {
       return (
-        <Button onClick={onStopReplaying} data-qa="start-replaying">
-          使用另一个视频
-        </Button>
+        <div>
+          <Button
+            onClick={() => {
+              onStopReplaying();
+            }}
+            data-qa="start-replaying"
+          >
+            再次{useVideoInput ? '上传' : '录制'}
+          </Button>
+          {setUseVideoInput && (
+            <Switch
+              checked={useVideoInput}
+              checkedChildren="上传"
+              unCheckedChildren="录制"
+              onChange={val => setUseVideoInput(val)}
+            />
+          )}
+        </div>
       );
     }
 
@@ -94,9 +114,19 @@ const Actions = ({
 
     if (useVideoInput) {
       return (
-        <Button onClick={onOpenVideoInput} data-qa="open-input">
-          上传一个视频
-        </Button>
+        <div>
+          <Button onClick={onOpenVideoInput} data-qa="open-input">
+            上传一个视频
+          </Button>
+          {setUseVideoInput && (
+            <Switch
+              checked={useVideoInput}
+              checkedChildren="上传"
+              unCheckedChildren="录制"
+              onChange={val => setUseVideoInput(val)}
+            />
+          )}
+        </div>
       );
     }
 
@@ -105,9 +135,25 @@ const Actions = ({
         录制一个视频
       </Button>
     ) : (
-      <Button onClick={onTurnOnCamera} data-qa="turn-on-camera">
-        打开摄像头
-      </Button>
+      <div>
+        <Button
+          onClick={() => {
+            onTurnOnCamera();
+            // setIsOnInitially && setIsOnInitially(true);
+          }}
+          data-qa="turn-on-camera"
+        >
+          打开摄像头
+        </Button>
+        {setUseVideoInput && (
+          <Switch
+            checked={useVideoInput}
+            checkedChildren="上传"
+            unCheckedChildren="录制"
+            onChange={val => setUseVideoInput(val)}
+          />
+        )}
+      </div>
     );
   };
 
@@ -120,4 +166,4 @@ const Actions = ({
   );
 };
 
-export default Actions;
+export default createActions;

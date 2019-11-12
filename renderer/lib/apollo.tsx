@@ -3,15 +3,20 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { split, ApolloLink, RequestHandler } from 'apollo-link';
 import { HttpLink } from 'apollo-link-http';
+import { WebSocketLink } from 'apollo-link-ws';
+import { getMainDefinition } from 'apollo-utilities';
 import { setContext } from 'apollo-link-context';
 import { ApolloProvider } from '@apollo/react-hooks';
 import fetch from 'isomorphic-unfetch';
 import { NextPage } from 'next';
-import { GQL_URI } from './constant';
+
+import { GQL_URI, GQL_WS_URI } from './constant';
 import { MixedNextPageContext } from './lib.interface';
 import { getToken } from './utils';
 import { auth } from './api/auth';
+
 /**
  * Creates and provides the apolloContext
  * to a next.js PageTree. Use it by wrapping
@@ -156,6 +161,17 @@ function createApolloClient(
 ) {
   const fetchOptions: any = {};
 
+  let link: ApolloLink | RequestHandler;
+
+  const httpLink = new HttpLink({
+    uri: GQL_URI, // Server URL (must be absolute)
+    credentials: 'same-origin',
+    fetch,
+    fetchOptions,
+  });
+
+  link = httpLink;
+
   // If you are using a https_proxy, add fetchOptions with 'https-proxy-agent' agent instance
   // 'https-proxy-agent' is required here because it's a sever-side only module
   if (typeof window === 'undefined') {
@@ -164,14 +180,27 @@ function createApolloClient(
         process.env.https_proxy,
       );
     }
+  } else {
+    // client-side only  Subscription
+    const wsLink = new WebSocketLink({
+      uri: GQL_WS_URI,
+      options: {
+        reconnect: true,
+      },
+    });
+    link = split(
+      // split based on operation type
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+        );
+      },
+      wsLink,
+      httpLink,
+    );
   }
-
-  const httpLink = new HttpLink({
-    uri: GQL_URI, // Server URL (must be absolute)
-    credentials: 'same-origin',
-    fetch,
-    fetchOptions,
-  });
 
   const authLink = setContext((_, { headers }) => {
     const token = getToken();
@@ -186,7 +215,7 @@ function createApolloClient(
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     ssrMode: typeof window === 'undefined', // Disables forceFetch on the server (so queries are only run once)
-    link: authLink.concat(httpLink),
+    link: authLink.concat(link),
     cache: new InMemoryCache().restore(initialState),
   });
 }

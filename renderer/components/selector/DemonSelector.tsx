@@ -1,10 +1,10 @@
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useSubscription } from '@apollo/react-hooks';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Alert, Button, List } from 'antd';
 
 import { PagedResult, Demonstrate } from '../../interfaces';
-import { API_DEMONSTRATES } from '../../lib/gql';
+import { API_DEMONSTRATES, S_DEMON__C_RELATION } from '../../lib/gql';
 import IconWithLoading from '../IconWithLoading';
 
 interface Props {
@@ -17,7 +17,7 @@ export default function DemonSelector({
   showRelated = false,
   onSelected,
 }: Props) {
-  const { data, loading, error, fetchMore, refetch } = useQuery<{
+  const { data, loading, error, fetchMore, refetch, updateQuery } = useQuery<{
     api_demonstrates: PagedResult<Demonstrate>;
   }>(API_DEMONSTRATES, {
     notifyOnNetworkStatusChange: true,
@@ -26,6 +26,39 @@ export default function DemonSelector({
 
   const { items = [] as Demonstrate[], next } =
     (data && data.api_demonstrates) || ({} as PagedResult<Demonstrate>);
+
+  const {
+    data: { relation: mutated } = {} as { relation: Demonstrate },
+  } = useSubscription<{
+    relation: Demonstrate;
+  }>(S_DEMON__C_RELATION);
+
+  console.info('pr', mutated, 'mutated');
+  if (mutated) {
+    updateQuery(prev => {
+      if (!prev) {
+        refetch();
+        return prev;
+      }
+      console.info('api_demonstrates', prev, 'prev');
+      let {
+        api_demonstrates: { items: [...newItems] = [] as any } = {} as any,
+      } = prev;
+      const targetIdx = newItems.findIndex(
+        (item: any) => item.id === mutated.id,
+      );
+      console.info('targetIdx', targetIdx, mutated);
+      if (targetIdx > -1) {
+        newItems[targetIdx] = { ...newItems[targetIdx], ...mutated };
+
+        return {
+          api_demonstrates: { ...prev.api_demonstrates, items: newItems },
+        };
+      }
+
+      return prev;
+    });
+  }
 
   return error ? (
     <Alert message={error.message} type="error" />

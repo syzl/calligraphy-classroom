@@ -14,17 +14,55 @@ export default withApollo(function CourseDetail() {
   const { query } = useRouter();
   const id = +query.id;
 
-  const { loading, error, data, refetch } = useQuery<{ api_course: Course }>(
-    API_COURSE,
-    {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        id,
-      },
+  const { loading, error, data, refetch, updateQuery } = useQuery<{
+    api_course: Course;
+  }>(API_COURSE, {
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      id,
     },
-  );
+  });
 
   const detail = (data && data.api_course) || ({} as Course);
+
+  console.info('query', data, updateQuery);
+
+  // const { data: relatedData } = useSubscription<{
+  //   related: Demonstrate;
+  // }>(S_COURSE_DEMON_RELATED, { variables: { courseId: id } });
+
+  // const { type, mutated } =
+  //   (subscribeData && subscribeData.courseMutated) || {};
+  // if (mutated) {
+  //   updateQuery(prev => {
+  //     const { api_course } = prev;
+  //     let newDemonstrates = api_course.demonstrates || [];
+  //     const { demonstrates } = mutated;
+  //     if (prev.api_course.id === mutated.id) {
+  //       if (demonstrates) {
+  //         switch (type) {
+  //           case 'delete':
+  //             newDemonstrates = newDemonstrates.filter(
+  //               item => !demonstrates.find(item_se => item_se.id === item.id),
+  //             );
+  //             break;
+  //           case 'add':
+  //           default:
+  //             newDemonstrates = [
+  //               ...demonstrates,
+  //               ...newDemonstrates.filter(
+  //                 item => !demonstrates.find(item_se => item_se.id === item.id),
+  //               ),
+  //             ];
+  //         }
+  //         return {
+  //           api_course: { ...api_course, demonstrates: newDemonstrates },
+  //         };
+  //       }
+  //     }
+  //     return prev;
+  //   });
+  // }
 
   return (
     <div>

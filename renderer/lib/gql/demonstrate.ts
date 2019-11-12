@@ -59,3 +59,13 @@ export const API_DEMONSTRATE = gql`
     }
   }
 `;
+
+export const S_DEMON__C_RELATION = gql`
+  ${GQLFragments.demonstrate}
+  subscription {
+    relation: demonstrateRelateCourse {
+      id
+      ...DemonstrateFragment
+    }
+  }
+`;

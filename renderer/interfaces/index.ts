@@ -35,7 +35,7 @@ export interface Demonstrate {
   type?: string;
   subType?: string;
   videos?: DemonstrateVideo[];
-  course?: Course;
+  course?: Course | null;
 }
 export interface Upload {
   id: number;
@@ -61,4 +61,9 @@ export interface PagedResult<T> {
   pageCount: number;
   next: string;
   previous: string;
+}
+
+export interface Mutated<T> {
+  type?: string;
+  mutated: Partial<T>;
 }

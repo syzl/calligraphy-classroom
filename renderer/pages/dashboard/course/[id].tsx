@@ -3,18 +3,17 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 import { API_COURSE } from '../../../lib/gql';
 import { Course } from '../../../interfaces';
-import { Alert, Row, Col, Typography, Divider, Spin, List, Button } from 'antd';
+import { Alert, Row, Col, Typography, Divider, Spin, Input, Form } from 'antd';
 import { withApollo } from '../../../lib/apollo';
-import Link from 'next/link';
 import IconWithLoading from '../../../components/IconWithLoading';
-import DemonSelector from '../../../components/selector/DemonSelector';
+import DemonOperator from '../../../components/selector/DemonOperator';
 import { relateCourse } from '../../../lib/api';
 
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();
   const id = +query.id;
 
-  const { loading, error, data, refetch, updateQuery } = useQuery<{
+  const { loading, error, data, refetch } = useQuery<{
     api_course: Course;
   }>(API_COURSE, {
     notifyOnNetworkStatusChange: true,
@@ -24,45 +23,6 @@ export default withApollo(function CourseDetail() {
   });
 
   const detail = (data && data.api_course) || ({} as Course);
-
-  console.info('query', data, updateQuery);
-
-  // const { data: relatedData } = useSubscription<{
-  //   related: Demonstrate;
-  // }>(S_COURSE_DEMON_RELATED, { variables: { courseId: id } });
-
-  // const { type, mutated } =
-  //   (subscribeData && subscribeData.courseMutated) || {};
-  // if (mutated) {
-  //   updateQuery(prev => {
-  //     const { api_course } = prev;
-  //     let newDemonstrates = api_course.demonstrates || [];
-  //     const { demonstrates } = mutated;
-  //     if (prev.api_course.id === mutated.id) {
-  //       if (demonstrates) {
-  //         switch (type) {
-  //           case 'delete':
-  //             newDemonstrates = newDemonstrates.filter(
-  //               item => !demonstrates.find(item_se => item_se.id === item.id),
-  //             );
-  //             break;
-  //           case 'add':
-  //           default:
-  //             newDemonstrates = [
-  //               ...demonstrates,
-  //               ...newDemonstrates.filter(
-  //                 item => !demonstrates.find(item_se => item_se.id === item.id),
-  //               ),
-  //             ];
-  //         }
-  //         return {
-  //           api_course: { ...api_course, demonstrates: newDemonstrates },
-  //         };
-  //       }
-  //     }
-  //     return prev;
-  //   });
-  // }
 
   return (
     <div>
@@ -83,45 +43,25 @@ export default withApollo(function CourseDetail() {
       </Row>
       {error ? <Alert type="error" message={error.message} /> : null}
       <Spin spinning={loading}>
-        <p>{JSON.stringify(detail)}</p>
-        <Typography.Title level={4}>关联的范字演示</Typography.Title>
-        <Row type="flex" gutter={10}>
-          <Col style={{ flex: 1 }}>
-            <List
-              bordered
-              dataSource={detail.demonstrates || []}
-              renderItem={item => (
-                <List.Item
-                  actions={[
-                    <Link
-                      href="/dashboard/demonstrate/detail/[id]"
-                      as={`/dashboard/demonstrate/detail/${item.id}`}
-                    >
-                      <a>详情</a>
-                    </Link>,
-                    <Button
-                      type="link"
-                      icon="disconnect"
-                      onClick={() => {
-                        relateCourse(item.id, -1);
-                      }}
-                    />,
-                  ]}
-                >
-                  <List.Item.Meta title={item.title} description={item.desc} />
-                </List.Item>
-              )}
-            ></List>
-          </Col>
-          <Col style={{ flex: 1 }}>
-            <DemonSelector
-              by={+query.id}
-              onSelected={demonstrateId => {
-                relateCourse(demonstrateId, id);
-              }}
-            />
-          </Col>
-        </Row>
+        <Form>
+          <Form.Item>
+            <Input addonBefore="课堂名称" value={detail.name} />
+          </Form.Item>
+          <Form.Item label="描述">
+            <Input.TextArea placeholder="课堂描述" value={detail.desc} />
+          </Form.Item>
+          <Form.Item>
+            <Input addonBefore="讲师" value={detail.teacher} />
+          </Form.Item>
+        </Form>
+
+        <Typography.Title level={4}>关联内容:</Typography.Title>
+        <DemonOperator
+          by={+query.id}
+          onSelected={demonstrateId => {
+            relateCourse(demonstrateId, id);
+          }}
+        />
       </Spin>
     </div>
   );

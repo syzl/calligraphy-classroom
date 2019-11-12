@@ -1,10 +1,37 @@
 export const SelfFrags = {
   pagedResultMeta: `\
-      itemCount
-      totalItems
-      pageCount
-      next
-      previous`,
+    itemCount
+    totalItems
+    pageCount
+    next
+    previous`,
+  uploadRelatedItem: `\
+    id
+    raw {
+      id
+      fieldname
+      originalname
+      encoding
+      mimetype
+      destination
+      filename
+      path
+      size
+      createdAt
+    }`,
+  course: `\
+    name
+    desc
+    teacher
+    updatedAt
+    createdAt`,
+  demonstrate: `\
+    title
+    desc
+    type
+    subType
+    updatedAt
+    createdAt`,
 };
 
 export const GQLFragments = {
@@ -17,11 +44,7 @@ export const GQLFragments = {
   `,
   course: `\
     fragment CourseFragment on Course {
-      name
-      desc
-      teacher
-      updatedAt
-      createdAt
+      ${SelfFrags.course}
       demonstrates {
         id
         title
@@ -35,12 +58,7 @@ export const GQLFragments = {
   `,
   demonstrate: `\
     fragment DemonstrateFragment on Demonstrate {
-      title
-      desc
-      type
-      subType
-      updatedAt
-      createdAt
+      ${SelfFrags.demonstrate}
       course {
         id
         name
@@ -53,26 +71,35 @@ export const GQLFragments = {
   `,
   demonstrate_detail: `\
     fragment DemonstrateFragmentD on Demonstrate {
-      title
-      desc
-      type
-      subType
-      updatedAt
-      createdAt
+      ${SelfFrags.demonstrate}
       course {
         id
-        name
-        desc
-        teacher
+        ${SelfFrags.course}
       }
       videos {
         id
-        upload {
-          id
-          ...UploadFragment
+        startedAt
+        duration
+        thumb {
+          ${SelfFrags.uploadRelatedItem}
+        }
+        video {
+          ${SelfFrags.uploadRelatedItem}
         }
       }
     }
+  `,
+  de_video: `
+  fragment DevideoFragment on DemonstrateVideo {
+    startedAt
+    duration
+    thumb {
+      ${SelfFrags.uploadRelatedItem}
+    }
+    video {
+      ${SelfFrags.uploadRelatedItem}
+    }
+  }
   `,
   upload: `\
     fragment UploadFragment on UploadRaw {

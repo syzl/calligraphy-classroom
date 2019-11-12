@@ -27,7 +27,6 @@ export const DELETE_DEMONSTRATE_VIDEO = gql`
   }
 `;
 export const UPDATE_DEMONSTRATE = gql`
-  ${GQLFragments.upload}
   ${GQLFragments.demonstrate_detail}
   mutation UpdateDemonstrate($id: Int!, $input: UpdateDemonstrateInput!) {
     updateDemonstrate(id: $id, input: $input) {
@@ -37,7 +36,6 @@ export const UPDATE_DEMONSTRATE = gql`
   }
 `;
 export const API_DEMONSTRATES = gql`
-  ${GQLFragments.upload}
   ${GQLFragments.demonstrate_detail}
   query Demonstrates($limit: Int, $page: Int, $by: Int) {
     api_demonstrates(limit: $limit, page: $page, by: $by) {
@@ -50,7 +48,6 @@ export const API_DEMONSTRATES = gql`
   }
 `;
 export const API_DEMONSTRATE = gql`
-  ${GQLFragments.upload}
   ${GQLFragments.demonstrate_detail}
   query Demonstrate($id: Int!) {
     api_demonstrate(id: $id) {

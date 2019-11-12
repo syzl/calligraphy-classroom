@@ -19,7 +19,10 @@ export const API_UPLOAD_RAWS = gql`
         items {
           id
           ...UploadFragment
-          video {
+          relatedThumb {
+            id
+          }
+          relatedVideo {
             id
           }
         }

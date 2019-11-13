@@ -6,7 +6,6 @@ export const SelfFrags = {
     next
     previous`,
   uploadRelatedItem: `\
-    id
     raw {
       id
       fieldname
@@ -94,10 +93,16 @@ export const GQLFragments = {
     startedAt
     duration
     thumb {
+      id
       ${SelfFrags.uploadRelatedItem}
     }
     video {
+      id
       ${SelfFrags.uploadRelatedItem}
+    }
+    demonstrate {
+      id
+      ${SelfFrags.demonstrate}
     }
   }
   `,

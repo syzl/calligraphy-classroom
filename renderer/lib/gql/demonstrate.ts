@@ -66,3 +66,24 @@ export const S_DEMON__C_RELATION = gql`
     }
   }
 `;
+export const API_DEMON_VIDEOS = gql`
+  ${GQLFragments.de_video}
+  query DemonVideos($limit: Int, $page: Int, $by: Int) {
+    api_demon_videos(limit: $limit, page: $page, by: $by) {
+      items {
+        id
+        ...DevideoFragment
+      }
+      ${SelfFrags.pagedResultMeta}
+    }
+  }
+`;
+export const API_DEMON_VIDEO = gql`
+  ${GQLFragments.de_video}
+  query DemonVideo($id: Int!) {
+    api_demon_video(id: $id) {
+      id
+      ...DevideoFragment
+    }
+  }
+`;

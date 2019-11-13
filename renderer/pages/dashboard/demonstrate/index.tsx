@@ -82,8 +82,8 @@ const Demonstrates: NextPage = function() {
       key: 'title',
       render: (text: string, record) => (
         <Link
-          href="/dashboard/demonstrate/detail/[id]"
-          as={`/dashboard/demonstrate/detail/${record.id}`}
+          href="/dashboard/demonstrate/[id]"
+          as={`/dashboard/demonstrate/${record.id}`}
         >
           <a>{text}</a>
         </Link>
@@ -122,8 +122,8 @@ const Demonstrates: NextPage = function() {
             type="link"
             onClick={() =>
               push(
-                '/dashboard/demonstrate/detail/[id]',
-                `/dashboard/demonstrate/detail/${record.id}`,
+                '/dashboard/demonstrate/[id]',
+                `/dashboard/demonstrate/${record.id}`,
               )
             }
           >

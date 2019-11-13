@@ -115,8 +115,8 @@ export default function DemonSelector({ by = -1, onSelected }: Props) {
             <List.Item
               actions={[
                 <Link
-                  href="/dashboard/demonstrate/detail/[id]"
-                  as={`/dashboard/demonstrate/detail/${item.id}`}
+                  href="/dashboard/demonstrate/[id]"
+                  as={`/dashboard/demonstrate/${item.id}`}
                 >
                   <a>详情</a>
                 </Link>,

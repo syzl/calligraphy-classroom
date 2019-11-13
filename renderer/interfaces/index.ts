@@ -19,11 +19,27 @@ export interface Course {
   demonstrates?: Demonstrate[];
 }
 
+export interface UploadThumb {
+  id: number;
+  raw: Upload;
+  demon_video: DemonstrateVideo;
+}
+export interface UploadVideo {
+  id: number;
+  raw: Upload;
+  demon_video: DemonstrateVideo;
+}
+
 export interface DemonstrateVideo {
   id: number;
   createdAt: string;
   updatedAt: string;
-  upload: Upload;
+  thumb: UploadThumb;
+  video: UploadVideo;
+  startedAt: string;
+  duration: number;
+
+  demonstrate?: Demonstrate;
 }
 
 export interface Demonstrate {

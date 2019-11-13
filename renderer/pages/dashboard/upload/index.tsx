@@ -44,9 +44,14 @@ const Uploads: NextPage = function() {
     setRefetching(false);
   };
   const [deleteUploadRaw, { loading: deleting }] = useMutation<{
-    deleteUploadRaw: Upload | null;
+    deleteUploadRaw: Upload;
   }>(GQL.DELETE_UPLOAD_RAW, {
-    update(proxy, { data: { deleteUploadRaw } }) {
+    update(proxy, { data }) {
+      if (!data) {
+        return proxy;
+      }
+      const { deleteUploadRaw } = data;
+
       if (deleteUploadRaw) {
         // 优化内存占用, 效果不大, 无法撤销
         const cache = getDepCache(proxy);
@@ -95,7 +100,10 @@ const Uploads: NextPage = function() {
                 <img
                   style={{ width: 240 }}
                   alt={record.originalname}
-                  src={`${SERVER_URL}/${record.path.replace(/^_static\/?/, '')}`}
+                  src={`${SERVER_URL}/${record.path.replace(
+                    /^_static\/?/,
+                    '',
+                  )}`}
                 />
               }
             >

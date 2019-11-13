@@ -44,9 +44,13 @@ const Demonstrates: NextPage = function() {
     setRefetching(false);
   };
   const [deleteDemonstrate, { loading: deleting }] = useMutation<{
-    deleteDemonstrate: Demonstrate | null;
+    deleteDemonstrate: Demonstrate;
   }>(GQL.DELETE_DEMONSTRATE, {
-    update(proxy, { data: { deleteDemonstrate } }) {
+    update(proxy, { data }) {
+      if (!data) {
+        return proxy;
+      }
+      const { deleteDemonstrate } = data;
       if (deleteDemonstrate) {
         // 优化内存占用, 效果不大, 无法撤销
         const cache = getDepCache(proxy);

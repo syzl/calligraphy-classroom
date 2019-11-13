@@ -41,9 +41,13 @@ const Courses: NextPage = function() {
   });
 
   const [deleteCourse, { loading: deleting }] = useMutation<{
-    deleteCourse: Course | null;
+    deleteCourse: Course;
   }>(GQL.DELETE_COURSE, {
-    update(proxy, { data: { deleteCourse } }) {
+    update(proxy, { data }) {
+      if (!data) {
+        return proxy;
+      }
+      const { deleteCourse } = data;
       if (deleteCourse) {
         // 优化内存占用, 效果不大, 无法撤销
         const cache = getDepCache(proxy);

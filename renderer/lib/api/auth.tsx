@@ -10,21 +10,24 @@ export const login = ({ token = '', expires = 1 }) => {
   // Router.push('/profile');
 };
 
-export const auth = (ctx: any) => {
+export const auth = (ctx: MixedNextPageContext) => {
   const { token } = nextCookie(ctx);
 
   /*
    * If `ctx.req` is available it means we are on the server.
    * Additionally if there's no token it means the user is not logged in.
    */
-  if (ctx.req && !token) {
-    ctx.res.writeHead(302, { Location: '/' });
-    ctx.res.end();
-  }
 
   // We already checked for server. This should only happen on client.
   if (!token) {
-    Router.push('/');
+    if (ctx.req && ctx.res) {
+      if (typeof ctx.res.writeHead === 'function') {
+        ctx.res.writeHead(302, { Location: '/' });
+        ctx.res.end();
+      }
+    } else {
+      Router.push('/');
+    }
   }
 
   return token;

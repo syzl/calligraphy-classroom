@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "next dev renderer",
     "dev:desktop": "electron .",
+    "export": "next export renderer",
     "build": "next build renderer && next export renderer",
     "start": "next start renderer",
     "build:electron": "tsc -p electron-src",
@@ -26,7 +27,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^7.0.1",
+    "electron": "^7.1.1",
     "electron-builder": "^22.1.0"
   },
   "dependencies": {

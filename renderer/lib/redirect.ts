@@ -1,17 +1,15 @@
 import Router from 'next/router';
-import { ServerResponse } from 'http';
+import { MixedNextPageContext } from './lib.interface';
 
-interface Ctx {
-  res?: ServerResponse;
-  [key: string]: any;
-}
-
-export default (context: Ctx, target: string) => {
-  if (context.res) {
+export default (context: MixedNextPageContext | any, target: string) => {
+  console.info('ctx ~~~', context.res);
+  if (context && context.res) {
     // server
     // 303: "See other"
-    context.res.writeHead(303, { Location: target });
-    context.res.end();
+    if (typeof context.res.writeHead === 'function') {
+      context.res.writeHead(303, { Location: target });
+      context.res.end();
+    }
   } else {
     // In the browser, we just pretend like this never even happened ;)
     Router.replace(target);

@@ -22,7 +22,7 @@ module.exports = withLess({
     modifyVars: themeVariables, // make your antd custom effective
   },
   webpack: (config, { isServer }) => {
-    console.info('next building ~ SERVER_URL:', process.env.SERVER_URL)
+    console.info('next building ~ SERVER_URL:', process.env.SERVER_URL);
     if (isServer) {
       const antStyles = /antd\/.*?\/style.*?/;
       const origExternals = [...config.externals];
@@ -53,5 +53,12 @@ module.exports = withLess({
     }
 
     return config;
+  },
+  exportPathMap: async function() {
+    return {
+      '/dashboard': { page: '/dashboard' },
+      '/index': { page: '/index' },
+      '/': { page: '/' },
+    };
   },
 });

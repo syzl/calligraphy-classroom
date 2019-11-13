@@ -4,15 +4,20 @@ import nextCookie from 'next-cookies';
 import cookie from 'js-cookie';
 import { NextPage } from 'next';
 import { MixedNextPageContext } from '../lib.interface';
+import redirect from '../redirect';
 
 export const login = ({ token = '', expires = 1 }) => {
   cookie.set('token', token, { expires });
+  console.info('js-cookie', cookie);
+  window.localStorage.setItem('token', token);
   // Router.push('/profile');
 };
 
 export const auth = (ctx: MixedNextPageContext) => {
-  const { token } = nextCookie(ctx);
-
+  let { token } = nextCookie(ctx);
+  if (!token) {
+    token = window.localStorage.getItem('token') || '';
+  }
   /*
    * If `ctx.req` is available it means we are on the server.
    * Additionally if there's no token it means the user is not logged in.
@@ -20,14 +25,7 @@ export const auth = (ctx: MixedNextPageContext) => {
 
   // We already checked for server. This should only happen on client.
   if (!token) {
-    if (ctx.req && ctx.res) {
-      if (typeof ctx.res.writeHead === 'function') {
-        ctx.res.writeHead(302, { Location: '/' });
-        ctx.res.end();
-      }
-    } else {
-      Router.push('/');
-    }
+    redirect(ctx, '/');
   }
 
   return token;
@@ -37,6 +35,7 @@ export const logout = () => {
   cookie.remove('token');
   // to support logging out from all windows
   window.localStorage.setItem('logout', Date.now().toString());
+  window.localStorage.removeItem('token');
   Router.push('/login');
 };
 

@@ -20,5 +20,9 @@ export function getToken(req?: any) {
   const cookies = cookie.parse(
     req ? req.headers.cookie || '' : document.cookie,
   );
-  return cookies.token;
+  let fallback = '';
+  if (typeof window !== undefined) {
+    fallback = window.localStorage.getItem('token') || '';
+  }
+  return cookies.token || fallback;
 }

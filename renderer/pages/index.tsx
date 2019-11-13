@@ -8,6 +8,7 @@ import { UserMenu } from '../components/auth/UserMenu';
 import { withApollo } from '../lib/apollo';
 import checkLoggedIn from '../lib/checkLoggedIn';
 import { WhoAmI } from '../interfaces';
+import { MixedNextPageContext } from '../lib/lib.interface';
 
 type Props = {
   whoami: WhoAmI;
@@ -169,7 +170,7 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
     </div>
   );
 };
-IndexPage.getInitialProps = async (context: any) => {
+IndexPage.getInitialProps = async (context: MixedNextPageContext) => {
   const { whoami } = await checkLoggedIn(context.apolloClient);
   return { whoami };
 };

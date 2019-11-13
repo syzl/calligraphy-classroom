@@ -87,3 +87,23 @@ export const API_DEMON_VIDEO = gql`
     }
   }
 `;
+
+export const S_VIDEO_DEMON = gql`
+  ${GQLFragments.de_video}
+  subscription {
+    relation: videoRelateDemon {
+      id
+      ...DevideoFragment
+    }
+  }
+`;
+
+export const S_DEMON_VIDEO = gql`
+  ${GQLFragments.de_video}
+  subscription($id: Int!) {
+    relation: DemonRelateVideo(id: $id) {
+      id
+      ...DevideoFragment
+    }
+  }
+`;

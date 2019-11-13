@@ -6,7 +6,6 @@ import * as GQL from '../../../lib/gql';
 import { wait } from '../../../lib/utils';
 import { withApollo } from '../../../lib/apollo';
 import { Demonstrate } from '../../../interfaces';
-// import UpdateDemonstrate from '../../../components/forms/UpdateDemonstrate';
 import RelatedDemonVideos from '../../../components/relatedEntity/DemonVideos';
 import Link from 'next/link';
 
@@ -67,11 +66,6 @@ export default withApollo(function DemonStrateDetail() {
       <Spin spinning={loading}>
         <Typography.Text>{details.desc}</Typography.Text>
         <RelatedDemonVideos />
-
-        <Divider />
-        <Row>
-          <Alert type="info" message="TODO: 关联的范字, 关联的作业" />
-        </Row>
       </Spin>
     </div>
   );

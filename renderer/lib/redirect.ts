@@ -1,6 +1,12 @@
 import Router from 'next/router';
+import { ServerResponse } from 'http';
 
-export default (context: any, target: string) => {
+interface Ctx {
+  res?: ServerResponse;
+  [key: string]: any;
+}
+
+export default (context: Ctx, target: string) => {
   if (context.res) {
     // server
     // 303: "See other"

@@ -21,7 +21,7 @@ export function getToken(req?: any) {
     req ? req.headers.cookie || '' : document.cookie,
   );
   let fallback = '';
-  if (typeof window !== undefined) {
+  if (typeof window !== 'undefined') {
     fallback = window.localStorage.getItem('token') || '';
   }
   return cookies.token || fallback;

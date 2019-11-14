@@ -3371,6 +3371,11 @@ fast-json-stable-stringify@^2.0.0:
   resolved "https://registry.npm.taobao.org/fast-json-stable-stringify/download/fast-json-stable-stringify-2.0.0.tgz#d5142c0caee6b1189f87d3a76111064f86c8bbf2"
   integrity sha1-1RQsDK7msRifh9OnYREGT4bIu/I=
 
+fast-memoize@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.npm.taobao.org/fast-memoize/download/fast-memoize-2.5.1.tgz#c3519241e80552ce395e1a32dcdde8d1fd680f5d"
+  integrity sha1-w1GSQegFUs45Xhoy3N3o0f1oD10=
+
 fastparse@^1.1.1:
   version "1.1.2"
   resolved "https://registry.npm.taobao.org/fastparse/download/fastparse-1.1.2.tgz#91728c5a5942eced8531283c79441ee4122c35a9"
@@ -6777,6 +6782,13 @@ rc@^1.2.7, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+re-resizable@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.npm.taobao.org/re-resizable/download/re-resizable-6.1.0.tgz#ba4ece505b48f05691446d57837151349d7575e8"
+  integrity sha1-uk7OUFtI8FaRRG1Xg3FRNJ11deg=
+  dependencies:
+    fast-memoize "^2.5.1"
+
 react-dom@^16.11.0:
   version "16.11.0"
   resolved "https://registry.npm.taobao.org/react-dom/download/react-dom-16.11.0.tgz#7e7c4a5a85a569d565c2462f5d345da2dd849af5"
@@ -6786,6 +6798,14 @@ react-dom@^16.11.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.17.0"
+
+react-draggable@4.0.3:
+  version "4.0.3"
+  resolved "https://registry.npm.taobao.org/react-draggable/download/react-draggable-4.0.3.tgz#6b9f76f66431c47b9070e9b805bbc520df8ca481"
+  integrity sha1-a5929mQxxHuQcOm4BbvFIN+MpIE=
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.0"
 
 react-draggable@^4.1.0:
   version "4.1.0"
@@ -6845,6 +6865,15 @@ react-player@^1.14.1:
     deepmerge "^4.0.0"
     load-script "^1.0.0"
     prop-types "^15.7.2"
+
+react-rnd@^10.1.1:
+  version "10.1.1"
+  resolved "https://registry.npm.taobao.org/react-rnd/download/react-rnd-10.1.1.tgz#4f4d9d28c46a6060acb64600df7a88490862a324"
+  integrity sha1-T02dKMRqYGCstkYA33qISQhioyQ=
+  dependencies:
+    re-resizable "6.1.0"
+    react-draggable "4.0.3"
+    tslib "1.10.0"
 
 react-slick@~0.25.2:
   version "0.25.2"
@@ -7918,7 +7947,7 @@ ts-pnp@^1.1.2:
   resolved "https://registry.npm.taobao.org/ts-pnp/download/ts-pnp-1.1.5.tgz#840e0739c89fce5f3abd9037bb091dbff16d9dec"
   integrity sha1-hA4HOcifzl86vZA3uwkdv/Ftnew=
 
-tslib@^1.10.0, tslib@^1.9.0, tslib@^1.9.3:
+tslib@1.10.0, tslib@^1.10.0, tslib@^1.9.0, tslib@^1.9.3:
   version "1.10.0"
   resolved "https://registry.npm.taobao.org/tslib/download/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
   integrity sha1-w8GflZc/sKYpc/sJ2Q2WHuQ+XIo=
@@ -7969,7 +7998,7 @@ typedarray@^0.0.6:
 
 typescript@^3.7.2:
   version "3.7.2"
-  resolved "https://registry.npm.taobao.org/typescript/download/typescript-3.7.2.tgz?cache=0&sync_timestamp=1573629537201&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftypescript%2Fdownload%2Ftypescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
+  resolved "https://registry.npm.taobao.org/typescript/download/typescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
   integrity sha1-J+SJuV+lkJRF6f717kjYFpetGPs=
 
 ua-parser-js@^0.7.18:

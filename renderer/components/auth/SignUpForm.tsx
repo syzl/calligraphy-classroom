@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
-import { Icon, Form, Input, Button } from 'antd';
+import { Icon, Form, Input, Button, message } from 'antd';
 import { Formik } from 'formik';
 import { hasErrors } from '../../lib/utils';
+import { signUp, signIn } from '../../lib/api';
+import { login } from '../../lib/auth';
+import { useApolloClient } from '@apollo/react-hooks';
 
-export const SignUpForm = function({ onSubmit }: { onSubmit?: any }) {
+export const SignUpForm = function({
+  onSubmit,
+  autoSignIn = false,
+}: {
+  onSubmit?: any;
+  autoSignIn?: boolean;
+}) {
   const [loading, setLoading] = useState(false);
+  const client = useApolloClient();
   return (
     <Formik
       initialValues={{
@@ -24,12 +34,21 @@ export const SignUpForm = function({ onSubmit }: { onSubmit?: any }) {
       onSubmit={async values => {
         setLoading(true);
         localStorage.setItem('__username', values.username);
-        console.info('注册', values);
-        onSubmit && onSubmit(values);
+        try {
+          const data = await signUp(values);
+          if (autoSignIn) {
+            const tokenMeta = await signIn(values);
+            console.info('tokenMeta', tokenMeta);
+            const { accessToken: token, expiresIn } = tokenMeta;
+            login({ token, expires: expiresIn / 60 / 60 / 24 });
+            await client.cache.reset();
+          }
+          onSubmit && onSubmit(data);
+          // message.error(`注册成功, 登陆中`);
+        } catch (error) {
+          message.error(`注册失败${error.message}`);
+        }
         setLoading(false);
-        // signinUser({
-        //   variables: values,
-        // });
       }}
     >
       {({

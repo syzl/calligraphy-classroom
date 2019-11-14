@@ -1,23 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { LoginForm } from '../components/auth/LoginForm';
 import { withApollo } from '../lib/apollo';
+import { Button, Divider } from 'antd';
 
-export default withApollo(function LoginPage() {
-  const router = useRouter();
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <LoginForm
-        onSubmit={() => {
-          router.back();
+export default withApollo(
+  function LoginPage() {
+    const router = useRouter();
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+      setShow(true);
+    }, []);
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          flexDirection: 'column',
         }}
-      />
-    </div>
-  );
-});
+      >
+        <div style={{ width: 320 }}>
+          {show ? (
+            <LoginForm
+              onSubmit={() => {
+                router.back();
+              }}
+            />
+          ) : null}
+          <Divider />
+          <div>
+            <Button
+              icon="home"
+              type="link"
+              onClick={() => {
+                router.push('/');
+              }}
+            />
+            <Button
+              onClick={() => {
+                router.push('/register');
+              }}
+            >
+              注册 ?
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  },
+  { ssr: false, needAuth: false },
+);

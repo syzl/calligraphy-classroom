@@ -9,12 +9,14 @@ import { withApollo } from '../lib/apollo';
 import checkLoggedIn from '../lib/checkLoggedIn';
 import { WhoAmI } from '../interfaces';
 import { MixedNextPageContext } from '../lib/lib.interface';
+import { useRouter } from 'next/router';
 
 type Props = {
   whoami: WhoAmI;
 };
 
 const IndexPage: NextPage<Props> = ({ whoami }) => {
+  const router = useRouter();
   const [username, setUsername] = useState(whoami.username);
   const [showMenu, setShowMenu] = useState(false);
   return (
@@ -22,6 +24,11 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
       <div className="band">
         <div className="top">
           <Dropdown.Button
+            onClick={() => {
+              if (!username) {
+                router.push('/login');
+              }
+            }}
             trigger={['click']}
             visible={showMenu}
             onVisibleChange={setShowMenu}

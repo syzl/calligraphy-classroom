@@ -58,10 +58,13 @@ export default withApollo(function DemonstrateDetail() {
       }
       actions={[
         <Button
-          disabled={!detail.videos || !detail.videos.length}
+          disabled={!targetDemon.id}
           type="link"
           icon="video-camera"
           block
+          onClick={() => {
+            setTargetDemon({} as any);
+          }}
         />,
 
         <Icon type="setting" key="setting" />,
@@ -72,16 +75,18 @@ export default withApollo(function DemonstrateDetail() {
     >
       {error ? <Alert type="error" message={message.error} /> : null}
       <Row type="flex" style={{ height: '100%' }}>
-        <Col style={{ flex: 1 }}>
+        <Col style={{ flex: '0 1 240px' }}>
           <List
             header={<Typography.Text>范字演示:</Typography.Text>}
             dataSource={detail.videos}
             renderItem={demon => (
               <List.Item
                 onClick={async () => {
-                  setTargetDemon({} as any);
-                  await wait(20);
-                  setTargetDemon(demon);
+                  if (targetDemon.id !== demon.id) {
+                    setTargetDemon({} as any);
+                    await wait(20);
+                    setTargetDemon(demon);
+                  }
                 }}
               >
                 <List.Item.Meta

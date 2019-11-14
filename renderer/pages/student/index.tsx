@@ -20,11 +20,11 @@ export default function StudentView() {
           </Col>
 
           <Col style={{ flex: 1 }}>
-            <Link href="/student/course">
-              <Typography.Title underline level={4}>
-                选择课程
-              </Typography.Title>
-            </Link>
+            <Typography.Title underline level={4}>
+              <Link href="/student/course">
+                <a>选择课程</a>
+              </Link>
+            </Typography.Title>
             <Divider />
           </Col>
         </Row>

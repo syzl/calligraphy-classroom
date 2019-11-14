@@ -1,10 +1,18 @@
 import React from 'react';
-import { Divider, Row, Col, Card, Typography, List } from 'antd';
+import { Card, List, Button, Typography, Collapse } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import { PagedResult, Course } from '../../../interfaces';
 import { API_COURSES } from '../../../lib/gql';
 import { withApollo } from '../../../lib/apollo';
 import Link from 'next/link';
+import IconWithLoading from '../../../components/IconWithLoading';
+
+const panelStyle = {
+  background: '#f7f7f7',
+  borderRadius: 4,
+  border: 0,
+  overflow: 'hidden',
+};
 
 export default withApollo(function StudentCourseView() {
   const { loading, error, data, refetch, fetchMore, updateQuery } = useQuery<{
@@ -21,45 +29,79 @@ export default withApollo(function StudentCourseView() {
     (data && data.api_courses) || ({} as PagedResult<Course>);
   console.info(next, error, refetch, fetchMore, updateQuery);
   return (
-    <div
-      style={{
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+    <Card
+      bordered={false}
+      loading={loading}
+      title="选择课程"
+      extra={<IconWithLoading type="reload" onClick={() => refetch()} />}
     >
-      <Card
-        style={{ minWidth: 540, minHeight: 300 }}
-        title="学习"
-        loading={loading}
-      >
-        <Row type="flex">
-          <Col style={{ flex: 1 }}>
-            <Typography.Title level={4}>选择课程</Typography.Title>
-            <Divider />
-            <List
-              grid={{
-                gutter: 6,
-                xs: 1,
-                sm: 2,
-                md: 4,
-                lg: 4,
-                xl: 6,
-                xxl: 3,
-              }}
-              dataSource={courses}
-              renderItem={item => (
-                <List.Item>
-                  <Card title={item.name} bordered={false} extra={<Link href='/student/course/[id]' as={`/student/course/${item.id}`}>详细</Link>}>
-                    <Card.Meta>{item.desc}</Card.Meta>
-                  </Card>
-                </List.Item>
-              )}
-            />
-          </Col>
-        </Row>
-      </Card>
-    </div>
+      <List
+        grid={{
+          gutter: 4,
+          xs: 1,
+          sm: 2,
+          md: 3,
+          lg: 4,
+          xl: 4,
+          xxl: 6,
+        }}
+        dataSource={courses}
+        renderItem={item => (
+          <List.Item>
+            <Card
+              size="small"
+              title={item.name}
+              extra={
+                <Link
+                  href="/student/course/[id]"
+                  as={`/student/course/${item.id}`}
+                >
+                  <a>详细</a>
+                </Link>
+              }
+            >
+              <Card.Meta
+                style={{ height: 240, overflow: 'auto' }}
+                // title={item.desc}
+                description={
+                  <Collapse bordered={false} defaultActiveKey={['1']}>
+                    <Collapse.Panel
+                      header="视频学习"
+                      key="1"
+                      style={panelStyle}
+                    >
+                      <List
+                        size="small"
+                        dataSource={item.demonstrates}
+                        renderItem={demon => (
+                          <List.Item
+                            actions={[
+                              <Link
+                                href="/student/demonstrate/[id]"
+                                as={`/student/demonstrate/${demon.id}`}
+                              >
+                                <Button type="link">学习</Button>
+                              </Link>,
+                            ]}
+                          >
+                            <List.Item.Meta
+                              title={
+                                <Typography.Text strong>
+                                  {demon.title}
+                                </Typography.Text>
+                              }
+                            />
+                          </List.Item>
+                        )}
+                      />
+                    </Collapse.Panel>
+                  </Collapse>
+                }
+              ></Card.Meta>
+            </Card>
+          </List.Item>
+        )}
+      />
+    </Card>
   );
 });

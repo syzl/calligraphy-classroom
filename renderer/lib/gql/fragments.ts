@@ -85,6 +85,10 @@ export const GQLFragments = {
         video {
           ${SelfFrags.uploadRelatedItem}
         }
+        copybooks {
+          id
+          ${SelfFrags.uploadRelatedItem}
+        }
       }
     }
   `,

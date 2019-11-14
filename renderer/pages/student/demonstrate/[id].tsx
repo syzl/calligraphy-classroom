@@ -16,7 +16,11 @@ import {
 } from 'antd';
 import Link from 'next/link';
 import { Rnd } from 'react-rnd';
-import { Demonstrate, DemonstrateVideo } from '../../../interfaces';
+import {
+  Demonstrate,
+  DemonstrateVideo,
+  UploadCopyBook,
+} from '../../../interfaces';
 import { API_DEMONSTRATE } from '../../../lib/gql';
 import { withApollo } from '../../../lib/apollo';
 import IconWithLoading from '../../../components/IconWithLoading';
@@ -34,6 +38,7 @@ export default withApollo(function DemonstrateDetail() {
   const detail = (data && data.api_demonstrate) || ({} as Demonstrate);
   const { course } = detail;
   const [targetDemon, setTargetDemon] = useState({} as DemonstrateVideo);
+  const [targetCopybook, setTargetCopybook] = useState({} as UploadCopyBook);
   return (
     <Card
       style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
@@ -81,6 +86,9 @@ export default withApollo(function DemonstrateDetail() {
             dataSource={detail.videos}
             renderItem={demon => (
               <List.Item
+                style={
+                  targetDemon.id === demon.id ? { background: 'lightblue' } : {}
+                }
                 onClick={async () => {
                   if (targetDemon.id !== demon.id) {
                     setTargetDemon({} as any);
@@ -108,7 +116,35 @@ export default withApollo(function DemonstrateDetail() {
             )}
           />
         </Col>
-        <Col style={{ flex: 1 }}>
+        <Col style={{ flex: '0 1 300px' }}>
+          <List
+            header={<Typography.Text>关联字帖:</Typography.Text>}
+            dataSource={targetDemon.copybooks}
+            renderItem={copybook => (
+              <List.Item
+                onClick={async () => {
+                  setTargetCopybook(copybook);
+                }}
+              >
+                <List.Item.Meta
+                  avatar={
+                    copybook.raw ? (
+                      <Avatar
+                        size={144}
+                        shape="square"
+                        src={`${SERVER_URL}/${copybook.raw.path.replace(
+                          /^_static\//,
+                          '',
+                        )}`}
+                      />
+                    ) : null
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        </Col>
+        <Col style={{ flex: 1, position: 'relative', zIndex: 999 }}>
           <div>
             {!targetDemon.video ? null : (
               <Rnd
@@ -167,8 +203,51 @@ export default withApollo(function DemonstrateDetail() {
               </Rnd>
             )}
           </div>
+          <div>
+            {!targetCopybook.raw ? null : (
+              <Rnd
+                default={{
+                  x: 0,
+                  y: 200,
+                  width: 320,
+                  height: 200,
+                }}
+                bounds="body"
+                minWidth={64}
+                minHeight={40}
+                resizeHandleComponent={{
+                  bottomRight: <Button shape="circle" icon="arrows-alt" />,
+                }}
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden',
+                    background: 'lightgray',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <img
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      pointerEvents: 'none',
+                    }}
+                    src={`${SERVER_URL}/${targetCopybook.raw.path.replace(
+                      /^_static\//,
+                      '',
+                    )}`}
+                  />
+                </div>
+              </Rnd>
+            )}
+          </div>
         </Col>
-        <Col style={{ flex: 1 }}></Col>
+        <Col style={{ flex: 1 }}>
+          {/* <pre>{JSON.stringify(targetCopybook, null, 1)}</pre> */}
+        </Col>
       </Row>
       <style global jsx>{`
         body {

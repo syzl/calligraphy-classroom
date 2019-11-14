@@ -19,6 +19,12 @@ export interface Course {
   demonstrates?: Demonstrate[];
 }
 
+export interface UploadCopyBook {
+  id: number;
+  raw: Upload;
+  demon_video: DemonstrateVideo;
+}
+
 export interface UploadThumb {
   id: number;
   raw: Upload;
@@ -36,6 +42,7 @@ export interface DemonstrateVideo {
   updatedAt: string;
   thumb: UploadThumb;
   video: UploadVideo;
+  copybooks?: UploadCopyBook[];
   startedAt: string;
   duration: number;
 
@@ -51,7 +58,7 @@ export interface Demonstrate {
   type?: string;
   subType?: string;
   videos?: DemonstrateVideo[];
-  course?: Course | null;
+  course?: Course;
 }
 export interface Upload {
   id: number;

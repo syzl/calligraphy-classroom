@@ -2,7 +2,7 @@ import { Menu, message, Icon } from 'antd';
 import { useApolloClient } from '@apollo/react-hooks';
 import redirect from '../../lib/redirect';
 import { ClickParam } from 'antd/lib/menu';
-import { logout } from '../../lib/api/auth';
+import { logout } from '../../lib/auth';
 
 export const UserMenu = function({ onLogout }: { onLogout?: Function }) {
   const apolloClient = useApolloClient();

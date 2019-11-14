@@ -3,8 +3,8 @@ import Router from 'next/router';
 import nextCookie from 'next-cookies';
 import cookie from 'js-cookie';
 import { NextPage } from 'next';
-import { MixedNextPageContext } from '../lib.interface';
-import redirect from '../redirect';
+import { MixedNextPageContext } from './lib.interface';
+import redirect from './redirect';
 
 export const login = ({ token = '', expires = 1 }) => {
   cookie.set('token', token, { expires });

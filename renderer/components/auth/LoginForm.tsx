@@ -5,7 +5,7 @@ import redirect from '../../lib/redirect';
 import * as GQL from '../../lib/gql';
 import { SignInReturn } from '../../interfaces';
 import { hasErrors } from '../../lib/utils';
-import { login } from '../../lib/api/auth';
+import { login } from '../../lib/auth';
 
 export const LoginForm = function({ onSubmit }: { onSubmit?: any }) {
   const client = useApolloClient();

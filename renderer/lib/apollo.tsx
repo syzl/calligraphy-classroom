@@ -15,7 +15,7 @@ import { NextPage } from 'next';
 import { GQL_URI, GQL_WS_URI } from './constant';
 import { MixedNextPageContext } from './lib.interface';
 import { getToken } from './utils';
-import { auth } from './api/auth';
+import { auth } from './auth';
 
 /**
  * Creates and provides the apolloContext

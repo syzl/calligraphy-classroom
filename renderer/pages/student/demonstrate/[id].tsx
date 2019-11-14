@@ -39,6 +39,13 @@ export default withApollo(function DemonstrateDetail() {
   const { course } = detail;
   const [targetDemon, setTargetDemon] = useState({} as DemonstrateVideo);
   const [targetCopybook, setTargetCopybook] = useState({} as UploadCopyBook);
+
+  const copybooks =
+    targetDemon.copybooks ||
+    (detail.videos || []).reduce(
+      (result, video) => [...result, ...(video.copybooks || [])],
+      [] as UploadCopyBook[],
+    );
   return (
     <Card
       style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
@@ -119,7 +126,7 @@ export default withApollo(function DemonstrateDetail() {
         <Col style={{ flex: '0 1 300px' }}>
           <List
             header={<Typography.Text>关联字帖:</Typography.Text>}
-            dataSource={targetDemon.copybooks}
+            dataSource={copybooks}
             renderItem={copybook => (
               <List.Item
                 onClick={async () => {
@@ -230,6 +237,7 @@ export default withApollo(function DemonstrateDetail() {
                   }}
                 >
                   <img
+                    className="cp-img"
                     style={{
                       width: '100%',
                       height: 'auto',
@@ -252,6 +260,9 @@ export default withApollo(function DemonstrateDetail() {
       <style global jsx>{`
         body {
           overflow: hidden;
+        }
+        .cp-img {
+          filter: contrast(170%) brightness(170%);
         }
       `}</style>
     </Card>

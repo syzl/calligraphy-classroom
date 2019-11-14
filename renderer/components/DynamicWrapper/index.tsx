@@ -18,7 +18,7 @@ const getTopRoute = (pathname: string) => {
   return pathname.slice(0, pathname.indexOf('/', 1));
 };
 const DynamicWrapper: FunctionComponent = function({ children }) {
-  const { pathname = '' } = useRouter() || {};
+  const { pathname = '' } = useRouter();
   const topRoute = getTopRoute(pathname);
   const WrapperComponent = wrappers[topRoute] || DefaultWrapper;
   return <WrapperComponent>{children}</WrapperComponent>;

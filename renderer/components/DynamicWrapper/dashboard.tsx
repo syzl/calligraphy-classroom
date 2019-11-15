@@ -40,7 +40,18 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
               style={{ height: '100%' }}
             >
               <Menu.Item key="/dashboard">管理</Menu.Item>
-              <Menu.Item key="/dashboard/upload">上传</Menu.Item>
+              <SubMenu
+                key="sub2"
+                title={
+                  <span>
+                    <Icon type="laptop" />
+                    课程
+                  </span>
+                }
+              >
+                <Menu.Item key="/dashboard/course">列表</Menu.Item>
+                {/* <Menu.Item key="/dashboard/course/add">添加</Menu.Item> */}
+              </SubMenu>
               <SubMenu
                 key="sub1"
                 title={
@@ -51,19 +62,7 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                 }
               >
                 <Menu.Item key="/dashboard/demonstrate">列表</Menu.Item>
-                <Menu.Item key="/dashboard/demonstrate/add">添加</Menu.Item>
-              </SubMenu>
-              <SubMenu
-                key="sub2"
-                title={
-                  <span>
-                    <Icon type="laptop" />
-                    课程管理
-                  </span>
-                }
-              >
-                <Menu.Item key="/dashboard/course">列表</Menu.Item>
-                <Menu.Item key="/dashboard/course/add">添加</Menu.Item>
+                {/* <Menu.Item key="/dashboard/demonstrate/add">添加</Menu.Item> */}
               </SubMenu>
               <SubMenu
                 key="sub3"
@@ -74,8 +73,8 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                   </span>
                 }
               >
-                <Menu.Item key="/dashboard/copy-board">字帖管理</Menu.Item>
-                <Menu.Item key="12">随堂范字录制管理</Menu.Item>
+                <Menu.Item key="/dashboard/upload">资料上传</Menu.Item>
+                <Menu.Item key="/dashboard/record">随堂录制</Menu.Item>
               </SubMenu>
             </Menu>
           </Sider>

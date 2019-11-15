@@ -67,7 +67,7 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
                     alt="icon"
                   />
                 </div>
-                <h3>课堂</h3>
+                <h3>管理</h3>
               </a>
             </Link>
           </div>
@@ -93,7 +93,7 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
                     alt="icon"
                   />
                 </div>
-                <h3>学生</h3>
+                <h3>学习</h3>
               </a>
             </Link>
           </div>

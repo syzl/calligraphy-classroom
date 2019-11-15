@@ -166,6 +166,7 @@ export default withApollo(function DemonstrateDetail() {
                 dragHandleClassName="player-drag"
                 minWidth={64}
                 minHeight={40}
+                dragGrid={[20, 32]}
                 resizeHandleComponent={{
                   bottomRight: <Button shape="circle" icon="arrows-alt" />,
                 }}
@@ -234,6 +235,7 @@ export default withApollo(function DemonstrateDetail() {
                     background: 'lightgray',
                     display: 'flex',
                     alignItems: 'center',
+                    border: 'thin solid lightgray',
                   }}
                 >
                   <img
@@ -262,7 +264,7 @@ export default withApollo(function DemonstrateDetail() {
           overflow: hidden;
         }
         .cp-img {
-          filter: contrast(170%) brightness(170%);
+          filter: contrast(170%) brightness(170%) invert(100%);
         }
       `}</style>
     </Card>

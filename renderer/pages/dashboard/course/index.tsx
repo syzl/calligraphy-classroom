@@ -29,6 +29,8 @@ import IconWithLoading from '../../../components/IconWithLoading';
 
 const Courses: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
+  const [refetching, setRefetching] = useState(false);
+  const [pageNum, setPageNum] = useState(1);
   const { push } = useRouter();
   const { loading, error, data, refetch, fetchMore, updateQuery } = useQuery<{
     api_courses: PagedResult<Course>;
@@ -77,12 +79,13 @@ const Courses: NextPage = function() {
     (data && data.api_courses) || ({} as PagedResult<Course>);
 
   const refetchWithMarking = async () => {
-    // if (refetching) return;
-    // setRefetching(true);
+    if (refetching) return;
+    setRefetching(true);
+
     await Promise.all([
       wait(1000),
       fetchMore({
-        variables: { page: Math.floor(courses.length / 10) + 1 },
+        variables: { page: pageNum + 1 },
         updateQuery(prev, { fetchMoreResult }) {
           const { api_courses: older } = prev;
           if (fetchMoreResult) {
@@ -99,7 +102,8 @@ const Courses: NextPage = function() {
         },
       }),
     ]);
-    // setRefetching(false);
+    setPageNum(pageNum + 1);
+    setRefetching(false);
   };
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -115,6 +119,12 @@ const Courses: NextPage = function() {
           ))}
         </Col>
         <Col>
+          <IconWithLoading
+            style={{ padding: 5 }}
+            type="reload"
+            onClick={() => refetchWithMarking()}
+          />
+          <Divider type="vertical" />
           <IconWithLoading
             style={{ padding: 5 }}
             type="reload"
@@ -138,10 +148,9 @@ const Courses: NextPage = function() {
           />
         </Col>
       </Row>
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      <div style={{ flex: '1 1 400px', overflow: 'auto' }}>
         <InfiniteScroll
-          initialLoad={false}
-          pageStart={0}
+          initialLoad={true}
           loadMore={() => {
             refetchWithMarking();
           }}
@@ -187,7 +196,7 @@ const Courses: NextPage = function() {
                 ]}
               >
                 <List.Item.Meta
-                  avatar={<Avatar>{item.id}</Avatar>}
+                  avatar={<Avatar size={48}>{item.id}</Avatar>}
                   title={
                     <Link
                       href="/dashboard/course/[id]"

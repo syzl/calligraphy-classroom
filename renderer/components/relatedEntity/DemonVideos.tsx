@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useSubscription } from '@apollo/react-hooks';
 import { API_DEMON_VIDEOS, S_VIDEO_DEMON } from '../../lib/gql';
 import { useRouter } from 'next/router';
 import {
   Alert,
   Divider,
-  Row,
-  Col,
   Button,
   Tooltip,
-  Collapse,
-  Icon,
   Card,
+  Avatar,
+  Typography,
+  Drawer,
 } from 'antd';
 import ReactPlayer from 'react-player';
 
@@ -19,17 +18,11 @@ import IconWithLoading from '../IconWithLoading';
 import { DemonstrateVideo, PagedResult } from '../../interfaces';
 import { SERVER_URL } from '../../lib/constant';
 import { videoRelateDemon } from '../../lib/api';
-
-const { Panel } = Collapse;
-const panelStyle = {
-  background: '#f7f7f7',
-  borderRadius: 4,
-  marginBottom: 16,
-  border: 0,
-  overflow: 'hidden',
-};
+import Button_L from '../Button_L';
 
 export default function RelatedDemonVideos() {
+  const [showdrawer, setShowdrawer] = useState(false);
+  const [operating, setOperating] = useState(-1);
   const { query } = useRouter();
   const id = +query.id;
   const { loading, error, data, refetch, fetchMore, updateQuery } = useQuery<{
@@ -69,7 +62,6 @@ export default function RelatedDemonVideos() {
 
   if (mutated) {
     updateQuery(prev => {
-      console.info('prev', prev, mutated);
       if (!prev) {
         refetch();
         return prev;
@@ -93,7 +85,8 @@ export default function RelatedDemonVideos() {
 
   return (
     <Card
-      title="可关联的范字演示"
+      title="可关联的演示视频"
+      size="small"
       loading={loading}
       extra={
         <>
@@ -102,85 +95,152 @@ export default function RelatedDemonVideos() {
           <IconWithLoading type="reload" onClick={() => refetch()} />
         </>
       }
+      bodyStyle={{
+        padding: '4px 0',
+        overflow: 'auto',
+      }}
     >
       {error ? <Alert type="error" message={error.message} /> : null}
-
-      <Collapse bordered={false} defaultActiveKey={items.map(item => item.id)}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-evenly',
+        }}
+      >
         {items.map(item => (
-          <Panel
-            style={panelStyle}
+          <Card
+            style={{
+              width: 322,
+              margin: 4,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
             key={item.id}
-            header={`${item.id} start at: ${item.startedAt}, duration: ${item.duration}`}
-            extra={
-              <>
-                <Icon
-                  type="file-image"
-                  style={{ color: !item.thumb ? 'lightgrey' : 'dark' }}
-                />
-                <Divider type="vertical" />
-                <Icon
-                  type="video-camera"
-                  style={{ color: !item.video ? 'lightgrey' : 'dark' }}
-                />
-                <Divider type="vertical" />
-                <Tooltip title={item.demonstrate ? `已关联` : '未关联'}>
-                  <Icon
-                    type={item.demonstrate ? 'link' : 'disconnect'}
-                    style={{ color: !item.demonstrate ? 'lightgrey' : 'dark' }}
+            bodyStyle={{ padding: 4, flex: 1 }}
+            cover={
+              !(item.video && item.video.raw) ? null : (
+                <div
+                  style={{
+                    width: 320,
+                    height: 200,
+                  }}
+                >
+                  <ReactPlayer
+                    width="100%"
+                    height="100%"
+                    light={`${SERVER_URL}/${item.thumb.raw.path.replace(
+                      /^_static\//,
+                      '',
+                    )}`}
+                    url={`${SERVER_URL}/${item.video.raw.path.replace(
+                      /^_static\//,
+                      '',
+                    )}`}
+                    controls
                   />
-                </Tooltip>
-              </>
+                </div>
+              )
             }
+            actions={[
+              <Avatar shape="square" style={{ backgroundColor: '#87d068' }}>
+                {item.id}
+              </Avatar>,
+              <Button
+                type="link"
+                onClick={() => {
+                  setShowdrawer(true);
+                  setOperating(item.id);
+                }}
+                icon="plus"
+              >
+                字帖
+              </Button>,
+              <Tooltip title={item.demonstrate ? `取消关联` : '关联当前'}>
+                <Button_L
+                  type={item.demonstrate ? 'danger' : 'primary'}
+                  icon={item.demonstrate ? 'disconnect' : 'link'}
+                  onClick={() =>
+                    videoRelateDemon(item.id, item.demonstrate ? -1 : id)
+                  }
+                />
+              </Tooltip>,
+              <Tooltip title="删除 TODO">
+                <Button_L
+                  type="link"
+                  icon="delete"
+                  style={{ color: 'red' }}
+                  onClick={() => {
+                    //
+                  }}
+                />
+              </Tooltip>,
+            ]}
           >
-            <Row type="flex">
-              <Col style={{ flex: 1 }}>
-                {!(item.video && item.video.raw) ? null : (
-                  <div
+            <Typography.Text type="secondary">
+              {Math.round(item.duration / 1000)} 秒
+            </Typography.Text>
+            {(item.copybooks || []).length ? (
+              <div
+                className="border-transparent"
+                style={{
+                  borderColor: item.id === operating ? 'red' : 'transparent',
+                }}
+              >
+                <h6>相关字帖:</h6>
+                {(item.copybooks || []).map(copybook => (
+                  <Card.Grid
+                    key={copybook.id}
                     style={{
-                      width: 360,
-                      height: 200,
-                      padding: 3,
-                      border: 'thin solid lightgray',
-                      borderRadius: 5,
+                      padding: 0,
+                      border: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      height: 90,
+                      overflow: 'hidden',
                     }}
                   >
-                    <ReactPlayer
-                      width="100%"
-                      height="100%"
-                      light={`${SERVER_URL}/${item.thumb.raw.path.replace(
+                    <img
+                      style={{ width: '100%', height: 'auto' }}
+                      src={`${SERVER_URL}/${copybook.raw.path.replace(
                         /^_static\//,
                         '',
                       )}`}
-                      url={`${SERVER_URL}/${item.video.raw.path.replace(
-                        /^_static\//,
-                        '',
-                      )}`}
-                      controls
                     />
-                  </div>
-                )}
-              </Col>
-              <Col style={{ flex: '0 0 13em', textAlign: 'right' }}>
-                {item.demonstrate ? (
-                  <Button
-                    type="danger"
-                    onClick={() => videoRelateDemon(item.id, -1)}
-                  >
-                    取消关联
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    onClick={() => videoRelateDemon(item.id, id)}
-                  >
-                    关联当前
-                  </Button>
-                )}
-              </Col>
-            </Row>
-          </Panel>
+                  </Card.Grid>
+                ))}
+              </div>
+            ) : null}
+          </Card>
         ))}
-      </Collapse>
+      </div>
+      <Drawer
+        title="选择关联字帖"
+        placement="right"
+        closable={false}
+        onClose={() => {
+          setShowdrawer(false);
+          setOperating(-1);
+        }}
+        visible={showdrawer}
+      >
+        <Typography.Text type="secondary">
+          为范字视频 {operating} 添加字帖
+        </Typography.Text>
+
+        <p>TODO 选择字帖列表...</p>
+        <p>TODO 创建字帖(标记上传文件为字帖)...</p>
+        <p>TODO 上传字帖...</p>
+      </Drawer>
+      <style global jsx>{`
+        .border-transparent {
+          border: thin solid transparent;
+          overflow: hidden;
+          padding: 2px;
+          border-radius: 3px;
+          transition: border 0.5s;
+        }
+      `}</style>
     </Card>
   );
 }

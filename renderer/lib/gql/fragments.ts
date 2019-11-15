@@ -104,6 +104,10 @@ export const GQLFragments = {
       id
       ${SelfFrags.uploadRelatedItem}
     }
+    copybooks {
+      id
+      ${SelfFrags.uploadRelatedItem}
+    }
     demonstrate {
       id
       ${SelfFrags.demonstrate}

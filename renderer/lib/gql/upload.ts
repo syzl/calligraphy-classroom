@@ -30,3 +30,29 @@ export const API_UPLOAD_RAWS = gql`
       }
     }
   `;
+
+export const COURSE_COPYBOOKS = gql`
+  query QueryCopybooks($cursor: CursorQuery) {
+    copybooks: cursor_copybooks(cursor: $cursor) {
+      totalCount
+      edges {
+        node {
+          id
+          raw {
+            id
+          }
+          demon_video {
+            id
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;

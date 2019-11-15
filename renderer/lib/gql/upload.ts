@@ -13,46 +13,38 @@ export const DELETE_UPLOAD_RAW = gql`
   }
 `;
 export const API_UPLOAD_RAWS = gql`
-    ${GQLFragments.upload}
-    query UploadRaws($limit: Int, $page: Int, $by: Int) {
-      api_upload_raws(limit: $limit, page: $page, by: $by) {
-        items {
+  ${GQLFragments.upload}
+  query UploadRaws($limit: Int, $page: Int, $by: Int) {
+    api_upload_raws(limit: $limit, page: $page, by: $by) {
+      items {
+        id
+        ...UploadFragment
+        relatedThumb {
           id
-          ...UploadFragment
-          relatedThumb {
-            id
-          }
-          relatedVideo {
-            id
-          }
         }
-        ${SelfFrags.pagedResultMeta}
+        relatedVideo {
+          id
+        }
       }
+      ${SelfFrags.pagedResultMeta}
     }
-  `;
+  }
+`;
 
 export const COURSE_COPYBOOKS = gql`
   query QueryCopybooks($cursor: CursorQuery) {
     copybooks: cursor_copybooks(cursor: $cursor) {
-      totalCount
       edges {
         node {
           id
-          raw {
-            id
-          }
+          ${SelfFrags.uploadRelatedItem}
           demon_video {
             id
           }
         }
         cursor
       }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
+      ${SelfFrags.cursoredResult}
     }
   }
 `;

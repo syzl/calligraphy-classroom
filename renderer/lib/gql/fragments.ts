@@ -1,4 +1,13 @@
 export const SelfFrags = {
+  cursoredResult: `\
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  `,
   pagedResultMeta: `\
     itemCount
     totalItems
@@ -126,6 +135,11 @@ export const GQLFragments = {
       size
       updatedAt
       createdAt
+    }
+  `,
+  copybook: `\
+    fragment CopybookFragment on UploadCopybook {
+      ${SelfFrags.uploadRelatedItem}
     }
   `,
 };

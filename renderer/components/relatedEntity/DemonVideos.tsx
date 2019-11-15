@@ -17,8 +17,9 @@ import ReactPlayer from 'react-player';
 import IconWithLoading from '../IconWithLoading';
 import { DemonstrateVideo, PagedResult } from '../../interfaces';
 import { SERVER_URL } from '../../lib/constant';
-import { videoRelateDemon } from '../../lib/api';
+import { videoRelateDemon, copybookRelateVideo } from '../../lib/api';
 import Button_L from '../Button_L';
+import CopybookSelector from '../selector/Copybook.selector';
 
 export default function RelatedDemonVideos() {
   const [showdrawer, setShowdrawer] = useState(false);
@@ -200,13 +201,17 @@ export default function RelatedDemonVideos() {
                       overflow: 'hidden',
                     }}
                   >
-                    <img
-                      style={{ width: '100%', height: 'auto' }}
-                      src={`${SERVER_URL}/${copybook.raw.path.replace(
-                        /^_static\//,
-                        '',
-                      )}`}
-                    />
+                    {copybook.raw ? (
+                      <img
+                        style={{ width: '100%', height: 'auto' }}
+                        src={`${SERVER_URL}/${copybook.raw.path.replace(
+                          /^_static\//,
+                          '',
+                        )}`}
+                      />
+                    ) : (
+                      '-'
+                    )}
                   </Card.Grid>
                 ))}
               </div>
@@ -231,6 +236,14 @@ export default function RelatedDemonVideos() {
         <p>TODO 选择字帖列表...</p>
         <p>TODO 创建字帖(标记上传文件为字帖)...</p>
         <p>TODO 上传字帖...</p>
+        <CopybookSelector
+          by={operating}
+          onSelect={(copyBookId, videoId) => {
+            copybookRelateVideo(copyBookId, videoId).then(data =>
+              console.warn('relate video', data),
+            );
+          }}
+        />
       </Drawer>
       <style global jsx>{`
         .border-transparent {

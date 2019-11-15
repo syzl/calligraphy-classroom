@@ -19,7 +19,7 @@ import { Rnd } from 'react-rnd';
 import {
   Demonstrate,
   DemonstrateVideo,
-  UploadCopyBook,
+  Copybook,
 } from '../../../interfaces';
 import { API_DEMONSTRATE } from '../../../lib/gql';
 import { withApollo } from '../../../lib/apollo';
@@ -38,13 +38,13 @@ export default withApollo(function DemonstrateDetail() {
   const detail = (data && data.api_demonstrate) || ({} as Demonstrate);
   const { course } = detail;
   const [targetDemon, setTargetDemon] = useState({} as DemonstrateVideo);
-  const [targetCopybook, setTargetCopybook] = useState({} as UploadCopyBook);
+  const [targetCopybook, setTargetCopybook] = useState({} as Copybook);
 
   const copybooks =
     targetDemon.copybooks ||
     (detail.videos || []).reduce(
       (result, video) => [...result, ...(video.copybooks || [])],
-      [] as UploadCopyBook[],
+      [] as Copybook[],
     );
   return (
     <Card

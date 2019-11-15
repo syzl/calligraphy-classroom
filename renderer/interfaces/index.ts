@@ -19,7 +19,7 @@ export interface Course {
   demonstrates?: Demonstrate[];
 }
 
-export interface UploadCopyBook {
+export interface Copybook {
   id: number;
   raw: Upload;
   demon_video: DemonstrateVideo;
@@ -42,7 +42,7 @@ export interface DemonstrateVideo {
   updatedAt: string;
   thumb: UploadThumb;
   video: UploadVideo;
-  copybooks?: UploadCopyBook[];
+  copybooks?: Copybook[];
   startedAt: string;
   duration: number;
 
@@ -84,6 +84,20 @@ export interface PagedResult<T> {
   pageCount: number;
   next: string;
   previous: string;
+}
+
+export interface CursorResult<T> {
+  edges: {
+    node: T;
+    cursor: number;
+  }[];
+  pageInfo: {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor?: number;
+    endCursor?: number;
+  };
+  totalCount: number;
 }
 
 export interface Mutated<T> {

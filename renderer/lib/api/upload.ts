@@ -18,3 +18,12 @@ export const traceUpload = (type: string = '-', rawId: number | string) =>
     method: 'POST',
     headers: getHeader(),
   });
+
+export const copybookRelateVideo = (
+  copybookId: number | string,
+  videoId: number | string,
+) =>
+  http(v1(`upload/copybook/${copybookId}/relate/${videoId}`), {
+    method: 'PUT',
+    headers: getHeader(),
+  });

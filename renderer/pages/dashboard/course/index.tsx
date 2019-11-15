@@ -27,6 +27,8 @@ import Link from 'next/link';
 import InfiniteScroll from 'react-infinite-scroller';
 import IconWithLoading from '../../../components/IconWithLoading';
 
+const limit = 10;
+
 const Courses: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [refetching, setRefetching] = useState(false);
@@ -37,7 +39,7 @@ const Courses: NextPage = function() {
   }>(GQL.API_COURSES, {
     notifyOnNetworkStatusChange: true,
     variables: {
-      limit: 10,
+      limit,
       page: 1,
     },
   });
@@ -85,7 +87,7 @@ const Courses: NextPage = function() {
     await Promise.all([
       wait(1000),
       fetchMore({
-        variables: { page: pageNum + 1 },
+        variables: { page: pageNum + 1, limit },
         updateQuery(prev, { fetchMoreResult }) {
           const { api_courses: older } = prev;
           if (fetchMoreResult) {
@@ -128,7 +130,10 @@ const Courses: NextPage = function() {
           <IconWithLoading
             style={{ padding: 5 }}
             type="reload"
-            onClick={() => refetch()}
+            onClick={() => {
+              setPageNum(1);
+              refetch();
+            }}
           />
           <Divider type="vertical" />
           <Button

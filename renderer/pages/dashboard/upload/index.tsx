@@ -22,6 +22,7 @@ import { wait, getDepCache } from '../../../lib/utils';
 import { Upload, PagedResult } from '../../../interfaces';
 import CreateUploadRaw from '../../../components/forms/UploadRaw';
 import { SERVER_URL } from '../../../lib/constant';
+import { traceUpload } from '../../../lib/api';
 
 const Uploads: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -135,6 +136,13 @@ const Uploads: NextPage = function() {
       width: 180,
       render: (_: any, record: any) => (
         <span>
+          <Button
+            onClick={() => {
+              traceUpload('copybook', record.id);
+            }}
+          >
+            Copybook
+          </Button>
           <Button
             type="link"
             onClick={() => {

@@ -12,3 +12,9 @@ export const uploadRaw = (payload: string | FormData, req?: any) =>
     headers: getHeader(req, null),
     body: payload,
   });
+
+export const traceUpload = (type: string = '-', rawId: number | string) =>
+  http(v1(`upload/trace/${type}/${rawId}`), {
+    method: 'POST',
+    headers: getHeader(),
+  });

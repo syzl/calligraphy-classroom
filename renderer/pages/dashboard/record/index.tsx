@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import VideoRecorder from 'react-video-recorder';
-
+import { get } from 'lodash';
 import createActions from '../../../components/video-record/render-actions';
-import { Button } from 'antd';
+import { Button, List, Avatar } from 'antd';
 import { uploadRaw } from '../../../lib/api';
+import { wait } from '../../../lib/utils';
+import Button_L from '../../../components/Button_L';
 
 const action = (str = '') => (...args: any[]) =>
   console.info(str, ':', ...args);
@@ -19,18 +21,21 @@ const actionLoggers = {
 };
 
 interface VideoItem {
+  id: string;
   videoBlob: Blob;
   thumbnailBlob: Blob;
   startedAt: number;
   duration: number;
+  thumbUrl: string;
+  videoUrl: string;
 }
 
 export default function CopyBoard() {
-  const [videos, setVideos] = useState<VideoItem[]>([]);
+  const [drafts, setDrafts] = useState<VideoItem[]>([]);
   const [useVideoInput, setUseVideoInput] = useState(false);
-  // const [isOnInitially, setIsOnInitially] = useState(false);
+  const refV = useRef<any>(null);
 
-  const handleRecordingComplete = (
+  const handleRecordingComplete = async (
     videoBlob: Blob,
     startedAt: number,
     thumbnailBlob: Blob,
@@ -44,13 +49,25 @@ export default function CopyBoard() {
     console.log('Thumb Blob', thumbnailBlob, thumbUrl);
     console.log('Started:', startedAt);
     console.log('Duration:', duration);
-    setVideos([
-      ...videos,
+    console.info('refV', refV);
+    // 暂停播放
+    await wait(100);
+    const $video = get(refV, 'current.replayVideo');
+    if ($video) {
+      $video.pause();
+    }
+    setDrafts([
+      ...drafts,
       {
+        id: Math.random()
+          .toString(16)
+          .slice(2, 8),
         videoBlob,
         thumbnailBlob,
         startedAt,
         duration,
+        thumbUrl,
+        videoUrl,
       },
     ]);
     return action('onRecordingComplete')(
@@ -63,27 +80,7 @@ export default function CopyBoard() {
 
   return (
     <div>
-      <h1>字帖管理 {videos.length}</h1>
-      {/* {isOnInitially ? 'isOnInitially' : 'not isOnInitially'} */}
-      <div>
-        {videos.map((item, idx) => (
-          <div key={idx}>
-            {item.startedAt} {item.duration}
-            <Button
-              onClick={() => {
-                const formdata = new FormData();
-                formdata.append('video', item.videoBlob, 'tmp.mp4');
-                formdata.append('thumb', item.thumbnailBlob, 'tmp-thumb.jpg');
-                formdata.append('startedAt', String(item.startedAt));
-                formdata.append('duration', String(item.duration));
-                uploadRaw(formdata);
-              }}
-            >
-              Upload
-            </Button>
-          </div>
-        ))}
-      </div>
+      <h1>录制范例</h1>
       <div
         style={{
           width: 640,
@@ -92,6 +89,7 @@ export default function CopyBoard() {
       >
         <VideoRecorder
           // isOnInitially={isOnInitially}
+          ref={refV}
           useVideoInput={useVideoInput}
           renderActions={createActions({
             setUseVideoInput,
@@ -118,6 +116,54 @@ export default function CopyBoard() {
           // timeLimit={5}
           {...actionLoggers}
           onRecordingComplete={handleRecordingComplete}
+        />
+      </div>
+      <div style={{ marginTop: '2em', width: 640 }}>
+        <List
+          bordered={true}
+          dataSource={drafts}
+          renderItem={draft => (
+            <List.Item
+              actions={[
+                <Button
+                  type="danger"
+                  onClick={() => {
+                    setDrafts(drafts.filter(item => item.id !== draft.id));
+                  }}
+                >
+                  丢弃
+                </Button>,
+                <Button_L
+                  type="primary"
+                  onClick={async () => {
+                    const formdata = new FormData();
+                    formdata.append('video', draft.videoBlob, 'tmp.mp4');
+                    formdata.append(
+                      'thumb',
+                      draft.thumbnailBlob,
+                      'tmp-thumb.jpg',
+                    );
+                    formdata.append('startedAt', String(draft.startedAt));
+                    formdata.append('duration', String(draft.duration));
+                    await uploadRaw(formdata);
+                  }}
+                  onComplete={() => {
+                    setDrafts(drafts.filter(item => item.id !== draft.id));
+                  }}
+                >
+                  上传
+                </Button_L>,
+              ]}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Avatar shape="square" src={draft.thumbUrl} size={100} />
+                }
+                title={draft.startedAt}
+                description={draft.duration}
+              />
+            </List.Item>
+          )}
         />
       </div>
     </div>

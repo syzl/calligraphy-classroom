@@ -34,7 +34,14 @@ const Courses: NextPage = function() {
   const [refetching, setRefetching] = useState(false);
   const [pageNum, setPageNum] = useState(1);
   const { push } = useRouter();
-  const { loading, error, data, refetch, fetchMore, updateQuery } = useQuery<{
+  const {
+    loading,
+    error: queryError,
+    data,
+    refetch,
+    fetchMore,
+    updateQuery,
+  } = useQuery<{
     api_courses: PagedResult<Course>;
   }>(GQL.API_COURSES, {
     notifyOnNetworkStatusChange: true,
@@ -44,7 +51,10 @@ const Courses: NextPage = function() {
     },
   });
 
-  const [deleteCourse, { loading: deleting }] = useMutation<{
+  const [
+    deleteCourse,
+    { loading: deleting, error: mutationError },
+  ] = useMutation<{
     deleteCourse: Course;
   }>(GQL.DELETE_COURSE, {
     update(proxy, { data }) {
@@ -73,7 +83,7 @@ const Courses: NextPage = function() {
       }
     },
   });
-
+  const error = queryError || mutationError;
   if (error) {
     message.error(error.message);
   }
@@ -201,7 +211,16 @@ const Courses: NextPage = function() {
                 ]}
               >
                 <List.Item.Meta
-                  avatar={<Avatar size={48}>{item.id}</Avatar>}
+                  avatar={
+                    <Link
+                      href="/dashboard/course/[id]"
+                      as={`/dashboard/course/${item.id}`}
+                    >
+                      <Avatar style={{ cursor: 'pointer' }} size={48}>
+                        {item.id}
+                      </Avatar>
+                    </Link>
+                  }
                   title={
                     <Link
                       href="/dashboard/course/[id]"

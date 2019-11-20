@@ -131,7 +131,7 @@ const Demonstrates: NextPage = function() {
               )
             }
           >
-            学习演示
+            编辑
           </Button>
           <Divider type="vertical" />
           <Popover

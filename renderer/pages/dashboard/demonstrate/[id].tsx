@@ -7,6 +7,7 @@ import { wait } from '../../../lib/utils';
 import { withApollo } from '../../../lib/apollo';
 import { Demonstrate } from '../../../interfaces';
 import RelatedDemonVideos from '../../../components/relatedEntity/DemonVideos';
+import FieldItem from '../../../components/forms/FieldItem';
 import Link from 'next/link';
 
 export default withApollo(function DemonStrateDetail() {
@@ -33,9 +34,7 @@ export default withApollo(function DemonStrateDetail() {
     <div>
       <Row type="flex" style={{ flex: '0 0 auto' }}>
         <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>
-            演示内容 【{details.title} 】
-          </Typography.Title>
+          <Typography.Title level={4}>编辑演示内容详情</Typography.Title>
         </Col>
         <Col>
           <Tag>{details.type}</Tag>
@@ -64,7 +63,23 @@ export default withApollo(function DemonStrateDetail() {
       </Row>
       {error ? <Alert message={error.message} type="warning" closable /> : null}
       <Spin spinning={loading}>
-        <Typography.Text>{details.desc}</Typography.Text>
+        <FieldItem
+          value={details.title}
+          label="标题"
+          onUpdate={str => {
+            //
+            console.info('str:', str);
+          }}
+        />
+        <FieldItem
+          value={details.desc}
+          label="描述"
+          onUpdate={str => {
+            //
+            console.info('str:', str);
+          }}
+        />
+        <Divider />
         <RelatedDemonVideos />
       </Spin>
     </div>

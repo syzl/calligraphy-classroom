@@ -2,9 +2,10 @@ import React, { FunctionComponent } from 'react';
 import { Layout, Menu, Icon, Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { ClickParam } from 'antd/lib/menu';
+import Link from 'next/link';
 
-const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
+
 const CaLayout: FunctionComponent<any> = function({ children }) {
   const { push, pathname } = useRouter();
   const handleClick = (e: ClickParam) => {
@@ -19,8 +20,16 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
         style={{ padding: '0 50px', display: 'flex', flexDirection: 'column' }}
       >
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>控制面板</Breadcrumb.Item>
-          <Breadcrumb.Item>书法学习</Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link href="/">
+              <a>首页</a>
+            </Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link href="/dashboard">
+              <a>控制面板</a>
+            </Link>
+          </Breadcrumb.Item>
         </Breadcrumb>
         <Layout
           style={{
@@ -39,43 +48,28 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
               defaultOpenKeys={['sub1', 'sub2', 'sub3']}
               style={{ height: '100%' }}
             >
-              <Menu.Item key="/dashboard">管理</Menu.Item>
-              <SubMenu
-                key="sub2"
-                title={
-                  <span>
-                    <Icon type="laptop" />
-                    课程
-                  </span>
-                }
-              >
-                <Menu.Item key="/dashboard/course">列表</Menu.Item>
-                {/* <Menu.Item key="/dashboard/course/add">添加</Menu.Item> */}
-              </SubMenu>
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <Icon type="user" />
-                    演示
-                  </span>
-                }
-              >
-                <Menu.Item key="/dashboard/demonstrate">列表</Menu.Item>
-                {/* <Menu.Item key="/dashboard/demonstrate/add">添加</Menu.Item> */}
-              </SubMenu>
-              <SubMenu
-                key="sub3"
-                title={
-                  <span>
-                    <Icon type="notification" />
-                    更多
-                  </span>
-                }
-              >
-                <Menu.Item key="/dashboard/upload">资料上传</Menu.Item>
-                <Menu.Item key="/dashboard/record">随堂录制</Menu.Item>
-              </SubMenu>
+              <Menu.Item key="/dashboard">
+                <Icon type="home" />
+                管理
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="/dashboard/course">
+                <Icon type="laptop" />
+                课程
+              </Menu.Item>
+              <Menu.Item key="/dashboard/demonstrate">
+                <Icon type="user" />
+                演示
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="/dashboard/upload">
+                <Icon type="notification" />
+                已上传文件
+              </Menu.Item>
+              <Menu.Item key="/dashboard/record">
+                <Icon type="notification" />
+                随堂录制
+              </Menu.Item>
             </Menu>
           </Sider>
           <Content style={{ padding: '0 24px', minHeight: 280 }}>

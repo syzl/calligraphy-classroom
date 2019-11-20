@@ -4,33 +4,27 @@ import Link from 'next/link';
 import { Card } from 'antd';
 
 const IndexPage: NextPage = () => {
+  const links = [
+    { href: '/login', label: '登陆' },
+    { href: '/register', label: '注册' },
+    { href: '/', label: '/' },
+    { href: '/', label: '/' },
+    { href: '/dashboard/course', label: '课程' },
+    { href: '/dashboard/demonstrate', label: '范字演示' },
+    { href: '/dashboard/record', label: '录制' },
+  ];
   return (
     <Card title={<div style={{ textAlign: 'center' }}>功能导航</div>}>
-      <Card.Grid hoverable={false} className="nav-grid">
-        <Link href="/dashboard/course">
-          <div className="inner">
-            <a>课程</a>
-          </div>
-        </Link>
-      </Card.Grid>
-      <Card.Grid className="nav-grid">
-        <Link href="/dashboard/demonstrate">
-          <div className="inner">
-            <a>范字演示</a>
-          </div>
-        </Link>
-      </Card.Grid>
-      <Card.Grid className="nav-grid">
-        <Link href="/dashboard/copy-board">
-          <div className="inner">
-            <a>演示上传</a>
-          </div>
-        </Link>
-      </Card.Grid>
-      <Card.Grid className="nav-grid">Content</Card.Grid>
-      <Card.Grid className="nav-grid">Content</Card.Grid>
-      <Card.Grid className="nav-grid">Content</Card.Grid>
-      <Card.Grid className="nav-grid">Content</Card.Grid>
+      {links.map((item, idx) => (
+        <Card.Grid key={idx} className="nav-grid">
+          <Link href={item.href}>
+            <div className="inner">
+              <a>{item.label}</a>
+            </div>
+          </Link>
+        </Card.Grid>
+      ))}
+
       <style global jsx>{`
         .nav-grid {
           width: 25%;

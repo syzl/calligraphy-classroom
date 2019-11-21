@@ -1,20 +1,43 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { API_COURSE, UPDATE_COURSE } from '../../../lib/gql';
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks';
+import Link from 'next/link';
+import {
+  API_COURSE,
+  UPDATE_COURSE,
+  S_COURSE_DEMON_RELATION,
+} from '../../../lib/gql';
 import { Course } from '../../../interfaces';
-import { Alert, Row, Col, Typography, Divider, Spin } from 'antd';
+import {
+  Alert,
+  Row,
+  Col,
+  Typography,
+  Divider,
+  Spin,
+  Card,
+  Tooltip,
+  List,
+  Avatar,
+} from 'antd';
 import { withApollo } from '../../../lib/apollo';
 import IconWithLoading from '../../../components/IconWithLoading';
 import DemonOperator from '../../../components/selector/DemonOperator';
 import { relateCourse } from '../../../lib/api';
 import FieldItem from '../../../components/forms/FieldItem';
 
+import Button_L from '../../../components/Button_L';
+
+interface FieldMeta<T> {
+  label: string;
+  key: keyof Omit<T, 'demonstrates' | 'id'>;
+}
+
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();
   const id = +query.id;
 
-  const { loading, error, data, refetch } = useQuery<{
+  const { loading, error, data, refetch, updateQuery } = useQuery<{
     api_course: Course;
   }>(API_COURSE, {
     notifyOnNetworkStatusChange: true,
@@ -25,7 +48,10 @@ export default withApollo(function CourseDetail() {
 
   const detail = (data && data.api_course) || ({} as Course);
 
-  const [updatePart, { loading: updating, data: updated }] = useMutation<
+  const [
+    updatePart,
+    //  { loading: updating, data: updated } 自动更新缓存
+  ] = useMutation<
     {
       updated: Course;
     },
@@ -39,67 +65,146 @@ export default withApollo(function CourseDetail() {
     }
   >(UPDATE_COURSE);
 
-  console.info('updating', updating, updated);
+  // console.info('updating', updating, updated);
+
+  useSubscription(S_COURSE_DEMON_RELATION, {
+    variables: { courseId: id },
+  });
+
+  const fieldMetas: FieldMeta<Course>[] = [
+    {
+      label: '课堂名称',
+      key: 'name',
+    },
+    {
+      label: '课堂描述',
+      key: 'desc',
+    },
+    {
+      label: '课堂讲师',
+      key: 'teacher',
+    },
+  ];
 
   return (
-    <div>
-      <Row type="flex" style={{ flex: '0 0 auto' }}>
-        <Col style={{ flex: 1 }}>
-          <Typography.Title level={4}>编辑课程详情</Typography.Title>
-        </Col>
-        <Col>
-          <Divider type="vertical" />
-          <IconWithLoading
-            style={{ padding: 5 }}
-            type="reload"
-            onClick={() => refetch()}
-          />
-        </Col>
-      </Row>
+    <Card
+      title="编辑课程详情"
+      bordered={false}
+      extra={
+        <Row type="flex" style={{ flex: '0 0 auto' }}>
+          <Col>
+            <Tooltip title={`CreatedAt ${detail.createdAt}`}>
+              <Typography.Text type="secondary">
+                {detail.updatedAt}
+              </Typography.Text>
+            </Tooltip>
+          </Col>
+          <Col>
+            <Divider type="vertical" />
+            <Tooltip title="刷新">
+              <IconWithLoading
+                style={{ padding: 5 }}
+                type="reload"
+                onClick={() => refetch()}
+              />
+            </Tooltip>
+          </Col>
+        </Row>
+      }
+    >
       {error ? <Alert type="error" message={error.message} /> : null}
       <Spin spinning={loading}>
-        <FieldItem
-          value={detail.name}
-          label="课堂名称"
-          onUpdate={name => {
-            // 错误信息显示
-            return updatePart({
-              variables: { id, data: { name } },
-            });
-          }}
-        />
-        <Divider />
-        <FieldItem
-          value={detail.desc}
-          label="课堂描述"
-          onUpdate={desc => {
-            // 错误信息显示
-            return updatePart({
-              variables: { id, data: { desc } },
-            });
-          }}
-        />
-        <Divider />
-        <FieldItem
-          value={detail.teacher}
-          label="讲师"
-          onUpdate={teacher => {
-            // 错误信息显示
-            return updatePart({
-              variables: { id, data: { teacher } },
-            });
-          }}
-        />
-        <Divider />
-
-        <Typography.Title level={4}>关联内容:</Typography.Title>
-        <DemonOperator
-          by={+query.id}
-          onSelected={demonstrateId => {
-            relateCourse(demonstrateId, id);
-          }}
-        />
+        {/* 更新文字字段 */}
+        {fieldMetas.map(fieldMeta => (
+          <FieldItem
+            value={detail[fieldMeta.key]}
+            key={fieldMeta.label}
+            label={fieldMeta.label}
+            onUpdate={str =>
+              updatePart({
+                variables: { id, data: { [fieldMeta.key]: str } },
+              })
+            }
+          />
+        ))}
+        <Divider>
+          <Typography.Text type="secondary">关联数据</Typography.Text>
+        </Divider>
+        <Row type="flex" gutter={16}>
+          <Col style={{ flex: 2 }}>
+            <List
+              dataSource={detail.demonstrates || []}
+              header={<Typography.Text strong>关联的范字演示</Typography.Text>}
+              renderItem={item => (
+                <List.Item
+                  actions={[
+                    <Link
+                      href="/dashboard/demonstrate/[id]"
+                      as={`/dashboard/demonstrate/${item.id}`}
+                    >
+                      <a>详情</a>
+                    </Link>,
+                    <Button_L
+                      type="link"
+                      icon="disconnect"
+                      onClick={async () => {
+                        await relateCourse(item.id, -1);
+                      }}
+                      onComplete={async () => {
+                        // 更新完之后再 updateQuery
+                        updateQuery(prev => {
+                          const {
+                            api_course: { demonstrates = [] },
+                          } = prev;
+                          const newArray = demonstrates.filter(
+                            demonstrate => demonstrate.id !== item.id,
+                          );
+                          if (newArray.length === demonstrates.length) {
+                            return prev;
+                          } else {
+                            return {
+                              api_course: {
+                                ...prev.api_course,
+                                demonstrates: newArray,
+                              },
+                            };
+                          }
+                        });
+                      }}
+                    />,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        shape="square"
+                        size="small"
+                        style={{ backgroundColor: '#87d068' }}
+                      >
+                        {item.id}
+                      </Avatar>
+                    }
+                    title={item.title}
+                    description={item.desc}
+                  />
+                </List.Item>
+              )}
+            ></List>
+          </Col>
+          <Col style={{ flex: 1 }}>
+            <DemonOperator
+              by={+query.id}
+              onSelected={async demonstrateId => {
+                const result = await relateCourse(demonstrateId, id);
+                updateQuery(prev => {
+                  console.info('result', prev, result);
+                  return prev;
+                });
+              }}
+            />
+          </Col>
+        </Row>
       </Spin>
-    </div>
+    </Card>
   );
 });

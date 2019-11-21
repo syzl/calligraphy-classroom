@@ -47,7 +47,7 @@ const FieldItem = ({
   return (
     <Spin spinning={loading}>
       <Row type="flex">
-        <Col style={{ minWidth: '4em', paddingRight: '.5em' }}>
+        <Col style={{ minWidth: '4em', paddingRight: '.8em' }}>
           <Typography.Text strong>{label}:</Typography.Text>
         </Col>
         <Col style={{ flex: 1 }}>

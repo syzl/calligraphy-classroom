@@ -34,7 +34,7 @@ const FieldItem = ({
 }) => {
   return (
     <Row type="flex">
-      <Col style={{ width: '4em' }}>
+      <Col style={{ minWidth: '4em', paddingRight: '.5em' }}>
         <Typography.Text strong>{label}:</Typography.Text>
       </Col>
       <Col style={{ flex: 1 }}>

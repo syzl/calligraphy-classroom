@@ -3,11 +3,12 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 import { API_COURSE } from '../../../lib/gql';
 import { Course } from '../../../interfaces';
-import { Alert, Row, Col, Typography, Divider, Spin, Input, Form } from 'antd';
+import { Alert, Row, Col, Typography, Divider, Spin } from 'antd';
 import { withApollo } from '../../../lib/apollo';
 import IconWithLoading from '../../../components/IconWithLoading';
 import DemonOperator from '../../../components/selector/DemonOperator';
 import { relateCourse } from '../../../lib/api';
+import FieldItem from '../../../components/forms/FieldItem';
 
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();
@@ -28,9 +29,7 @@ export default withApollo(function CourseDetail() {
     <div>
       <Row type="flex" style={{ flex: '0 0 auto' }}>
         <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>
-            课程详情 【{detail.name} 】
-          </Typography.Title>
+          <Typography.Title level={4}>编辑课程详情</Typography.Title>
         </Col>
         <Col>
           <Divider type="vertical" />
@@ -43,17 +42,33 @@ export default withApollo(function CourseDetail() {
       </Row>
       {error ? <Alert type="error" message={error.message} /> : null}
       <Spin spinning={loading}>
-        <Form>
-          <Form.Item>
-            <Input addonBefore="课堂名称" value={detail.name} />
-          </Form.Item>
-          <Form.Item label="描述">
-            <Input.TextArea placeholder="课堂描述" value={detail.desc} />
-          </Form.Item>
-          <Form.Item>
-            <Input addonBefore="讲师" value={detail.teacher} />
-          </Form.Item>
-        </Form>
+        <FieldItem
+          value={detail.name}
+          label="课堂名称"
+          onUpdate={str => {
+            //
+            console.info('str:', str);
+          }}
+        />
+        <Divider />
+        <FieldItem
+          value={detail.desc}
+          label="课堂描述"
+          onUpdate={str => {
+            //
+            console.info('str:', str);
+          }}
+        />
+        <Divider />
+        <FieldItem
+          value={detail.teacher}
+          label="讲师"
+          onUpdate={str => {
+            //
+            console.info('str:', str);
+          }}
+        />
+        <Divider />
 
         <Typography.Title level={4}>关联内容:</Typography.Title>
         <DemonOperator

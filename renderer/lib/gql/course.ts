@@ -23,6 +23,17 @@ export const DELETE_COURSE = gql`
   }
 `;
 
+// 不查询关联字段
+export const UPDATE_COURSE = gql`
+  ${GQLFragments.course_base}
+  mutation UpdateCourse($id: Int!, $data: UpdateCourseInput!) {
+    updated: updateCourse(id: $id, data: $data) {
+      id
+      ...CourseFragmentBase
+    }
+  }
+`;
+
 export const API_COURSES = gql`
     ${GQLFragments.course}
     query Courses($limit: Int, $page: Int) {

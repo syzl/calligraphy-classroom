@@ -50,6 +50,11 @@ export const GQLFragments = {
       updatedAt
     }
   `,
+  course_base: `\
+    fragment CourseFragmentBase on Course {
+      ${SelfFrags.course}
+    }
+  `,
   course: `\
     fragment CourseFragment on Course {
       ${SelfFrags.course}

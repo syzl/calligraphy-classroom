@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { useQuery } from '@apollo/react-hooks';
-import { API_COURSE } from '../../../lib/gql';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { API_COURSE, UPDATE_COURSE } from '../../../lib/gql';
 import { Course } from '../../../interfaces';
 import { Alert, Row, Col, Typography, Divider, Spin } from 'antd';
 import { withApollo } from '../../../lib/apollo';
@@ -25,6 +25,22 @@ export default withApollo(function CourseDetail() {
 
   const detail = (data && data.api_course) || ({} as Course);
 
+  const [updatePart, { loading: updating, data: updated }] = useMutation<
+    {
+      updated: Course;
+    },
+    {
+      id: number;
+      data: {
+        name?: string;
+        desc?: string;
+        teacher?: string;
+      };
+    }
+  >(UPDATE_COURSE);
+
+  console.info('updating', updating, updated);
+
   return (
     <div>
       <Row type="flex" style={{ flex: '0 0 auto' }}>
@@ -45,27 +61,33 @@ export default withApollo(function CourseDetail() {
         <FieldItem
           value={detail.name}
           label="课堂名称"
-          onUpdate={str => {
-            //
-            console.info('str:', str);
+          onUpdate={name => {
+            // 错误信息显示
+            return updatePart({
+              variables: { id, data: { name } },
+            });
           }}
         />
         <Divider />
         <FieldItem
           value={detail.desc}
           label="课堂描述"
-          onUpdate={str => {
-            //
-            console.info('str:', str);
+          onUpdate={desc => {
+            // 错误信息显示
+            return updatePart({
+              variables: { id, data: { desc } },
+            });
           }}
         />
         <Divider />
         <FieldItem
           value={detail.teacher}
           label="讲师"
-          onUpdate={str => {
-            //
-            console.info('str:', str);
+          onUpdate={teacher => {
+            // 错误信息显示
+            return updatePart({
+              variables: { id, data: { teacher } },
+            });
           }}
         />
         <Divider />

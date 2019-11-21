@@ -81,7 +81,6 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
           </Content>
         </Layout>
       </Content>
-      <Layout.Footer style={{ textAlign: 'center' }}>©2019</Layout.Footer>
       <style>{`
         .logo {
           width: 120px;

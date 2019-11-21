@@ -61,6 +61,10 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                 <Icon type="user" />
                 演示
               </Menu.Item>
+              <Menu.Item key="/dashboard/demonstrate/video">
+                <Icon type="user" />
+                范字视频
+              </Menu.Item>
               <Menu.Divider />
               <Menu.Item key="/dashboard/upload">
                 <Icon type="notification" />

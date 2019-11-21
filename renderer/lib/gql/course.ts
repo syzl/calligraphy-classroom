@@ -58,11 +58,11 @@ export const API_COURSE = gql`
 `;
 
 export const S_COURSE_DEMON_RELATION = gql`
-  ${GQLFragments.demonstrate}
+  ${GQLFragments.course_relation}
   subscription($courseId: Int!) {
     relation: courseRelateDemonstrate(courseId: $courseId) {
       id
-      ...DemonstrateFragment
+      ...CourseFragmentRelation
     }
   }
 `;

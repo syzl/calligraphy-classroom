@@ -1,3 +1,5 @@
+import gql from 'graphql-tag';
+
 export const SelfFrags = {
   cursoredResult: `\
     totalCount
@@ -43,19 +45,27 @@ export const SelfFrags = {
 };
 
 export const GQLFragments = {
-  base: `\
+  base: gql`
     fragment base on BaseEntity {
       id
       createdAt
       updatedAt
     }
   `,
-  course_base: `\
+  course_base: gql`\
     fragment CourseFragmentBase on Course {
       ${SelfFrags.course}
     }
   `,
-  course: `\
+  course_relation: gql`\
+    fragment CourseFragmentRelation on Course {
+      ${SelfFrags.course}
+      demonstrates {
+        id
+      }
+    }
+  `,
+  course: gql`\
     fragment CourseFragment on Course {
       ${SelfFrags.course}
       demonstrates {
@@ -69,7 +79,7 @@ export const GQLFragments = {
       }
     }
   `,
-  demonstrate: `\
+  demonstrate: gql`\
     fragment DemonstrateFragment on Demonstrate {
       ${SelfFrags.demonstrate}
       course {
@@ -82,7 +92,7 @@ export const GQLFragments = {
       }
     }
   `,
-  demonstrate_detail: `\
+  demonstrate_detail: gql`\
     fragment DemonstrateFragmentD on Demonstrate {
       ${SelfFrags.demonstrate}
       course {
@@ -106,7 +116,7 @@ export const GQLFragments = {
       }
     }
   `,
-  de_video: `
+  de_video: gql`
   fragment DevideoFragment on DemonstrateVideo {
     startedAt
     duration
@@ -128,7 +138,7 @@ export const GQLFragments = {
     }
   }
   `,
-  upload: `\
+  upload: gql`
     fragment UploadFragment on UploadRaw {
       fieldname
       originalname
@@ -142,7 +152,7 @@ export const GQLFragments = {
       createdAt
     }
   `,
-  copybook: `\
+  copybook: gql`\
     fragment CopybookFragment on UploadCopybook {
       ${SelfFrags.uploadRelatedItem}
     }

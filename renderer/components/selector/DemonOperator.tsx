@@ -141,7 +141,16 @@ export default function DemonSelector({ by = -1, onSelected }: Props) {
                 ]
           }
         >
-          <List.Item.Meta title={item.title} />
+          <List.Item.Meta
+            title={
+              <span>
+                <Typography.Text type="secondary" mark>
+                  {item.id}
+                </Typography.Text>{' '}
+                <Typography.Text>{item.title}</Typography.Text>
+              </span>
+            }
+          />
         </List.Item>
       )}
     />

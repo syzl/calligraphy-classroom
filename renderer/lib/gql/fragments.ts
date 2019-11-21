@@ -59,7 +59,6 @@ export const GQLFragments = {
   `,
   course_relation: gql`\
     fragment CourseFragmentRelation on Course {
-      ${SelfFrags.course}
       demonstrates {
         id
       }

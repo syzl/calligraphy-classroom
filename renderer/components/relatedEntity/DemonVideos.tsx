@@ -18,8 +18,9 @@ import IconWithLoading from '../IconWithLoading';
 import { DemonstrateVideo, PagedResult } from '../../interfaces';
 import { SERVER_URL } from '../../lib/constant';
 import { videoRelateDemon, copybookRelateVideo } from '../../lib/api';
-import Button_L from '../Button_L';
+
 import CopybookSelector from '../selector/Copybook.selector';
+import { Button_ } from '../LoadingWrapper';
 
 export default function RelatedDemonVideos() {
   const [showdrawer, setShowdrawer] = useState(false);
@@ -158,7 +159,7 @@ export default function RelatedDemonVideos() {
                 字帖
               </Button>,
               <Tooltip title={item.demonstrate ? `取消关联` : '关联当前'}>
-                <Button_L
+                <Button_
                   type={item.demonstrate ? 'danger' : 'primary'}
                   icon={item.demonstrate ? 'disconnect' : 'link'}
                   onClick={() =>
@@ -167,7 +168,7 @@ export default function RelatedDemonVideos() {
                 />
               </Tooltip>,
               <Tooltip title="删除 TODO">
-                <Button_L
+                <Button_
                   type="link"
                   icon="delete"
                   style={{ color: 'red' }}

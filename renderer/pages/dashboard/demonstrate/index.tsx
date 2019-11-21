@@ -4,14 +4,15 @@ import {
   message,
   Icon,
   Divider,
-  Table,
   Drawer,
   Row,
   Col,
   Typography,
   Popover,
+  List,
+  Avatar,
+  Spin,
 } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/react-hooks';
@@ -22,19 +23,21 @@ import { wait, getDepCache } from '../../../lib/utils';
 import { Demonstrate, PagedResult } from '../../../interfaces';
 import CreateDemonstrate from '../../../components/forms/Demonstrate';
 import Link from 'next/link';
+import InfiniteScroll from 'react-infinite-scroller';
+
+const limit = 10;
 
 const Demonstrates: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
   const { push } = useRouter();
   const [refetching, setRefetching] = useState(false);
-  const { loading, error, data, refetch, updateQuery } = useQuery<{
+  const { loading, error, data, refetch, updateQuery, fetchMore } = useQuery<{
     api_demonstrates: PagedResult<Demonstrate>;
   }>(GQL.API_DEMONSTRATES, {
     variables: {
       limit,
-      page,
+      page: 1,
     },
   });
   const refetchWithMarking = async () => {
@@ -73,96 +76,32 @@ const Demonstrates: NextPage = function() {
     },
   });
 
-  const columns: ColumnProps<Demonstrate>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 50,
-    },
-    {
-      title: '名称',
-      dataIndex: 'title',
-      key: 'title',
-      render: (text: string, record) => (
-        <Link
-          href="/dashboard/demonstrate/[id]"
-          as={`/dashboard/demonstrate/${record.id}`}
-        >
-          <a>{text}</a>
-        </Link>
-      ),
-    },
-    {
-      title: '详情',
-      dataIndex: 'desc',
-      key: 'desc',
-      render: text => (
-        <Typography.Text type="secondary" style={{ whiteSpace: 'pre-wrap' }}>
-          {text}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: '类型',
-      dataIndex: 'type',
-      key: 'type',
-      width: 100,
-    },
-    {
-      title: '作者',
-      dataIndex: 'author',
-      key: 'author',
-      width: 100,
-    },
-    {
-      title: '操作',
-      key: 'action',
-      fixed: 'right',
-      width: 180,
-      render: (_: any, record: any) => (
-        <span>
-          <Button
-            type="link"
-            onClick={() =>
-              push(
-                '/dashboard/demonstrate/[id]',
-                `/dashboard/demonstrate/${record.id}`,
-              )
-            }
-          >
-            编辑
-          </Button>
-          <Divider type="vertical" />
-          <Popover
-            trigger="click"
-            placement="left"
-            content={
-              <Button
-                type="danger"
-                icon="delete"
-                loading={deleting}
-                onClick={() => {
-                  deleteDemonstrate({ variables: { id: record.id } });
-                }}
-              >
-                确定删除
-              </Button>
-            }
-          >
-            <Icon type="delete" />
-          </Popover>
-        </span>
-      ),
-    },
-  ];
-
   if (error) {
     message.error(error.message);
   }
-  const { items: demonstrates, totalItems } =
+  const { items: demonstrates, next } =
     (data && data.api_demonstrates) || ({} as PagedResult<Demonstrate>);
 
+  const loadMore = function() {
+    fetchMore({
+      variables: { page: page + 1, limit },
+      updateQuery(prev, { fetchMoreResult }) {
+        const { api_demonstrates: older } = prev;
+        if (fetchMoreResult) {
+          const { api_demonstrates } = fetchMoreResult;
+          return {
+            api_demonstrates: {
+              ...api_demonstrates,
+              items: [...older.items, ...api_demonstrates.items],
+            },
+          };
+        } else {
+          return prev;
+        }
+      },
+    });
+    setPage(page + 1);
+  };
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Row type="flex" style={{ flex: '0 0 auto' }}>
@@ -195,30 +134,77 @@ const Demonstrates: NextPage = function() {
         </Col>
       </Row>
       <div style={{ flex: 1, overflow: 'auto' }}>
-        <Table
-          size="small"
-          loading={loading || refetching}
-          rowKey="id"
-          columns={columns}
-          dataSource={demonstrates}
-          // scroll={{ y: 360 }}
-          pagination={{
-            size: 'small',
-            total: totalItems,
-            pageSize: limit,
-            current: page,
-            showSizeChanger: true,
-            pageSizeOptions: ['6', '10', '30', '50'],
-            onChange(page, pageSize) {
-              setPage(page);
-              pageSize && setLimit(pageSize);
-            },
-            onShowSizeChange(current, size) {
-              setPage(current);
-              setLimit(size);
-            },
-          }}
-        />
+        <InfiniteScroll
+          initialLoad={false}
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={!(loading || refetching) && !!next}
+          useWindow={false}
+        >
+          <List
+            dataSource={demonstrates}
+            renderItem={item => (
+              <List.Item
+                key={item.id}
+                actions={[
+                  <Button
+                    type="link"
+                    onClick={() =>
+                      push(
+                        '/dashboard/demonstrate/[id]',
+                        `/dashboard/demonstrate/${item.id}`,
+                      )
+                    }
+                  >
+                    编辑
+                  </Button>,
+                  <Popover
+                    trigger="click"
+                    placement="left"
+                    content={
+                      <Button
+                        type="danger"
+                        icon="delete"
+                        loading={deleting}
+                        onClick={() => {
+                          return deleteDemonstrate({
+                            variables: { id: item.id },
+                          });
+                        }}
+                      >
+                        确定删除
+                      </Button>
+                    }
+                  >
+                    <Icon type="delete" />
+                  </Popover>,
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={<Avatar>{item.id}</Avatar>}
+                  title={
+                    <Link
+                      href="/dashboard/demonstrate/[id]"
+                      as={`/dashboard/demonstrate/${item.id}`}
+                    >
+                      <a>{item.title}</a>
+                    </Link>
+                  }
+                  description={item.desc}
+                />
+                <div>
+                  type:{item.type} subType:{item.subType}
+                </div>
+              </List.Item>
+            )}
+          >
+            {loading && !!next && (
+              <div className="demo-loading-container">
+                <Spin />
+              </div>
+            )}
+          </List>
+        </InfiniteScroll>
       </div>
       <Drawer
         width="360"

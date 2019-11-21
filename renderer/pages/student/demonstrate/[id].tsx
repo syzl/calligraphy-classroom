@@ -16,17 +16,14 @@ import {
 } from 'antd';
 import Link from 'next/link';
 import { Rnd } from 'react-rnd';
-import {
-  Demonstrate,
-  DemonstrateVideo,
-  Copybook,
-} from '../../../interfaces';
+import { Demonstrate, DemonstrateVideo, Copybook } from '../../../interfaces';
 import { API_DEMONSTRATE } from '../../../lib/gql';
 import { withApollo } from '../../../lib/apollo';
 import IconWithLoading from '../../../components/IconWithLoading';
 import { SERVER_URL } from '../../../lib/constant';
 import ReactPlayer from 'react-player';
 import { wait } from '../../../lib/utils';
+import { holderCardProp } from '../../../lib/common';
 
 export default withApollo(function DemonstrateDetail() {
   const { query } = useRouter();
@@ -48,7 +45,7 @@ export default withApollo(function DemonstrateDetail() {
     );
   return (
     <Card
-      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+      {...holderCardProp}
       title={detail.title}
       size="small"
       loading={loading}
@@ -83,7 +80,6 @@ export default withApollo(function DemonstrateDetail() {
         <Icon type="edit" key="edit" />,
         <Icon type="ellipsis" key="ellipsis" />,
       ]}
-      bodyStyle={{ flex: 1, overflow: 'auto' }}
     >
       {error ? <Alert type="error" message={message.error} /> : null}
       <Row type="flex" style={{ height: '100%' }}>

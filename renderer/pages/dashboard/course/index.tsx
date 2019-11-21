@@ -7,12 +7,12 @@ import {
   Drawer,
   Row,
   Col,
-  Typography,
   Tag,
   List,
   Avatar,
   Spin,
   Popover,
+  Card,
 } from 'antd';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -26,6 +26,7 @@ import CreateCourse from '../../../components/forms/Course';
 import Link from 'next/link';
 import InfiniteScroll from 'react-infinite-scroller';
 import IconWithLoading from '../../../components/IconWithLoading';
+import { holderCardProp } from '../../../lib/common';
 
 const limit = 10;
 
@@ -118,51 +119,40 @@ const Courses: NextPage = function() {
     setRefetching(false);
   };
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Row type="flex" style={{ flex: '0 0 auto' }}>
-        <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>课程</Typography.Title>
-        </Col>
-        <Col style={{ paddingTop: 5 }}>
-          {['硬笔', '毛笔', '义务教育', '自选'].map(type => (
-            <Tag color="#2db7f5" key={type}>
-              {type}
-            </Tag>
-          ))}
-        </Col>
-        <Col>
-          <IconWithLoading
-            style={{ padding: 5 }}
-            type="reload"
-            onClick={() => refetchWithMarking()}
-          />
-          <Divider type="vertical" />
-          <IconWithLoading
-            style={{ padding: 5 }}
-            type="reload"
-            onClick={() => {
-              setPageNum(1);
-              refetch();
-            }}
-          />
-          <Divider type="vertical" />
-          <Button
-            shape="round"
-            onClick={() => {
-              push('/dashboard/course/add');
-            }}
-          >
-            添加
-          </Button>
-          <Divider type="vertical" />
-          <Button
-            icon="plus"
-            type="primary"
-            shape="circle"
-            onClick={() => setShowDrawer(true)}
-          />
-        </Col>
-      </Row>
+    <Card
+      {...holderCardProp}
+      title="课程"
+      extra={
+        <Row type="flex">
+          <Col style={{ flex: 1 }}></Col>
+          <Col style={{ paddingTop: 5 }}>
+            {['硬笔', '毛笔', '义务教育', '自选'].map(type => (
+              <Tag color="#2db7f5" key={type}>
+                {type}
+              </Tag>
+            ))}
+          </Col>
+          <Col>
+            <IconWithLoading
+              style={{ padding: 5 }}
+              type="reload"
+              onClick={() => {
+                setPageNum(1);
+                refetch();
+              }}
+            />
+            <Divider type="vertical" />
+
+            <Button
+              icon="plus"
+              type="primary"
+              shape="circle"
+              onClick={() => setShowDrawer(true)}
+            />
+          </Col>
+        </Row>
+      }
+    >
       <div style={{ flex: '1 1 400px', overflow: 'auto' }}>
         <InfiniteScroll
           initialLoad={true}
@@ -259,7 +249,7 @@ const Courses: NextPage = function() {
           }}
         />
       </Drawer>
-    </div>
+    </Card>
   );
 };
 export default withApollo(Courses);

@@ -7,11 +7,11 @@ import {
   Drawer,
   Row,
   Col,
-  Typography,
   Popover,
   List,
   Avatar,
   Spin,
+  Card,
 } from 'antd';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -24,6 +24,7 @@ import { Demonstrate, PagedResult } from '../../../interfaces';
 import CreateDemonstrate from '../../../components/forms/Demonstrate';
 import Link from 'next/link';
 import InfiniteScroll from 'react-infinite-scroller';
+import { holderCardProp } from '../../../lib/common';
 
 const limit = 10;
 
@@ -103,36 +104,30 @@ const Demonstrates: NextPage = function() {
     setPage(page + 1);
   };
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Row type="flex" style={{ flex: '0 0 auto' }}>
-        <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>范字演示管理</Typography.Title>
-        </Col>
-        <Col>
-          <Icon
-            style={{ padding: 5 }}
-            type="reload"
-            spin={refetching}
-            onClick={refetchWithMarking}
-          />
-          <Divider type="vertical" />
-          <Button
-            shape="round"
-            onClick={() => {
-              push('/dashboard/course/add');
-            }}
-          >
-            添加
-          </Button>
-          <Divider type="vertical" />
-          <Button
-            icon="plus"
-            type="primary"
-            shape="circle"
-            onClick={() => setShowDrawer(true)}
-          />
-        </Col>
-      </Row>
+    <Card
+      {...holderCardProp}
+      title="课程环节"
+      extra={
+        <Row type="flex" style={{ flex: '0 0 auto' }}>
+          <Col style={{ flex: 1 }}></Col>
+          <Col>
+            <Icon
+              style={{ padding: 5 }}
+              type="reload"
+              spin={refetching}
+              onClick={refetchWithMarking}
+            />
+            <Divider type="vertical" />
+            <Button
+              icon="plus"
+              type="primary"
+              shape="circle"
+              onClick={() => setShowDrawer(true)}
+            />
+          </Col>
+        </Row>
+      }
+    >
       <div style={{ flex: 1, overflow: 'auto' }}>
         <InfiniteScroll
           initialLoad={false}
@@ -222,7 +217,7 @@ const Demonstrates: NextPage = function() {
           }}
         />
       </Drawer>
-    </div>
+    </Card>
   );
 };
 export default withApollo(Demonstrates);

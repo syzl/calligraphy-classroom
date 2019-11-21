@@ -26,6 +26,7 @@ import DemonOperator from '../../../components/selector/DemonOperator';
 import { relateCourse } from '../../../lib/api';
 import FieldItem from '../../../components/forms/FieldItem';
 import { Button__ } from '../../../components/LoadingWrapper';
+import { holderCardProp } from '../../../lib/common';
 
 interface FieldMeta<T> {
   label: string;
@@ -85,8 +86,8 @@ export default withApollo(function CourseDetail() {
 
   return (
     <Card
+      {...holderCardProp}
       title="编辑课程详情"
-      bordered={false}
       extra={
         <Row type="flex" style={{ flex: '0 0 auto' }}>
           <Col>

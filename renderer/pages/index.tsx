@@ -72,19 +72,6 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
             </Link>
           </div>
           <div>
-            <Link href="/copy-painting">
-              <a>
-                <div className="navimg">
-                  <img
-                    src="https://gw.alipayobjects.com/zos/rmsportal/qXncdwwUTTgUFnsbCNCE.svg"
-                    alt="icon"
-                  />
-                </div>
-                <h3>临摹</h3>
-              </a>
-            </Link>
-          </div>
-          <div>
             <Link href="/student">
               <a>
                 <div className="navimg">
@@ -94,19 +81,6 @@ const IndexPage: NextPage<Props> = ({ whoami }) => {
                   />
                 </div>
                 <h3>学习</h3>
-              </a>
-            </Link>
-          </div>
-          <div>
-            <Link href="/teacher">
-              <a>
-                <div className="navimg">
-                  <img
-                    src="https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg"
-                    alt="icon"
-                  />
-                </div>
-                <h3>讲师</h3>
               </a>
             </Link>
           </div>

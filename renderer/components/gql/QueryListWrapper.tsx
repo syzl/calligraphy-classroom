@@ -80,7 +80,7 @@ interface QueryListWithDelWrapperProp<
   QueryDataT,
   WrapKey extends string = 'data',
   DelWrapKey extends string = 'delete'
-> extends QueryListWrapperProp<QueryDataT, WrapKey> {
+> extends Omit<QueryListWrapperProp<QueryDataT, WrapKey>, 'render'> {
   deleteGql?: any;
   delDataKey?: DelWrapKey;
   render: (
@@ -95,9 +95,14 @@ interface QueryListWithDelWrapperProp<
 export const genListParams = function<
   QueryDataT extends { id: number },
   WrapKey extends string = 'data'
->({ gql, variables, dataKey }: QueryListWrapperProp<QueryDataT, WrapKey>) {
+>({
+  gql,
+  variables,
+  dataKey,
+}: Omit<QueryListWrapperProp<QueryDataT, WrapKey>, 'render'>) {
   const initialPage = variables.page || 1;
   const [fetchMorePage, setFetchMorePage] = useState(initialPage);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const {
     loading,
@@ -107,40 +112,47 @@ export const genListParams = function<
     fetchMore,
     updateQuery,
   } = useQuery<WrapedPagedType<WrapKey, QueryDataT>>(gql, {
+    // notifyOnNetworkStatusChange: false,
     variables,
   });
 
   const { items: dataItems = [], next: hasNext } =
     (data && data[dataKey]) || ({} as PagedResult<QueryDataT>);
 
-  const loadMore = function() {
-    fetchMore({
-      variables: {
-        ...variables,
-        page: fetchMorePage + 1,
-      },
-      updateQuery(prev, { fetchMoreResult }) {
-        const olderItems = prev[dataKey];
-        if (fetchMoreResult) {
-          const pagedItems = fetchMoreResult[dataKey];
-          return {
-            [dataKey]: {
-              ...pagedItems,
-              items: [...olderItems.items, ...pagedItems.items],
-            },
-          } as WrapedPagedType<WrapKey, QueryDataT>;
-        }
-        return prev;
-      },
-    });
+  const loadMore = async function() {
+    setLoadingMore(true);
+    try {
+      await fetchMore({
+        variables: {
+          ...variables,
+          page: fetchMorePage + 1,
+        },
+        updateQuery(prev, { fetchMoreResult }) {
+          const olderItems = prev[dataKey];
+          if (fetchMoreResult) {
+            const pagedItems = fetchMoreResult[dataKey];
+            return {
+              [dataKey]: {
+                ...pagedItems,
+                items: [...olderItems.items, ...pagedItems.items],
+              },
+            } as WrapedPagedType<WrapKey, QueryDataT>;
+          }
+          return prev;
+        },
+      });
+    } catch (error) {
+      //
+    }
     setFetchMorePage(fetchMorePage + 1);
+    setLoadingMore(false);
   };
 
   const resetFetchMorePage = () => setFetchMorePage(initialPage);
 
   return {
     origin: {
-      loading,
+      loading: loading || loadingMore,
       error: queryError,
       refetch,
       updateQuery,
@@ -174,7 +186,12 @@ export const genListWithDelParams = function<
   QueryDataT extends { id: number },
   WrapKey extends string = 'data',
   DelWrapKey extends string = 'data'
->(prop: QueryListWithDelWrapperProp<QueryDataT, WrapKey, DelWrapKey>) {
+>(
+  prop: Omit<
+    QueryListWithDelWrapperProp<QueryDataT, WrapKey, DelWrapKey>,
+    'render'
+  >,
+) {
   const params = genListParams<QueryDataT, WrapKey>(prop);
   let mutationError: ApolloError | undefined;
   let delFn:

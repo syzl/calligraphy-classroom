@@ -27,7 +27,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import IconWithLoading from '../../../components/IconWithLoading';
 import { holderCardProp } from '../../../lib/common';
 import { API_COURSES, DELETE_COURSE } from '../../../lib/gql';
-import { QueryListWrapper } from '../../../components/gql/QueryWrapper';
+import { QueryListWithDelWrapper } from '../../../components/gql/QueryListWrapper';
 import { Button__ } from '../../../components/LoadingWrapper';
 
 const Courses: NextPage = function() {
@@ -35,12 +35,12 @@ const Courses: NextPage = function() {
   const { push } = useRouter();
 
   return (
-    <QueryListWrapper<Course, 'api_courses', 'deleteCourse'>
+    <QueryListWithDelWrapper<Course, 'api_courses', 'deleteCourse'>
       gql={API_COURSES}
       deleteGql={DELETE_COURSE}
       dataKey="api_courses"
       delDataKey="deleteCourse"
-      variables={{ limit: 10, page: 1 }}
+      variables={{ limit: 8, page: 1 }}
       render={({
         origin: { loading, error, refetch },
         hasNext,
@@ -88,11 +88,8 @@ const Courses: NextPage = function() {
             <div style={{ flex: '1 1 400px', overflow: 'auto' }}>
               <InfiniteScroll
                 initialLoad={true}
-                loadMore={() => {
-                  loadMore();
-                }}
+                loadMore={() => loadMore()}
                 hasMore={!!hasNext && !loading}
-                // && !refetching}
                 useWindow={false}
               >
                 <List

@@ -28,7 +28,7 @@ export default function RelatedDemonVideos() {
   const { query } = useRouter();
   const id = +query.id;
   const { loading, error, data, refetch, fetchMore, updateQuery } = useQuery<{
-    api_demon_videos: PagedResult<DemonstrateVideo>;
+    pagedItems: PagedResult<DemonstrateVideo>;
   }>(API_DEMON_VIDEOS, {
     variables: {
       by: id,
@@ -46,11 +46,11 @@ export default function RelatedDemonVideos() {
     });
   };
   const {
-    api_demon_videos: { items = [] },
+    pagedItems: { items = [] },
   } =
     data ||
-    ({ api_demon_videos: {} } as {
-      api_demon_videos: PagedResult<DemonstrateVideo>;
+    ({ pagedItems: {} } as {
+      pagedItems: PagedResult<DemonstrateVideo>;
     });
 
   // 排序
@@ -69,7 +69,7 @@ export default function RelatedDemonVideos() {
         return prev;
       }
       let {
-        api_demon_videos: { items: [...newItems] = [] as any } = {} as any,
+        pagedItems: { items: [...newItems] = [] as any } = {} as any,
       } = prev;
       const targetIdx = newItems.findIndex(
         (item: any) => item.id === mutated.id,

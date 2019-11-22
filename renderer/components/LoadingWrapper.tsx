@@ -7,14 +7,17 @@ export const genLoadingComponent = function<
   T extends {
     onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   }
->(AntComp: React.ElementType) {
+>(AntComp: React.ElementType, key = 'loading') {
   return function LoadingComponent(props: T) {
     const [loading, setLoading] = useState(false);
 
+    const loadingProp = {
+      [key]: loading,
+    };
     return (
       <AntComp
         {...props}
-        loading={loading}
+        {...loadingProp}
         onClick={async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
           const onClick = props.onClick;
           if (!onClick) return;
@@ -31,14 +34,17 @@ export const genOnceComponent = function<
   T extends {
     onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   }
->(AntComp: React.ElementType) {
+>(AntComp: React.ElementType, key = 'loading') {
   return function LoadingComponent(props: T) {
     const [loading, setLoading] = useState(false);
 
+    const loadingProp = {
+      [key]: loading,
+    };
     return (
       <AntComp
         {...props}
-        loading={loading}
+        {...loadingProp}
         onClick={async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
           const onClick = props.onClick;
           if (!onClick) return;
@@ -53,5 +59,5 @@ export const genOnceComponent = function<
 export const Button_ = genLoadingComponent<ButtonProps>(Button);
 export const Button__ = genOnceComponent<ButtonProps>(Button);
 
-export const Icon_ = genLoadingComponent<IconProps>(Icon);
-export const Icon__ = genOnceComponent<IconProps>(Icon);
+export const Icon_ = genLoadingComponent<IconProps>(Icon, 'spin');
+export const Icon__ = genOnceComponent<IconProps>(Icon, 'spin');

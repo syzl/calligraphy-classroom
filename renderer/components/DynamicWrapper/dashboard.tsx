@@ -1,39 +1,23 @@
 import React, { FunctionComponent } from 'react';
-import { Layout, Menu, Icon, Breadcrumb } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import { useRouter } from 'next/router';
 import { ClickParam } from 'antd/lib/menu';
-import Link from 'next/link';
 
 const { Content, Sider } = Layout;
 
 const CaLayout: FunctionComponent<any> = function({ children }) {
   const { push, pathname } = useRouter();
   const handleClick = (e: ClickParam) => {
-    if (e.key.startsWith('/dashboard')) {
+    if (e.key === '/' || e.key.startsWith('/dashboard')) {
       push(e.key);
     }
   };
   const defaultSelectedKeys = [pathname];
   return (
     <Layout style={{ height: '100%' }}>
-      <Content
-        style={{ padding: '0 50px', display: 'flex', flexDirection: 'column' }}
-      >
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>
-            <Link href="/">
-              <a>首页</a>
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <Link href="/dashboard">
-              <a>控制面板</a>
-            </Link>
-          </Breadcrumb.Item>
-        </Breadcrumb>
+      <Content style={{ display: 'flex', flexDirection: 'column' }}>
         <Layout
           style={{
-            padding: '24px 0',
             background: '#fff',
             flex: 1,
             overflow: 'hidden',
@@ -48,6 +32,10 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
               defaultOpenKeys={['sub1', 'sub2', 'sub3']}
               style={{ height: '100%' }}
             >
+              <Menu.Item key="/">
+                <Icon type="home" />
+                返回
+              </Menu.Item>
               <Menu.Item key="/dashboard">
                 <Icon type="home" />
                 管理
@@ -76,9 +64,7 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Content style={{ padding: '0 24px', minHeight: 280 }}>
-            {children}
-          </Content>
+          <Content style={{ minHeight: 280 }}>{children}</Content>
         </Layout>
       </Content>
       <style>{`

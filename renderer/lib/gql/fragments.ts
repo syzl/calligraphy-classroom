@@ -91,6 +91,22 @@ export const GQLFragments = {
       }
     }
   `,
+
+  demonstrate_base: gql`\
+    fragment DemonstrateFragmentBase on Demonstrate {
+      ${SelfFrags.demonstrate}
+    }
+  `,
+  demonstrate_relation: gql`\
+    fragment DemonstrateFragmentRelation on Demonstrate {
+      course {
+        id
+      }
+      videos {
+        id
+      }
+    }
+  `,
   demonstrate_detail: gql`\
     fragment DemonstrateFragmentD on Demonstrate {
       ${SelfFrags.demonstrate}

@@ -99,11 +99,11 @@ export const S_VIDEO_DEMON = gql`
 `;
 
 export const S_DEMON_VIDEO = gql`
-  ${GQLFragments.de_video}
+  ${GQLFragments.demonstrate_relation}
   subscription($id: Int!) {
     relation: DemonRelateVideo(id: $id) {
       id
-      ...DevideoFragment
+      ...DemonstrateFragmentRelation
     }
   }
 `;

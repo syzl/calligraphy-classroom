@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Tag, Row, Col, Typography, Icon, Divider, Alert, Spin } from 'antd';
+import {
+  Tag,
+  Row,
+  Col,
+  Icon,
+  Divider,
+  Alert,
+  Spin,
+  Card,
+} from 'antd';
 import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 import * as GQL from '../../../lib/gql';
@@ -9,6 +18,7 @@ import { Demonstrate } from '../../../interfaces';
 import RelatedDemonVideos from '../../../components/relatedEntity/DemonVideos';
 import FieldItem from '../../../components/forms/FieldItem';
 import Link from 'next/link';
+import { holderCardProp } from '../../../lib/common';
 
 export default withApollo(function DemonStrateDetail() {
   const { query } = useRouter();
@@ -31,36 +41,39 @@ export default withApollo(function DemonStrateDetail() {
   delete details.videos;
 
   return (
-    <div>
-      <Row type="flex" style={{ flex: '0 0 auto' }}>
-        <Col style={{ flex: 1 }}>
-          <Typography.Title level={4}>编辑演示内容详情</Typography.Title>
-        </Col>
-        <Col>
-          <Tag>{details.type}</Tag>
-          <Divider type="vertical" />
-          <Tag>{details.subType || '-'}</Tag>
-          <Divider type="vertical" />
-          {!details.course ? null : (
-            <>
-              <Link
-                href="/dashboard/course/[id]"
-                as={`/dashboard/course/${details.course.id}`}
-              >
-                <a>课程: {details.course.name}</a>
-              </Link>
+    <Card
+      {...holderCardProp}
+      title="编辑演示内容详情"
+      extra={
+        <Row type="flex" style={{ flex: '0 0 auto' }}>
+          <Col style={{ flex: 1 }}></Col>
+          <Col>
+            <Tag>{details.type}</Tag>
+            <Divider type="vertical" />
+            <Tag>{details.subType || '-'}</Tag>
+            <Divider type="vertical" />
+            {!details.course ? null : (
+              <>
+                <Link
+                  href="/dashboard/course/[id]"
+                  as={`/dashboard/course/${details.course.id}`}
+                >
+                  <a>课程: {details.course.name}</a>
+                </Link>
 
-              <Divider type="vertical" />
-            </>
-          )}
-          <Icon
-            style={{ padding: 5 }}
-            type="reload"
-            spin={refetching}
-            onClick={refetchWithMarking}
-          />
-        </Col>
-      </Row>
+                <Divider type="vertical" />
+              </>
+            )}
+            <Icon
+              style={{ padding: 5 }}
+              type="reload"
+              spin={refetching}
+              onClick={refetchWithMarking}
+            />
+          </Col>
+        </Row>
+      }
+    >
       {error ? <Alert message={error.message} type="warning" closable /> : null}
       <Spin spinning={loading}>
         <FieldItem
@@ -82,6 +95,6 @@ export default withApollo(function DemonStrateDetail() {
         <Divider />
         <RelatedDemonVideos />
       </Spin>
-    </div>
+    </Card>
   );
 });

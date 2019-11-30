@@ -25,7 +25,7 @@ import IconWithLoading from '../../../components/IconWithLoading';
 import DemonOperator from '../../../components/selector/DemonOperator';
 import { relateCourse } from '../../../lib/api';
 import FieldItem from '../../../components/forms/FieldItem';
-import { Button__ } from '../../../components/LoadingWrapper';
+import { Button_ } from '../../../components/LoadingWrapper';
 import { holderCardProp } from '../../../lib/common';
 
 interface FieldMeta<T> {
@@ -142,7 +142,7 @@ export default withApollo(function CourseDetail() {
                     >
                       <a>详情</a>
                     </Link>,
-                    <Button__
+                    <Button_
                       type="link"
                       icon="disconnect"
                       onClick={() => relateCourse(item.id, -1)}

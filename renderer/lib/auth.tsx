@@ -16,7 +16,9 @@ export const login = ({ token = '', expires = 1 }) => {
 export const auth = (ctx: MixedNextPageContext) => {
   let { token } = nextCookie(ctx);
   if (!token) {
-    token = window.localStorage.getItem('token') || '';
+    token =
+      (typeof window !== 'undefined' && window.localStorage.getItem('token')) ||
+      '';
   }
   /*
    * If `ctx.req` is available it means we are on the server.
@@ -25,7 +27,7 @@ export const auth = (ctx: MixedNextPageContext) => {
 
   // We already checked for server. This should only happen on client.
   if (!token) {
-    redirect(ctx, '/');
+    redirect(ctx, '/login');
   }
 
   return token;
@@ -44,7 +46,7 @@ export const withAuthSync = (WrappedComponent: NextPage) => {
     const syncLogout = (event: any) => {
       if (event.key === 'logout') {
         console.log('logged out from storage!');
-        Router.push('/');
+        Router.push('/login');
       }
     };
 

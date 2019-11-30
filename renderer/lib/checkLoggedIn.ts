@@ -1,9 +1,8 @@
 import ApolloClient from 'apollo-client';
-import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import * as GQL from './gql';
 import { WhoAmI } from '../interfaces';
 
-export default (apolloClient: ApolloClient<NormalizedCacheObject>) =>
+export default (apolloClient: ApolloClient<any>) =>
   apolloClient
     .query<{ auth_whoami: WhoAmI }>({
       query: GQL.WHOAMI,

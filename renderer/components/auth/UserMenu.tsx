@@ -31,14 +31,6 @@ export const UserMenu = function({ onLogout }: { onLogout?: Function }) {
       onClick={handleMenuClick}
       style={{ background: '#fff', padding: 10, borderRadius: 12 }}
     >
-      <Menu.Item key="1">
-        <Icon type="user" />
-        1st menu item
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Icon type="user" />
-        2nd menu item
-      </Menu.Item>
       <Menu.Item key="logout">
         <Icon type="user" />
         登出

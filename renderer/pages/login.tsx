@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { Button, Divider } from 'antd';
 import { LoginForm } from '../components/auth/LoginForm';
 import { withApollo } from '../lib/apollo';
-import { Button, Divider } from 'antd';
 
 export default withApollo(
   function LoginPage() {
@@ -25,7 +25,7 @@ export default withApollo(
           {show ? (
             <LoginForm
               onSubmit={() => {
-                router.back();
+                router.push('/');
               }}
             />
           ) : null}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Dropdown, Icon } from 'antd';
 
 import { LoginForm } from './auth/LoginForm';
@@ -8,19 +8,29 @@ import { WhoAmI } from '../interfaces';
 import { WHOAMI } from '../lib/gql';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { pureWithApollo } from '../lib/apollo';
+import { IdentityContext } from './identityCtx';
 
 const Status = function() {
+  const { identity } = useContext(IdentityContext);
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const [fn, { data, called }] = useLazyQuery<{ auth_whoami: WhoAmI }>(WHOAMI);
+  const [fn, { data, called, refetch }] = useLazyQuery<{ auth_whoami: WhoAmI }>(
+    WHOAMI,
+  );
   const [username, setUsername] = useState('');
   useEffect(() => {
     called || fn();
     const initUsername = data ? data.auth_whoami.username : '';
     setUsername(initUsername);
-
-    console.info('router', router);
   }, [data]);
+
+  useEffect(() => {
+    setUsername(identity.username || '');
+    if (!identity.username) {
+      return;
+    }
+    refetch && refetch();
+  }, [identity]);
 
   return (
     <div className="top">

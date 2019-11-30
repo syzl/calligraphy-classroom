@@ -7,7 +7,15 @@ import { SignInReturn } from '../../interfaces';
 import { hasErrors } from '../../lib/utils';
 import { login } from '../../lib/auth';
 
-export const LoginForm = function({ onSubmit }: { onSubmit?: any }) {
+import { IdentityContext } from '../identityCtx';
+import { useContext } from 'react';
+
+export const LoginForm = function({
+  onSubmit,
+}: {
+  onSubmit?: ({ token }: { token?: string }) => any;
+}) {
+  const { setIdentity } = useContext(IdentityContext);
   const client = useApolloClient();
 
   const onCompleted: (data: { signinUser: SignInReturn }) => any = data => {
@@ -20,7 +28,7 @@ export const LoginForm = function({ onSubmit }: { onSubmit?: any }) {
       redirect({}, '/');
     });
 
-    onSubmit && onSubmit();
+    onSubmit && onSubmit({ token });
   };
 
   const onError = (error: any) => {
@@ -57,9 +65,10 @@ export const LoginForm = function({ onSubmit }: { onSubmit?: any }) {
       }}
       onSubmit={async values => {
         localStorage.setItem('__username', values.username);
-        signinUser({
+        await signinUser({
           variables: values,
         });
+        setIdentity({ username: values.username });
       }}
     >
       {({

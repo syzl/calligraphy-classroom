@@ -7,7 +7,7 @@ import {
   UPDATE_COURSE,
   S_COURSE_DEMON_RELATION,
 } from '../../../lib/gql';
-import { Course } from '../../../interfaces';
+import { Course, FieldMeta } from '../../../interfaces';
 import {
   Alert,
   Row,
@@ -27,11 +27,6 @@ import { relateCourse } from '../../../lib/api';
 import FieldItem from '../../../components/forms/FieldItem';
 import { Button_ } from '../../../components/LoadingWrapper';
 import { holderCardProp } from '../../../lib/common';
-
-interface FieldMeta<T> {
-  label: string;
-  key: keyof Omit<T, 'demonstrates' | 'id'>;
-}
 
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();

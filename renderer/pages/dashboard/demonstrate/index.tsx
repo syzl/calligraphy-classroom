@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Button,
-  message,
   Icon,
   Divider,
   Drawer,
@@ -12,212 +11,175 @@ import {
   Avatar,
   Spin,
   Card,
+  Alert,
 } from 'antd';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+
 import * as _ from 'lodash';
 import { withApollo } from '../../../lib/apollo';
-import * as GQL from '../../../lib/gql';
-import { wait, getDepCache } from '../../../lib/utils';
-import { Demonstrate, PagedResult } from '../../../interfaces';
+
+import { Demonstrate } from '../../../interfaces';
 import CreateDemonstrate from '../../../components/forms/Demonstrate';
 import Link from 'next/link';
 import InfiniteScroll from 'react-infinite-scroller';
 import { holderCardProp } from '../../../lib/common';
-
-const limit = 10;
+import { QueryListWithDelWrapper } from '../../../components/gql/QueryListWrapper';
+import { API_DEMONSTRATES, DELETE_DEMONSTRATE } from '../../../lib/gql';
+import IconWithLoading from '../../../components/IconWithLoading';
+import { Button_ } from '../../../components/LoadingWrapper';
 
 const Demonstrates: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
-  const [page, setPage] = useState(1);
   const { push } = useRouter();
-  const [refetching, setRefetching] = useState(false);
-  const { loading, error, data, refetch, updateQuery, fetchMore } = useQuery<{
-    api_demonstrates: PagedResult<Demonstrate>;
-  }>(GQL.API_DEMONSTRATES, {
-    variables: {
-      limit,
-      page: 1,
-    },
-  });
-  const refetchWithMarking = async () => {
-    if (refetching) return;
-    setRefetching(true);
-    await Promise.all([wait(1000), refetch()]);
-    setRefetching(false);
-  };
-  const [deleteDemonstrate, { loading: deleting }] = useMutation<{
-    deleteDemonstrate: Demonstrate;
-  }>(GQL.DELETE_DEMONSTRATE, {
-    update(proxy, { data }) {
-      if (!data) {
-        return proxy;
-      }
-      const { deleteDemonstrate } = data;
-      if (deleteDemonstrate) {
-        // 优化内存占用, 效果不大, 无法撤销
-        const cache = getDepCache(proxy);
-        cache.delete(`Demonstrate：${deleteDemonstrate.id}`);
-        updateQuery(prev => {
-          const {
-            api_demonstrates: { ...api_demonstrates },
-          } = prev;
-          const idx = api_demonstrates.items.findIndex(
-            item => item.id === deleteDemonstrate.id,
-          );
-          if (idx > -1) {
-            api_demonstrates.items.splice(idx, 1);
-            api_demonstrates.totalItems -= 1;
-            return { ...prev, api_demonstrates };
-          }
-          return prev;
-        });
-      }
-    },
-  });
 
-  if (error) {
-    message.error(error.message);
-  }
-  const { items: demonstrates, next } =
-    (data && data.api_demonstrates) || ({} as PagedResult<Demonstrate>);
-
-  const loadMore = function() {
-    fetchMore({
-      variables: { page: page + 1, limit },
-      updateQuery(prev, { fetchMoreResult }) {
-        const { api_demonstrates: older } = prev;
-        if (fetchMoreResult) {
-          const { api_demonstrates } = fetchMoreResult;
-          return {
-            api_demonstrates: {
-              ...api_demonstrates,
-              items: [...older.items, ...api_demonstrates.items],
-            },
-          };
-        } else {
-          return prev;
-        }
-      },
-    });
-    setPage(page + 1);
-  };
   return (
-    <Card
-      {...holderCardProp}
-      title="课程环节"
-      extra={
-        <Row type="flex" style={{ flex: '0 0 auto' }}>
-          <Col style={{ flex: 1 }}></Col>
-          <Col>
-            <Icon
-              style={{ padding: 5 }}
-              type="reload"
-              spin={refetching}
-              onClick={refetchWithMarking}
-            />
-            <Divider type="vertical" />
-            <Button
-              icon="plus"
-              type="primary"
-              shape="circle"
-              onClick={() => setShowDrawer(true)}
-            />
-          </Col>
-        </Row>
-      }
+    <QueryListWithDelWrapper<
+      Demonstrate,
+      'api_demonstrates',
+      'deleteDemonstrate'
     >
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        <InfiniteScroll
-          initialLoad={false}
-          pageStart={0}
-          loadMore={loadMore}
-          hasMore={!(loading || refetching) && !!next}
-          useWindow={false}
-        >
-          <List
-            dataSource={demonstrates}
-            renderItem={item => (
-              <List.Item
-                key={item.id}
-                actions={[
+      gql={API_DEMONSTRATES}
+      deleteGql={DELETE_DEMONSTRATE}
+      dataKey="api_demonstrates"
+      delDataKey="deleteDemonstrate"
+      variables={{ limit: 8, page: 1 }}
+      render={({
+        origin: { loading, error, refetch },
+        hasNext,
+        dataItems,
+        setFetchMorePage,
+        loadMore,
+        delFn: deleteCourse,
+      }) => {
+        return (
+          <Card
+            {...holderCardProp}
+            title="课程环节"
+            extra={
+              <Row type="flex">
+                <Col style={{ flex: 1 }}></Col>
+                <Col style={{ paddingTop: 5 }}></Col>
+                <Col>
+                  <IconWithLoading
+                    style={{ padding: 5 }}
+                    type="reload"
+                    onClick={() => {
+                      setFetchMorePage(1);
+                      refetch();
+                    }}
+                  />
+                  <Divider type="vertical" />
+
                   <Button
-                    type="link"
-                    onClick={() =>
-                      push(
-                        '/dashboard/demonstrate/[id]',
-                        `/dashboard/demonstrate/${item.id}`,
-                      )
-                    }
-                  >
-                    编辑
-                  </Button>,
-                  <Popover
-                    trigger="click"
-                    placement="left"
-                    content={
-                      <Button
-                        type="danger"
-                        icon="delete"
-                        loading={deleting}
-                        onClick={() => {
-                          return deleteDemonstrate({
-                            variables: { id: item.id },
-                          });
-                        }}
-                      >
-                        确定删除
-                      </Button>
-                    }
-                  >
-                    <Icon type="delete" />
-                  </Popover>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={<Avatar>{item.id}</Avatar>}
-                  title={
-                    <Link
-                      href="/dashboard/demonstrate/[id]"
-                      as={`/dashboard/demonstrate/${item.id}`}
-                    >
-                      <a>{item.title}</a>
-                    </Link>
-                  }
-                  description={item.desc}
-                />
-                <div>
-                  type:{item.type} subType:{item.subType}
-                </div>
-              </List.Item>
-            )}
+                    icon="plus"
+                    type="primary"
+                    shape="circle"
+                    onClick={() => setShowDrawer(true)}
+                  />
+                </Col>
+              </Row>
+            }
           >
-            {loading && !!next && (
-              <div className="demo-loading-container">
-                <Spin />
-              </div>
-            )}
-          </List>
-        </InfiniteScroll>
-      </div>
-      <Drawer
-        width="360"
-        title="范字演示"
-        placement="right"
-        closable={false}
-        onClose={() => {
-          setShowDrawer(false);
-        }}
-        visible={showDrawer}
-      >
-        <CreateDemonstrate
-          onCompleted={() => {
-            refetchWithMarking();
-          }}
-        />
-      </Drawer>
-    </Card>
+            {error ? <Alert type="error" message={error.message} /> : null}
+            <div style={{ flex: '1 1 400px', overflow: 'auto' }}>
+              <InfiniteScroll
+                initialLoad={true}
+                loadMore={() => loadMore()}
+                hasMore={!!hasNext && !loading}
+                useWindow={false}
+              >
+                <List
+                  dataSource={dataItems}
+                  renderItem={item => (
+                    <List.Item
+                      key={item.id}
+                      actions={[
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            push(
+                              '/dashboard/demonstrate/[id]',
+                              `/dashboard/demonstrate/${item.id}`,
+                            );
+                          }}
+                        >
+                          详情
+                        </Button>,
+                        deleteCourse ? (
+                          <Popover
+                            trigger="click"
+                            placement="left"
+                            content={
+                              <Button_
+                                type="danger"
+                                icon="delete"
+                                onClick={() =>
+                                  deleteCourse({ variables: { id: item.id } })
+                                }
+                              >
+                                确定删除
+                              </Button_>
+                            }
+                          >
+                            <Icon type="delete" />
+                          </Popover>
+                        ) : null,
+                      ]}
+                    >
+                      <List.Item.Meta
+                        avatar={
+                          <Link
+                            href="/dashboard/demonstrate/[id]"
+                            as={`/dashboard/demonstrate/${item.id}`}
+                          >
+                            <Avatar style={{ cursor: 'pointer' }} size={48}>
+                              {item.id}
+                            </Avatar>
+                          </Link>
+                        }
+                        title={
+                          <Link
+                            href="/dashboard/demonstrate/[id]"
+                            as={`/dashboard/demonstrate/${item.id}`}
+                          >
+                            <a>{item.title}</a>
+                          </Link>
+                        }
+                        description={item.desc}
+                      />
+                    </List.Item>
+                  )}
+                >
+                  {loading && !!hasNext && (
+                    <div className="demo-loading-container">
+                      <Spin />
+                    </div>
+                  )}
+                </List>
+              </InfiniteScroll>
+            </div>
+
+            <Drawer
+              width="360"
+              title="课程环节"
+              placement="right"
+              closable={false}
+              onClose={() => {
+                setShowDrawer(false);
+              }}
+              visible={showDrawer}
+            >
+              <CreateDemonstrate
+                onCompleted={() => {
+                  refetch();
+                }}
+              />
+            </Drawer>
+          </Card>
+        );
+      }}
+    />
   );
 };
 export default withApollo(Demonstrates);

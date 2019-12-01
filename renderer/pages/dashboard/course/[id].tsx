@@ -31,6 +31,20 @@ import { withQueryDetail } from '../../../components/gql/QueryDetailWrapper';
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();
   const id = +query.id;
+  const fieldMetas: FieldMeta<Course>[] = [
+    {
+      label: '课堂名称',
+      key: 'name',
+    },
+    {
+      label: '课堂描述',
+      key: 'desc',
+    },
+    {
+      label: '课堂讲师',
+      key: 'teacher',
+    },
+  ];
 
   return withQueryDetail<Course, 'api_course', 'update', 'courseId'>(
     {
@@ -42,21 +56,6 @@ export default withApollo(function CourseDetail() {
       gqlSubscribe: S_COURSE_DEMON_RELATION,
     },
     function({ detail, loading, error, refetch, updatePart }) {
-      const fieldMetas: FieldMeta<Course>[] = [
-        {
-          label: '课堂名称',
-          key: 'name',
-        },
-        {
-          label: '课堂描述',
-          key: 'desc',
-        },
-        {
-          label: '课堂讲师',
-          key: 'teacher',
-        },
-      ];
-
       return (
         <Card
           {...holderCardProp}

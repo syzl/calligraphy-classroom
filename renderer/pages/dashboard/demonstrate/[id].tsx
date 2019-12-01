@@ -13,11 +13,11 @@ import {
   Avatar,
 } from 'antd';
 import { useRouter } from 'next/router';
-import { useQuery, useSubscription } from '@apollo/react-hooks';
+import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks';
 import * as GQL from '../../../lib/gql';
 import { wait } from '../../../lib/utils';
 import { withApollo } from '../../../lib/apollo';
-import { Demonstrate } from '../../../interfaces';
+import { Demonstrate, FieldMeta } from '../../../interfaces';
 import RelatedDemonVideos from '../../../components/relatedEntity/DemonVideos';
 import FieldItem from '../../../components/forms/FieldItem';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ import { SERVER_URL } from '../../../lib/constant';
 import { Button_ } from '../../../components/LoadingWrapper';
 
 import { videoRelateDemon } from '../../../lib/api';
-import { S_DEMON_VIDEO } from '../../../lib/gql';
+import { S_DEMON_VIDEO, UPDATE_DEMONSTRATE } from '../../../lib/gql';
 
 export default withApollo(function DemonStrateDetail() {
   const { query } = useRouter();
@@ -48,7 +48,31 @@ export default withApollo(function DemonStrateDetail() {
     variables: { demonId: id },
   });
 
-  const details: Demonstrate = data ? data.api_demonstrate : ({} as any);
+  const [updatePart] = useMutation<
+    {
+      updated: Demonstrate;
+    },
+    {
+      id: number;
+      data: {
+        title?: string;
+        desc?: string;
+      };
+    }
+  >(UPDATE_DEMONSTRATE);
+
+  const detail: Demonstrate = data ? data.api_demonstrate : ({} as any);
+
+  const fieldMetas: FieldMeta<Demonstrate, string | undefined>[] = [
+    {
+      label: '环节名称',
+      key: 'title',
+    },
+    {
+      label: '环节描述',
+      key: 'desc',
+    },
+  ];
 
   return (
     <Card
@@ -58,17 +82,17 @@ export default withApollo(function DemonStrateDetail() {
         <Row type="flex" style={{ flex: '0 0 auto' }}>
           <Col style={{ flex: 1 }}></Col>
           <Col>
-            <Tag>{details.type || '-'}</Tag>
+            <Tag>{detail.type || '-'}</Tag>
             <Divider type="vertical" />
-            <Tag>{details.subType || '-'}</Tag>
+            <Tag>{detail.subType || '-'}</Tag>
             <Divider type="vertical" />
-            {!details.course ? null : (
+            {!detail.course ? null : (
               <>
                 <Link
                   href="/dashboard/course/[id]"
-                  as={`/dashboard/course/${details.course.id}`}
+                  as={`/dashboard/course/${detail.course.id}`}
                 >
-                  <a>课程: {details.course.name}</a>
+                  <a>课程: {detail.course.name}</a>
                 </Link>
 
                 <Divider type="vertical" />
@@ -86,22 +110,19 @@ export default withApollo(function DemonStrateDetail() {
     >
       {error ? <Alert message={error.message} type="warning" closable /> : null}
       <Spin spinning={loading}>
-        <FieldItem
-          value={details.title}
-          label="标题"
-          onUpdate={str => {
-            //
-            console.info('str:', str);
-          }}
-        />
-        <FieldItem
-          value={details.desc}
-          label="描述"
-          onUpdate={str => {
-            //
-            console.info('str:', str);
-          }}
-        />
+        {/* 更新文字字段 */}
+        {fieldMetas.map(fieldMeta => (
+          <FieldItem
+            value={detail[fieldMeta.key]}
+            key={fieldMeta.label}
+            label={fieldMeta.label}
+            onUpdate={str =>
+              updatePart({
+                variables: { id, data: { [fieldMeta.key]: str } },
+              })
+            }
+          />
+        ))}
         <Divider>
           <Typography.Text type="secondary">关联数据</Typography.Text>
         </Divider>
@@ -111,7 +132,7 @@ export default withApollo(function DemonStrateDetail() {
             <List
               header={<Typography.Text strong>已关联</Typography.Text>}
               bordered
-              dataSource={details.videos || []}
+              dataSource={detail.videos || []}
               renderItem={item => (
                 <List.Item
                   actions={[

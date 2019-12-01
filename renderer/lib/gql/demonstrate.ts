@@ -27,11 +27,11 @@ export const DELETE_DEMONSTRATE_VIDEO = gql`
   }
 `;
 export const UPDATE_DEMONSTRATE = gql`
-  ${GQLFragments.demonstrate_detail}
-  mutation UpdateDemonstrate($id: Int!, $input: UpdateDemonstrateInput!) {
-    updateDemonstrate(id: $id, input: $input) {
+  ${GQLFragments.demonstrate_base}
+  mutation UpdateDemonstrate($id: Int!, $data: UpdateDemonstrateInput!) {
+    updateDemonstrate(id: $id, data: $data) {
       id
-      ...DemonstrateFragmentD
+      ...DemonstrateFragmentBase
     }
   }
 `;

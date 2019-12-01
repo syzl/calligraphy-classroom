@@ -28,7 +28,7 @@ import IconWithLoading from '../../../components/IconWithLoading';
 import { holderCardProp } from '../../../lib/common';
 import { API_COURSES, DELETE_COURSE } from '../../../lib/gql';
 import { QueryListWithDelWrapper } from '../../../components/gql/QueryListWrapper';
-import { Button__ } from '../../../components/LoadingWrapper';
+import { Button_ } from '../../../components/LoadingWrapper';
 
 const Courses: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -114,7 +114,7 @@ const Courses: NextPage = function() {
                             trigger="click"
                             placement="left"
                             content={
-                              <Button__
+                              <Button_
                                 type="danger"
                                 icon="delete"
                                 onClick={() =>
@@ -122,7 +122,7 @@ const Courses: NextPage = function() {
                                 }
                               >
                                 确定删除
-                              </Button__>
+                              </Button_>
                             }
                           >
                             <Icon type="delete" />

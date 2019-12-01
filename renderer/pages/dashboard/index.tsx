@@ -14,7 +14,10 @@ const IndexPage: NextPage = () => {
     { href: '/dashboard/record', label: '录制' },
   ];
   return (
-    <Card title={<div style={{ textAlign: 'center' }}>功能导航</div>}>
+    <Card
+      bordered={false}
+      title={<div style={{ textAlign: 'center' }}>功能导航</div>}
+    >
       {links.map((item, idx) => (
         <Card.Grid key={idx} className="nav-grid">
           <Link href={item.href}>

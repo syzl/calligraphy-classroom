@@ -100,8 +100,8 @@ export const S_VIDEO_DEMON = gql`
 
 export const S_DEMON_VIDEO = gql`
   ${GQLFragments.demonstrate_relation}
-  subscription($id: Int!) {
-    relation: DemonRelateVideo(id: $id) {
+  subscription($demonId: Int!) {
+    relation: DemonRelateVideo(demonId: $demonId) {
       id
       ...DemonstrateFragmentRelation
     }

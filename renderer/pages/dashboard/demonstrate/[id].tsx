@@ -8,9 +8,12 @@ import {
   Alert,
   Spin,
   Card,
+  Typography,
+  List,
+  Avatar,
 } from 'antd';
 import { useRouter } from 'next/router';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useSubscription } from '@apollo/react-hooks';
 import * as GQL from '../../../lib/gql';
 import { wait } from '../../../lib/utils';
 import { withApollo } from '../../../lib/apollo';
@@ -19,15 +22,20 @@ import RelatedDemonVideos from '../../../components/relatedEntity/DemonVideos';
 import FieldItem from '../../../components/forms/FieldItem';
 import Link from 'next/link';
 import { holderCardProp } from '../../../lib/common';
+import { SERVER_URL } from '../../../lib/constant';
+import { Button_ } from '../../../components/LoadingWrapper';
+
+import { videoRelateDemon } from '../../../lib/api';
+import { S_DEMON_VIDEO } from '../../../lib/gql';
 
 export default withApollo(function DemonStrateDetail() {
   const { query } = useRouter();
-
+  const id = Number(query.id);
   const [refetching, setRefetching] = useState(false);
   const { data, loading, error, refetch } = useQuery<{
     api_demonstrate: Demonstrate;
   }>(GQL.API_DEMONSTRATE, {
-    variables: { id: Number(query.id) },
+    variables: { id },
   });
   const refetchWithMarking = async () => {
     if (refetching) return;
@@ -36,9 +44,11 @@ export default withApollo(function DemonStrateDetail() {
     setRefetching(false);
   };
 
-  const details: Demonstrate = data ? data.api_demonstrate : ({} as any);
+  useSubscription(S_DEMON_VIDEO, {
+    variables: { demonId: id },
+  });
 
-  delete details.videos;
+  const details: Demonstrate = data ? data.api_demonstrate : ({} as any);
 
   return (
     <Card
@@ -48,7 +58,7 @@ export default withApollo(function DemonStrateDetail() {
         <Row type="flex" style={{ flex: '0 0 auto' }}>
           <Col style={{ flex: 1 }}></Col>
           <Col>
-            <Tag>{details.type}</Tag>
+            <Tag>{details.type || '-'}</Tag>
             <Divider type="vertical" />
             <Tag>{details.subType || '-'}</Tag>
             <Divider type="vertical" />
@@ -92,8 +102,60 @@ export default withApollo(function DemonStrateDetail() {
             console.info('str:', str);
           }}
         />
-        <Divider />
-        <RelatedDemonVideos />
+        <Divider>
+          <Typography.Text type="secondary">关联数据</Typography.Text>
+        </Divider>
+
+        <Row type="flex" gutter={16}>
+          <Col style={{ flex: 2 }}>
+            <List
+              header={<Typography.Text strong>已关联</Typography.Text>}
+              bordered
+              dataSource={details.videos || []}
+              renderItem={item => (
+                <List.Item
+                  actions={[
+                    <Link
+                      href="/dashboard/demonstrate/video/[id]"
+                      as={`/dashboard/demonstrate/video/${item.id}`}
+                    >
+                      <a>详情</a>
+                    </Link>,
+                    <Button_
+                      type="link"
+                      icon="disconnect"
+                      onClick={() => videoRelateDemon(item.id, -1)}
+                    />,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      item.thumb ? (
+                        <Avatar
+                          shape="square"
+                          size={72}
+                          src={`${SERVER_URL}/${item.thumb.raw.path.replace(
+                            /^_static\//,
+                            '',
+                          )}`}
+                        />
+                      ) : (
+                        <Avatar shape="square" size={72}>
+                          -
+                        </Avatar>
+                      )
+                    }
+                    title={item.id}
+                    description={`${item.duration / 1000} s`}
+                  ></List.Item.Meta>
+                </List.Item>
+              )}
+            />
+          </Col>
+          <Col style={{ flex: '0 0 200px' }}>
+            <RelatedDemonVideos />
+          </Col>
+        </Row>
       </Spin>
     </Card>
   );

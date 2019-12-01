@@ -108,7 +108,7 @@ export interface Mutated<T> {
 /**
  * 令 T 中的 possible 变为确定
  */
-type TmpNonPossible<T> = {
+export type TmpNonPossible<T> = {
   [key in NonNullable<keyof T>]: Exclude<T[key], undefined>;
 };
 

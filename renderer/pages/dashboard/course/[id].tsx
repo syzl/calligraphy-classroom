@@ -27,14 +27,18 @@ import { relateCourse } from '../../../lib/api';
 import FieldItem from '../../../components/forms/FieldItem';
 import { Button_ } from '../../../components/LoadingWrapper';
 import { holderCardProp } from '../../../lib/common';
+import {
+  MutateUpdatePayload,
+  ActionResult,
+} from '../../../interfaces/gqlAction';
 
 export default withApollo(function CourseDetail() {
   const { query } = useRouter();
   const id = +query.id;
 
-  const { loading, error, data, refetch } = useQuery<{
-    api_course: Course;
-  }>(API_COURSE, {
+  const { loading, error, data, refetch } = useQuery<
+    ActionResult<Course, 'api_course'>
+  >(API_COURSE, {
     notifyOnNetworkStatusChange: true,
     variables: {
       id,
@@ -46,19 +50,9 @@ export default withApollo(function CourseDetail() {
   const [
     updatePart,
     //  { loading: updating, data: updated } 自动更新缓存
-  ] = useMutation<
-    {
-      updated: Course;
-    },
-    {
-      id: number;
-      data: {
-        name?: string;
-        desc?: string;
-        teacher?: string;
-      };
-    }
-  >(UPDATE_COURSE);
+  ] = useMutation<ActionResult<Course, 'updated'>, MutateUpdatePayload<Course>>(
+    UPDATE_COURSE,
+  );
 
   useSubscription(S_COURSE_DEMON_RELATION, {
     variables: { courseId: id },

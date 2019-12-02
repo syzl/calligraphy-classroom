@@ -143,10 +143,10 @@ export default withApollo(function DemonVideoList() {
                             href="/dashboard/demonstrate/video/[id]"
                             as={`/dashboard/demonstrate/video/${item.id}`}
                           >
-                            <a>{item.duration}</a>
+                            <a>{item.id}</a>
                           </Link>
                         }
-                        description={item.createdAt}
+                        description={item.duration}
                       />
                     </List.Item>
                   )}
@@ -168,7 +168,9 @@ export default withApollo(function DemonVideoList() {
                 setShowDrawer(false);
               }}
               visible={showDrawer}
-            ></Drawer>
+            >
+              // TODO
+            </Drawer>
           </Card>
         );
       }}

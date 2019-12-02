@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 import {
@@ -24,6 +24,7 @@ import { SERVER_URL } from '../../../lib/constant';
 import ReactPlayer from 'react-player';
 import { wait } from '../../../lib/utils';
 import { holderCardProp } from '../../../lib/common';
+import { captureVideoFrame } from '../../../lib/video/capture-video-frame';
 
 export default withApollo(function DemonstrateDetail() {
   const { query } = useRouter();
@@ -44,9 +45,12 @@ export default withApollo(function DemonstrateDetail() {
       [] as Copybook[],
     );
   const [playingCache, setPlayingCache] = useState();
-
+  const [previewData, setPreviewData] = useState(
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E",
+  );
   const [playing, setPlaying] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const player = useRef<ReactPlayer>(null);
   return (
     <Card
       {...holderCardProp}
@@ -171,6 +175,15 @@ export default withApollo(function DemonstrateDetail() {
                   bottomRight: <Button shape="circle" icon="arrows-alt" />,
                 }}
                 onDragStart={() => {
+                  if (player.current) {
+                    const el = player.current.getInternalPlayer() as any;
+                    if (el) {
+                      const { dataUri } = captureVideoFrame(el);
+                      if (dataUri) {
+                        setPreviewData(dataUri);
+                      }
+                    }
+                  }
                   setDragging(true);
                   setPlayingCache(playing);
                   setPlaying(false);
@@ -192,12 +205,14 @@ export default withApollo(function DemonstrateDetail() {
                   <div
                     className="player-cover"
                     style={{
+                      backgroundImage: `url(${previewData})`,
                       visibility: dragging ? 'visible' : 'hidden',
                     }}
                   >
                     {playing ? '' : '拖动中...'}
                   </div>
                   <ReactPlayer
+                    ref={player}
                     style={{ visibility: dragging ? 'hidden' : 'visible' }}
                     playing={playing}
                     onPlay={() => setPlaying(true)}
@@ -214,6 +229,13 @@ export default withApollo(function DemonstrateDetail() {
                     )}`}
                     width="100%"
                     height="100%"
+                    config={{
+                      file: {
+                        attributes: {
+                          crossOrigin: 'true',
+                        },
+                      },
+                    }}
                   />
                   <Row type="flex">
                     <Col>
@@ -298,6 +320,11 @@ export default withApollo(function DemonstrateDetail() {
           z-index: 100;
           background: rgba(255, 255, 255, 0.6);
           font-size: 24px;
+
+          background: #fff;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center center;
         }
       `}</style>
     </Card>

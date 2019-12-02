@@ -18,7 +18,9 @@ import { withApollo } from '../../../../lib/apollo';
 import { withQueryDetail } from '../../../../components/gql/QueryDetailWrapper';
 import { holderCardProp } from '../../../../lib/common';
 import IconWithLoading from '../../../../components/IconWithLoading';
-import FieldItem from '../../../../components/forms/FieldItem';
+import FieldItem, {
+  FieldItemRaw,
+} from '../../../../components/forms/FieldItem';
 import { SERVER_URL } from '../../../../lib/constant';
 import ReactPlayer from 'react-player';
 
@@ -37,10 +39,10 @@ export default withApollo(function VideoDetail() {
     },
   ];
 
-  return withQueryDetail<DemonstrateVideo, 'api_demonstrate'>(
+  return withQueryDetail<DemonstrateVideo, 'api_demon_video'>(
     {
       id,
-      queryKey: 'api_demonstrate',
+      queryKey: 'api_demon_video',
       gqlDetail: API_DEMON_VIDEO,
     },
     function({ detail, loading, error, refetch }) {
@@ -89,45 +91,25 @@ export default withApollo(function VideoDetail() {
                 label={fieldMeta.label}
               />
             ))}
-            <Divider>
-              <Typography.Text type="secondary">封面图片</Typography.Text>
-            </Divider>
-
-            {!(detail.video && detail.video.raw) ? (
-              <Typography.Text type="secondary">无</Typography.Text>
-            ) : (
-              <img
-                src={`${SERVER_URL}/${detail.thumb.raw.path.replace(
-                  /^_static\//,
-                  '',
-                )}`}
-              />
-            )}
-
-            <Divider>
-              <Typography.Text type="secondary">临摹视频</Typography.Text>
-            </Divider>
-
-            {!(detail.video && detail.video.raw) ? (
-              <Typography.Text type="secondary">无</Typography.Text>
-            ) : (
-              <div
-                style={{
-                  width: 320,
-                  height: 200,
-                }}
-              >
+            <FieldItemRaw label="临摹视频">
+              {!(detail.video && detail.video.raw) ? (
+                <Typography.Text type="secondary">无</Typography.Text>
+              ) : (
                 <ReactPlayer
-                  width="100%"
-                  height="100%"
+                  width="480px"
+                  height="300px"
+                  light={`${SERVER_URL}/${detail.thumb.raw.path.replace(
+                    /^_static\//,
+                    '',
+                  )}`}
                   url={`${SERVER_URL}/${detail.video.raw.path.replace(
                     /^_static\//,
                     '',
                   )}`}
                   controls
                 />
-              </div>
-            )}
+              )}
+            </FieldItemRaw>
           </Spin>
         </Card>
       );

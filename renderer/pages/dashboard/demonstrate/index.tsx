@@ -12,6 +12,7 @@ import {
   Spin,
   Card,
   Alert,
+  Typography,
 } from 'antd';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -55,7 +56,14 @@ const Demonstrates: NextPage = function() {
         return (
           <Card
             {...holderCardProp}
-            title="课程环节"
+            title={
+              <>
+                <Typography.Title level={4}>课程环节 </Typography.Title>
+                <Typography.Text type="secondary">
+                  每个课程环节包含多个临摹视频
+                </Typography.Text>
+              </>
+            }
             extra={
               <Row type="flex">
                 <Col style={{ flex: 1 }}></Col>

@@ -13,6 +13,7 @@ import {
   Spin,
   Popover,
   Card,
+  Typography,
 } from 'antd';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -52,10 +53,16 @@ const Courses: NextPage = function() {
         return (
           <Card
             {...holderCardProp}
-            title="课程"
+            title={
+              <>
+                <Typography.Title level={4}>课程 </Typography.Title>
+                <Typography.Text type="secondary">
+                  每个课程包含多个课程环节
+                </Typography.Text>
+              </>
+            }
             extra={
               <Row type="flex">
-                <Col style={{ flex: 1 }}></Col>
                 <Col style={{ paddingTop: 5 }}>
                   {['硬笔', '毛笔', '义务教育', '自选'].map(type => (
                     <Tag color="#2db7f5" key={type}>

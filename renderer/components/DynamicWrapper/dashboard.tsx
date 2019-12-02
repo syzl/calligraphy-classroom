@@ -29,7 +29,7 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
               onClick={handleClick}
               mode="inline"
               defaultSelectedKeys={defaultSelectedKeys}
-              defaultOpenKeys={['sub1', 'sub1-1', 'sub3']}
+              defaultOpenKeys={['sub1', 'sub1-1', 'sub1-1-1']}
               style={{ height: '100%' }}
             >
               <Menu.Item key="/">
@@ -41,34 +41,14 @@ const CaLayout: FunctionComponent<any> = function({ children }) {
                 管理
               </Menu.Item>
               <Menu.Divider />
-              <Menu.SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <Icon type="laptop" />
-                    <span>课程</span>
-                  </span>
-                }
-              >
-                <Menu.Item key="/dashboard/course">
-                  <Icon type="laptop" />
-                  列表
-                </Menu.Item>
-                <Menu.SubMenu
-                  key="sub1-1"
-                  title={
-                    <span>
-                      <Icon type="laptop" />
-                      <span> 演示</span>
-                    </span>
-                  }
-                >
-                  <Menu.Item key="/dashboard/demonstrate">
-                    <Icon type="user" />
-                    列表
-                  </Menu.Item>
-                </Menu.SubMenu>
-              </Menu.SubMenu>
+              <Menu.Item key="/dashboard/course">
+                <Icon type="laptop" />
+                课程
+              </Menu.Item>
+              <Menu.Item key="/dashboard/demonstrate">
+                <Icon type="user" />
+                演示
+              </Menu.Item>
               <Menu.Item key="/dashboard/demonstrate/video">
                 <Icon type="user" />
                 范字视频

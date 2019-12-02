@@ -26,6 +26,7 @@ import { QueryListWithDelWrapper } from '../../../../components/gql/QueryListWra
 import { holderCardProp } from '../../../../lib/common';
 import IconWithLoading from '../../../../components/IconWithLoading';
 import InfiniteScroll from 'react-infinite-scroller';
+import { SERVER_URL } from '../../../../lib/constant';
 
 // API_DEMON_VIDEOS
 
@@ -133,9 +134,21 @@ export default withApollo(function DemonVideoList() {
                             href="/dashboard/demonstrate/video/[id]"
                             as={`/dashboard/demonstrate/video/${item.id}`}
                           >
-                            <Avatar style={{ cursor: 'pointer' }} size={48}>
-                              {item.id}
-                            </Avatar>
+                            <Avatar
+                              style={{ cursor: 'pointer' }}
+                              shape="square"
+                              size={48}
+                              {...(item.thumb
+                                ? {
+                                    src: `${SERVER_URL}/${item.thumb.raw.path.replace(
+                                      /^_static\//,
+                                      '',
+                                    )}`,
+                                  }
+                                : {
+                                    icon: 'question',
+                                  })}
+                            />
                           </Link>
                         }
                         title={

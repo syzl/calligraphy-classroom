@@ -13,17 +13,17 @@ export const CREATE_DEMONSTRATE = gql`
   }
 `;
 export const DELETE_DEMONSTRATE = gql`
-  ${GQLFragments.demonstrate}
   mutation DeleteDemonstrate($id: Int!) {
     deleteDemonstrate(id: $id) {
       id
-      ...DemonstrateFragment
     }
   }
 `;
 export const DELETE_DEMONSTRATE_VIDEO = gql`
   mutation DeleteDemonstrateVideo($id: Int!) {
-    deleteDemonstrateVideo(id: $id)
+    deleteDemonstrateVideo(id: $id) {
+      id
+    }
   }
 `;
 export const UPDATE_DEMONSTRATE = gql`

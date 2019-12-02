@@ -57,7 +57,7 @@ export const GQLFragments = {
       ${SelfFrags.course}
     }
   `,
-  course_relation: gql`\
+  course_relation: gql`
     fragment CourseFragmentRelation on Course {
       demonstrates {
         id
@@ -97,7 +97,7 @@ export const GQLFragments = {
       ${SelfFrags.demonstrate}
     }
   `,
-  demonstrate_relation: gql`\
+  demonstrate_relation: gql`
     fragment DemonstrateFragmentRelation on Demonstrate {
       course {
         id
@@ -131,27 +131,33 @@ export const GQLFragments = {
       }
     }
   `,
+  de_video_base: gql`
+    fragment DevideoFragmentBase on DemonstrateVideo {
+      startedAt
+      duration
+    }
+  `,
   de_video: gql`
-  fragment DevideoFragment on DemonstrateVideo {
-    startedAt
-    duration
-    thumb {
-      id
-      ${SelfFrags.uploadRelatedItem}
+    fragment DevideoFragment on DemonstrateVideo {
+      startedAt
+      duration
+      thumb {
+        id
+        ${SelfFrags.uploadRelatedItem}
+      }
+      video {
+        id
+        ${SelfFrags.uploadRelatedItem}
+      }
+      copybooks {
+        id
+        ${SelfFrags.uploadRelatedItem}
+      }
+      demonstrate {
+        id
+        ${SelfFrags.demonstrate}
+      }
     }
-    video {
-      id
-      ${SelfFrags.uploadRelatedItem}
-    }
-    copybooks {
-      id
-      ${SelfFrags.uploadRelatedItem}
-    }
-    demonstrate {
-      id
-      ${SelfFrags.demonstrate}
-    }
-  }
   `,
   upload: gql`
     fragment UploadFragment on UploadRaw {

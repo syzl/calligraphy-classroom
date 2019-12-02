@@ -13,7 +13,13 @@ interface WithProp<QueryKey extends string, SubscrbeKey> {
   gqlSubscribe?: any;
 }
 
+interface WithPropR<T, QueryKey extends string, UpdateKey, SubscrbeKey>
+  extends WithProp<QueryKey, SubscrbeKey> {
+  render: (arg: ReturnCProp<T, QueryKey, UpdateKey>) => JSX.Element;
+}
+
 interface ReturnCProp<T, QueryKey, UpdateKey> {
+  id: number;
   detail: T;
   loading: boolean;
   error?: ApolloError;
@@ -32,24 +38,17 @@ interface ReturnCProp<T, QueryKey, UpdateKey> {
     : undefined;
 }
 
-export const withQueryDetail = function<
-  T,
-  QueryKey extends string,
-  UpdateKey extends string | undefined = undefined,
-  SubscrbeKey extends string | undefined = undefined
->(
-  {
+const genParams = <T, QueryKey extends string, UpdateKey, SubscrbeKey>(
+  prop: WithProp<QueryKey, SubscrbeKey>,
+): ReturnCProp<T, QueryKey, UpdateKey> => {
+  const {
     id,
     queryKey,
     subscrbeKey = undefined,
     gqlDetail,
     gqlUpdate,
     gqlSubscribe,
-  }: WithProp<QueryKey, SubscrbeKey>,
-  DetailPageComponent: (
-    prop: ReturnCProp<T, QueryKey, UpdateKey>,
-  ) => JSX.Element,
-) {
+  } = prop;
   const { loading, error, data, refetch } = useQuery<ActionResult<T, QueryKey>>(
     gqlDetail,
     {
@@ -76,10 +75,34 @@ export const withQueryDetail = function<
       variables: { [subscrbeKey]: id },
     });
   }
+  return { id, detail, loading, error, refetch, updatePart };
+};
 
-  return (
-    <DetailPageComponent
-      {...{ id, detail, loading, error, refetch, updatePart }}
-    />
-  );
+export const withQueryDetail = function<
+  T,
+  QueryKey extends string,
+  UpdateKey extends string | undefined = undefined,
+  SubscrbeKey extends string | undefined = undefined
+>(
+  props: WithProp<QueryKey, SubscrbeKey>,
+  DetailPageComponent: (
+    prop: ReturnCProp<T, QueryKey, UpdateKey>,
+  ) => JSX.Element,
+) {
+  const params = genParams<T, QueryKey, UpdateKey, SubscrbeKey>(props);
+  return <DetailPageComponent {...params} />;
+};
+
+/**
+ * 使用 Graphql 显示数据列表, 传入 Query GQL
+ * @param prop
+ */
+export const QueryDetailWrapper = function<
+  T,
+  QueryKey extends string,
+  UpdateKey extends string | undefined = undefined,
+  SubscrbeKey extends string | undefined = undefined
+>(prop: WithPropR<T, QueryKey, UpdateKey, SubscrbeKey>) {
+  const params = genParams<T, QueryKey, UpdateKey, SubscrbeKey>(prop);
+  return <>{prop.render(params)}</>;
 };

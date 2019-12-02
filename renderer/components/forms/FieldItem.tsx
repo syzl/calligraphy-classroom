@@ -4,7 +4,7 @@ import { wait } from '../../lib/utils';
 
 interface UpdatorProps {
   value?: string;
-  onUpdate: (str: string) => void;
+  onUpdate?: (str: string) => void;
 }
 
 interface FieldItemProps extends Omit<UpdatorProps, 'onUpdate'> {
@@ -24,11 +24,15 @@ export const DefaultUpdator = function({ value, onUpdate }: UpdatorProps) {
   return (
     <Typography.Paragraph
       style={{ whiteSpace: 'pre' }}
-      editable={{
-        onChange: str => {
-          return onUpdate(str);
-        },
-      }}
+      {...(onUpdate
+        ? {
+            editable: {
+              onChange: str => {
+                return onUpdate(str);
+              },
+            },
+          }
+        : null)}
     >
       {value}
     </Typography.Paragraph>
@@ -53,23 +57,27 @@ const FieldItem = ({
         <Col style={{ flex: 1 }}>
           <UpdatorComponent
             value={value || ''}
-            onUpdate={async str => {
-              if (str === value || !onUpdate) {
-                return;
-              }
+            {...(onUpdate
+              ? {
+                  onUpdate: async str => {
+                    if (str === value) {
+                      return;
+                    }
 
-              setLoading(true);
-              try {
-                await Promise.all([onUpdate(str), wait(300)]);
-              } catch (err) {
-                if (onError) {
-                  onError(err);
-                } else {
-                  throw err;
+                    setLoading(true);
+                    try {
+                      await Promise.all([onUpdate(str), wait(300)]);
+                    } catch (err) {
+                      if (onError) {
+                        onError(err);
+                      } else {
+                        throw err;
+                      }
+                    }
+                    setLoading(false);
+                  },
                 }
-              }
-              setLoading(false);
-            }}
+              : undefined)}
           />
         </Col>
       </Row>

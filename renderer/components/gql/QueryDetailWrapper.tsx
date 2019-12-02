@@ -4,13 +4,13 @@ import { ApolloError, ApolloQueryResult } from 'apollo-client';
 import { MutationFunctionOptions } from '@apollo/react-common';
 import { ExecutionResult } from 'graphql';
 
-interface WithProp<QueryKey extends string, SubscrbeKey extends string> {
+interface WithProp<QueryKey extends string, SubscrbeKey> {
   id: number;
   queryKey: QueryKey;
-  subscrbeKey: SubscrbeKey;
+  subscrbeKey?: SubscrbeKey;
   gqlDetail: any;
-  gqlUpdate: any;
-  gqlSubscribe: any;
+  gqlUpdate?: any;
+  gqlSubscribe?: any;
 }
 
 interface ReturnCProp<T, QueryKey, UpdateKey> {
@@ -20,26 +20,28 @@ interface ReturnCProp<T, QueryKey, UpdateKey> {
   refetch: (
     variables?: Record<string, any> | undefined,
   ) => Promise<ApolloQueryResult<ActionResult<T, QueryKey>>>;
-  updatePart: (
-    options?:
-      | MutationFunctionOptions<
-          ActionResult<T, UpdateKey>,
-          MutateUpdatePayload<T, 'number'>
-        >
-      | undefined,
-  ) => Promise<ExecutionResult<ActionResult<T, UpdateKey>>>;
+  updatePart: UpdateKey extends string
+    ? (
+        options?:
+          | MutationFunctionOptions<
+              ActionResult<T, UpdateKey>,
+              MutateUpdatePayload<T, 'number'>
+            >
+          | undefined,
+      ) => Promise<ExecutionResult<ActionResult<T, UpdateKey>>>
+    : undefined;
 }
 
 export const withQueryDetail = function<
   T,
   QueryKey extends string,
-  UpdateKey extends string,
-  SubscrbeKey extends string
+  UpdateKey extends string | undefined = undefined,
+  SubscrbeKey extends string | undefined = undefined
 >(
   {
     id,
     queryKey,
-    subscrbeKey,
+    subscrbeKey = undefined,
     gqlDetail,
     gqlUpdate,
     gqlSubscribe,
@@ -60,16 +62,20 @@ export const withQueryDetail = function<
 
   const detail = (data && data[queryKey]) || ({} as T);
 
-  const [
-    updatePart,
-    //  { loading: updating, data: updated } 自动更新缓存
-  ] = useMutation<ActionResult<T, UpdateKey>, MutateUpdatePayload<T>>(
-    gqlUpdate,
-  );
-
-  useSubscription(gqlSubscribe, {
-    variables: { [subscrbeKey]: id },
-  });
+  let updatePart: any;
+  if (gqlUpdate) {
+    [
+      updatePart,
+      //  { loading: updating, data: updated } 自动更新缓存
+    ] = useMutation<ActionResult<T, UpdateKey>, MutateUpdatePayload<T>>(
+      gqlUpdate,
+    );
+  }
+  if (typeof subscrbeKey === 'string') {
+    useSubscription(gqlSubscribe, {
+      variables: { [subscrbeKey]: id },
+    });
+  }
 
   return (
     <DetailPageComponent

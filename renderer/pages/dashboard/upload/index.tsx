@@ -1,263 +1,215 @@
 import React, { useState } from 'react';
 import {
   Button,
-  message,
   Icon,
   Divider,
-  Table,
   Drawer,
   Row,
   Col,
   Typography,
   Popover,
+  List,
+  Avatar,
+  Spin,
+  Card,
+  Alert,
 } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import * as _ from 'lodash';
 import { withApollo } from '../../../lib/apollo';
-import * as GQL from '../../../lib/gql';
-import { wait, getDepCache } from '../../../lib/utils';
-import { Upload, PagedResult } from '../../../interfaces';
+import { Upload } from '../../../interfaces';
 import CreateUploadRaw from '../../../components/forms/UploadRaw';
 import { SERVER_URL } from '../../../lib/constant';
 import { traceUpload } from '../../../lib/api';
 
+import Link from 'next/link';
+import InfiniteScroll from 'react-infinite-scroller';
+import { holderCardProp } from '../../../lib/common';
+import { QueryListWithDelWrapper } from '../../../components/gql/QueryListWrapper';
+import { API_UPLOAD_RAWS, DELETE_UPLOAD_RAW } from '../../../lib/gql';
+import IconWithLoading from '../../../components/IconWithLoading';
+import { Button_ } from '../../../components/LoadingWrapper';
+
 const Uploads: NextPage = function() {
   const [showDrawer, setShowDrawer] = useState(false);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
   const { push } = useRouter();
-  const [refetching, setRefetching] = useState(false);
-  const { loading, error, data, refetch, updateQuery } = useQuery<{
-    api_upload_raws: PagedResult<Upload>;
-  }>(GQL.API_UPLOAD_RAWS, {
-    variables: {
-      limit,
-      page,
-    },
-  });
-  const refetchWithMarking = async () => {
-    if (refetching) return;
-    setRefetching(true);
-    await Promise.all([wait(1000), refetch()]);
-    setRefetching(false);
-  };
-  const [deleteUploadRaw, { loading: deleting }] = useMutation<{
-    deleteUploadRaw: Upload;
-  }>(GQL.DELETE_UPLOAD_RAW, {
-    update(proxy, { data }) {
-      if (!data) {
-        return proxy;
-      }
-      const { deleteUploadRaw } = data;
-
-      if (deleteUploadRaw) {
-        // 优化内存占用, 效果不大, 无法撤销
-        const cache = getDepCache(proxy);
-        cache.delete(`Upload：${deleteUploadRaw.id}`);
-        updateQuery(prev => {
-          const {
-            api_upload_raws: { ...api_upload_raws },
-          } = prev;
-          const idx = api_upload_raws.items.findIndex(
-            item => item.id === deleteUploadRaw.id,
-          );
-          if (idx > -1) {
-            api_upload_raws.items.splice(idx, 1);
-            api_upload_raws.totalItems -= 1;
-            return { ...prev, api_upload_raws };
-          }
-          return prev;
-        });
-      }
-    },
-  });
-
-  const columns: ColumnProps<Upload>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 50,
-    },
-    {
-      title: '名称',
-      dataIndex: 'originalname',
-      key: 'originalname',
-    },
-    {
-      title: 'mime',
-      dataIndex: 'mimetype',
-      key: 'mimetype',
-      render(mime, record) {
-        if (mime.startsWith('image/')) {
-          return (
-            <Popover
-              trigger="click"
-              placement="bottom"
-              content={
-                <img
-                  style={{ width: 240 }}
-                  alt={record.originalname}
-                  src={`${SERVER_URL}/${record.path.replace(
-                    /^_static\/?/,
-                    '',
-                  )}`}
-                />
-              }
-            >
-              <Button type="link" icon="eye">
-                图片
-              </Button>
-            </Popover>
-          );
-        }
-        return mime;
-      },
-    },
-    {
-      title: '类型',
-      dataIndex: 'type',
-      key: 'type',
-      width: 100,
-    },
-    {
-      title: '大小',
-      dataIndex: 'size',
-      key: 'size',
-      width: 100,
-    },
-    {
-      title: '操作',
-      key: 'action',
-      fixed: 'right',
-      width: 180,
-      render: (_: any, record: any) => (
-        <span>
-          <Button
-            onClick={() => {
-              traceUpload('copybook', record.id);
-            }}
-          >
-            Copybook
-          </Button>
-          <Button
-            type="link"
-            onClick={() => {
-              window.open(
-                `${SERVER_URL}${record.path.replace(/^_static/, '')}`,
-                '_blank',
-              );
-            }}
-          >
-            下载
-          </Button>
-          <Divider type="vertical" />
-          <Popover
-            trigger="click"
-            placement="left"
-            content={
-              <Button
-                type="danger"
-                icon="delete"
-                loading={deleting}
-                onClick={() => {
-                  deleteUploadRaw({ variables: { id: record.id } });
-                }}
-              >
-                确定删除
-              </Button>
-            }
-          >
-            <Icon type="delete" />
-          </Popover>
-        </span>
-      ),
-    },
-  ];
-
-  if (error) {
-    message.error(error.message);
-  }
-  const { items: uploads, totalItems } =
-    (data && data.api_upload_raws) || ({} as PagedResult<Upload>);
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Row type="flex" style={{ flex: '0 0 auto' }}>
-        <Col style={{ flex: 1 }}>
-          <Typography.Title level={3}>上传内容管理</Typography.Title>
-        </Col>
-        <Col>
-          <Icon
-            style={{ padding: 5 }}
-            type="reload"
-            spin={refetching}
-            onClick={refetchWithMarking}
-          />
-          <Divider type="vertical" />
-          <Button
-            shape="round"
-            onClick={() => {
-              push('/dashboard/course/add');
-            }}
+    <QueryListWithDelWrapper<Upload, 'api_upload_raws', 'deleteUploadRaw'>
+      gql={API_UPLOAD_RAWS}
+      deleteGql={DELETE_UPLOAD_RAW}
+      dataKey="api_upload_raws"
+      delDataKey="deleteUploadRaw"
+      variables={{ limit: 8, page: 1 }}
+      render={({
+        origin: { loading, error, refetch },
+        hasNext,
+        dataItems,
+        setFetchMorePage,
+        loadMore,
+        delFn,
+      }) => {
+        return (
+          <Card
+            {...holderCardProp}
+            title={<Typography.Title level={4}>上传内容管理</Typography.Title>}
+            extra={
+              <Row type="flex">
+                <Col style={{ flex: 1 }}></Col>
+                <Col style={{ paddingTop: 5 }}></Col>
+                <Col>
+                  <IconWithLoading
+                    style={{ padding: 5 }}
+                    type="reload"
+                    onClick={() => {
+                      setFetchMorePage(1);
+                      refetch();
+                    }}
+                  />
+                  <Divider type="vertical" />
+
+                  <Button
+                    icon="plus"
+                    type="primary"
+                    shape="circle"
+                    onClick={() => setShowDrawer(true)}
+                  />
+                </Col>
+              </Row>
+            }
           >
-            添加
-          </Button>
-          <Divider type="vertical" />
-          <Button
-            icon="plus"
-            type="primary"
-            shape="circle"
-            onClick={() => setShowDrawer(true)}
-          />
-        </Col>
-      </Row>
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        <Table
-          size="small"
-          loading={loading || refetching}
-          rowKey="id"
-          columns={columns}
-          dataSource={uploads}
-          // scroll={{ y: 360 }}
-          pagination={{
-            size: 'small',
-            total: totalItems,
-            pageSize: limit,
-            current: page,
-            showSizeChanger: true,
-            pageSizeOptions: ['6', '10', '30', '50'],
-            onChange(page, pageSize) {
-              setPage(page);
-              pageSize && setLimit(pageSize);
-            },
-            onShowSizeChange(current, size) {
-              setPage(current);
-              setLimit(size);
-            },
-          }}
-        />
-      </div>
-      <Drawer
-        width="360"
-        title="上传"
-        placement="right"
-        closable={false}
-        onClose={() => {
-          setShowDrawer(false);
-        }}
-        visible={showDrawer}
-      >
-        <CreateUploadRaw
-          onCompleted={() => {
-            refetchWithMarking();
-          }}
-        />
-      </Drawer>
-    </div>
+            {error ? <Alert type="error" message={error.message} /> : null}
+            <div style={{ flex: '1 1 400px', overflow: 'auto' }}>
+              <InfiniteScroll
+                initialLoad={true}
+                loadMore={() => loadMore()}
+                hasMore={!!hasNext && !loading}
+                useWindow={false}
+              >
+                <List
+                  dataSource={dataItems}
+                  renderItem={item => (
+                    <List.Item
+                      key={item.id}
+                      actions={[
+                        <Button_
+                          type="link"
+                          onClick={() => traceUpload('copybook', item.id)}
+                        >
+                          标记为copybook
+                        </Button_>,
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            window.open(
+                              `${SERVER_URL}${item.path.replace(
+                                /^_static/,
+                                '',
+                              )}`,
+                              '_blank',
+                            );
+                          }}
+                        >
+                          下载
+                        </Button>,
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            push(
+                              '/dashboard/upload/[id]',
+                              `/dashboard/upload/${item.id}`,
+                            );
+                          }}
+                        >
+                          详情
+                        </Button>,
+                        delFn ? (
+                          <Popover
+                            trigger="click"
+                            placement="left"
+                            content={
+                              <Button_
+                                type="danger"
+                                icon="delete"
+                                onClick={() =>
+                                  delFn({ variables: { id: item.id } })
+                                }
+                              >
+                                确定删除
+                              </Button_>
+                            }
+                          >
+                            <Icon type="delete" />
+                          </Popover>
+                        ) : null,
+                      ]}
+                    >
+                      <List.Item.Meta
+                        avatar={
+                          <Link
+                            href="/dashboard/demonstrate/[id]"
+                            as={`/dashboard/demonstrate/${item.id}`}
+                          >
+                            <Avatar
+                              {...(item.mimetype.startsWith('image/')
+                                ? {
+                                    src: `${SERVER_URL}/${item.path.replace(
+                                      /^_static\/?/,
+                                      '',
+                                    )}`,
+                                  }
+                                : { icon: 'question' })}
+                              style={{ cursor: 'pointer' }}
+                              size={64}
+                              shape="square"
+                            />
+                          </Link>
+                        }
+                        title={
+                          <Link
+                            href="/dashboard/demonstrate/[id]"
+                            as={`/dashboard/demonstrate/${item.id}`}
+                          >
+                            <a>{item.originalname}</a>
+                          </Link>
+                        }
+                        description={
+                          <span>
+                            [id:{item.id}] [size:{Math.round(item.size / 1024)}
+                            K]
+                            {item.path}
+                          </span>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                >
+                  {loading && !!hasNext && (
+                    <div className="demo-loading-container">
+                      <Spin />
+                    </div>
+                  )}
+                </List>
+              </InfiniteScroll>
+            </div>
+
+            <Drawer
+              width="360"
+              title="上传"
+              placement="right"
+              closable={false}
+              onClose={() => {
+                setShowDrawer(false);
+              }}
+              visible={showDrawer}
+            >
+              <CreateUploadRaw onCompleted={() => refetch()} />
+            </Drawer>
+          </Card>
+        );
+      }}
+    />
   );
 };
 export default withApollo(Uploads);

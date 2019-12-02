@@ -51,7 +51,7 @@ const Demonstrates: NextPage = function() {
         dataItems,
         setFetchMorePage,
         loadMore,
-        delFn: deleteCourse,
+        delFn: deleteFn,
       }) => {
         return (
           <Card
@@ -114,7 +114,7 @@ const Demonstrates: NextPage = function() {
                         >
                           详情
                         </Button>,
-                        deleteCourse ? (
+                        deleteFn ? (
                           <Popover
                             trigger="click"
                             placement="left"
@@ -123,7 +123,7 @@ const Demonstrates: NextPage = function() {
                                 type="danger"
                                 icon="delete"
                                 onClick={() =>
-                                  deleteCourse({ variables: { id: item.id } })
+                                  deleteFn({ variables: { id: item.id } })
                                 }
                               >
                                 确定删除

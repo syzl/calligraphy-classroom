@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, ReactNode } from 'react';
 import { Row, Col, Typography, Spin } from 'antd';
 import { wait } from '../../lib/utils';
 
@@ -39,6 +39,21 @@ export const DefaultUpdator = function({ value, onUpdate }: UpdatorProps) {
   );
 };
 
+export const FieldItemRaw = ({
+  label,
+  children,
+}: {
+  label?: string | number;
+  children?: ReactNode;
+}) => (
+  <Row type="flex">
+    <Col style={{ minWidth: '4em', paddingRight: '.8em' }}>
+      <Typography.Text strong>{label}:</Typography.Text>
+    </Col>
+    <Col style={{ flex: 1 }}>{children}</Col>
+  </Row>
+);
+
 const FieldItem = ({
   label,
   value,
@@ -50,37 +65,32 @@ const FieldItem = ({
 
   return (
     <Spin spinning={loading}>
-      <Row type="flex">
-        <Col style={{ minWidth: '4em', paddingRight: '.8em' }}>
-          <Typography.Text strong>{label}:</Typography.Text>
-        </Col>
-        <Col style={{ flex: 1 }}>
-          <UpdatorComponent
-            value={value || ''}
-            {...(onUpdate
-              ? {
-                  onUpdate: async str => {
-                    if (str === value) {
-                      return;
-                    }
+      <FieldItemRaw label={label}>
+        <UpdatorComponent
+          value={value || ''}
+          {...(onUpdate
+            ? {
+                onUpdate: async str => {
+                  if (str === value) {
+                    return;
+                  }
 
-                    setLoading(true);
-                    try {
-                      await Promise.all([onUpdate(str), wait(300)]);
-                    } catch (err) {
-                      if (onError) {
-                        onError(err);
-                      } else {
-                        throw err;
-                      }
+                  setLoading(true);
+                  try {
+                    await Promise.all([onUpdate(str), wait(300)]);
+                  } catch (err) {
+                    if (onError) {
+                      onError(err);
+                    } else {
+                      throw err;
                     }
-                    setLoading(false);
-                  },
-                }
-              : undefined)}
-          />
-        </Col>
-      </Row>
+                  }
+                  setLoading(false);
+                },
+              }
+            : undefined)}
+        />
+      </FieldItemRaw>
     </Spin>
   );
 };

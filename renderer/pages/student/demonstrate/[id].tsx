@@ -43,6 +43,10 @@ export default withApollo(function DemonstrateDetail() {
       (result, video) => [...result, ...(video.copybooks || [])],
       [] as Copybook[],
     );
+  const [playingCache, setPlayingCache] = useState();
+
+  const [playing, setPlaying] = useState(false);
+  const [dragging, setDragging] = useState(false);
   return (
     <Card
       {...holderCardProp}
@@ -166,6 +170,15 @@ export default withApollo(function DemonstrateDetail() {
                 resizeHandleComponent={{
                   bottomRight: <Button shape="circle" icon="arrows-alt" />,
                 }}
+                onDragStart={() => {
+                  setDragging(true);
+                  setPlayingCache(playing);
+                  setPlaying(false);
+                }}
+                onDragStop={() => {
+                  setDragging(false);
+                  setPlaying(playingCache);
+                }}
               >
                 <div
                   style={{
@@ -173,9 +186,22 @@ export default withApollo(function DemonstrateDetail() {
                     height: '100%',
                     border: 'thin solid lightgray',
                     background: '#fff',
+                    position: 'relative',
                   }}
                 >
+                  <div
+                    className="player-cover"
+                    style={{
+                      visibility: dragging ? 'visible' : 'hidden',
+                    }}
+                  >
+                    {playing ? '' : '拖动中...'}
+                  </div>
                   <ReactPlayer
+                    style={{ visibility: dragging ? 'hidden' : 'visible' }}
+                    playing={playing}
+                    onPlay={() => setPlaying(true)}
+                    onPause={() => setPlaying(false)}
                     light={`${SERVER_URL}/${targetDemon.thumb.raw.path.replace(
                       /^_static\//,
                       '',
@@ -261,6 +287,17 @@ export default withApollo(function DemonstrateDetail() {
         }
         .cp-img {
           filter: contrast(170%) brightness(170%) invert(100%);
+        }
+        .player-cover {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          justify-content: center;
+          display: flex;
+          align-items: center;
+          z-index: 100;
+          background: rgba(255, 255, 255, 0.6);
+          font-size: 24px;
         }
       `}</style>
     </Card>

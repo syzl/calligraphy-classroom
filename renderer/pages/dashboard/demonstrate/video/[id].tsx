@@ -43,7 +43,7 @@ export default withApollo(function VideoDetail() {
       queryKey: 'api_demonstrate',
       gqlDetail: API_DEMON_VIDEO,
     },
-    function({ detail, loading, error, refetch, updatePart }) {
+    function({ detail, loading, error, refetch }) {
       return (
         <Card
           {...holderCardProp}

@@ -23,7 +23,7 @@ export const DELETE_DEMONSTRATE = gql`
 `;
 export const DELETE_DEMONSTRATE_VIDEO = gql`
   mutation DeleteDemonstrateVideo($id: Int!) {
-    deleteDemonstrate(id: $id)
+    deleteDemonstrateVideo(id: $id)
   }
 `;
 export const UPDATE_DEMONSTRATE = gql`

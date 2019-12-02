@@ -106,23 +106,20 @@ export interface Mutated<T> {
 }
 
 /**
- * 令 T 中的 possible 变为确定
- */
-export type TmpNonPossible<T> = {
-  [key in NonNullable<keyof T>]: Exclude<T[key], undefined>;
-};
-
-/**
  * 用于 取得 Entity 指定类型字段
  */
-export type StringKey<Entity, Condition> = {
-  [Key in keyof Entity]: Entity[Key] extends Condition ? Key : never;
-}[Exclude<keyof Entity, 'createdAt' | 'updatedAt'>];
-
+export type ConditionKey<Entity, Condition> = Exclude<
+  {
+    [key in keyof Entity]: Entity[key] extends Condition ? key : never;
+  } extends { [_ in keyof Entity]: infer U }
+    ? U
+    : never,
+  'createdAt' | 'updatedAt'
+>;
 /**
  * 用于 详情页面字段
  */
 export interface FieldMeta<T, Condition = string> {
   label: string;
-  key: StringKey<TmpNonPossible<T>, Condition>;
+  key: ConditionKey<T, Condition>;
 }

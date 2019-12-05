@@ -1,41 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
+
 import { NextPage } from 'next';
-import { withApollo } from '../lib/apollo';
 
 const IndexPage: NextPage = () => {
   return (
     <div className="container">
       <div className="band">
-        <div className="title">书法课堂 · 快速导航</div>
-        <div className="nav">
-          <div>
-            <Link href="/dashboard">
-              <a>
-                <div className="navimg">
-                  <img
-                    src="https://gw.alipayobjects.com/zos/rmsportal/URIeCOKLMAbRXaeXoNqN.svg"
-                    alt="icon"
-                  />
-                </div>
-                <h3>管理</h3>
-              </a>
-            </Link>
-          </div>
-          <div>
-            <Link href="/student/course">
-              <a>
-                <div className="navimg">
-                  <img
-                    src="https://gw.alipayobjects.com/zos/rmsportal/YFXXZocxAgjReehpPNbX.svg"
-                    alt="icon"
-                  />
-                </div>
-                <h3>学习</h3>
-              </a>
-            </Link>
-          </div>
-        </div>
+        <div className="title">Demonstrate</div>
       </div>
       <style jsx>{`
         .container {
@@ -69,32 +40,9 @@ const IndexPage: NextPage = () => {
           line-height: 46px;
           text-align: center;
         }
-        .band a {
-          color: #f2f2f4;
-        }
-        .band .nav {
-          display: flex;
-          padding: 0 10%;
-          justify-content: space-around;
-        }
-
-        .band .nav .navimg {
-          width: 120px;
-          height: 120px;
-          margin: 46px auto 40px;
-          background: #fff;
-          border-radius: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .debug {
-          display: none;
-        }
       `}</style>
     </div>
   );
 };
 
-export default withApollo(IndexPage, { ssr: false, needAuth: false });
+export default IndexPage;

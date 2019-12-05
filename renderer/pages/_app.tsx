@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import App from 'next/app';
 
-import DynamicWrapper from '../components/DynamicWrapper';
 import '../assets/global.less';
+
+const DynamicWrapper: FunctionComponent = function({ children }) {
+  return <div>{children}</div>;
+};
 
 export default class MyApp extends App {
   render() {

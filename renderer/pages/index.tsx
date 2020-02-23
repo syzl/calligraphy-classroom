@@ -35,6 +35,19 @@ const IndexPage: NextPage = () => {
               </a>
             </Link>
           </div>
+          <div>
+            <Link href="/settings">
+              <a>
+                <div className="navimg">
+                  <img
+                    src="https://gw.alipayobjects.com/zos/rmsportal/VPuetGsvJuYBwoDkZWFW.svg"
+                    alt="icon"
+                  />
+                </div>
+                <h3>设置</h3>
+              </a>
+            </Link>
+          </div>
         </div>
       </div>
       <style jsx>{`
@@ -54,7 +67,7 @@ const IndexPage: NextPage = () => {
         }
 
         .container .band {
-          margin: 2em 0;
+          margin: 0 0;
           background: #533fdc;
           background: linear-gradient(180deg, #70f, #40f);
           color: #fff;
@@ -87,6 +100,9 @@ const IndexPage: NextPage = () => {
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+        .band h3 {
+          color: #fff;
         }
 
         .debug {

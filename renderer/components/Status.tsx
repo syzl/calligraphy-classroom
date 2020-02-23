@@ -51,6 +51,9 @@ const Status = function() {
                   setUsername('');
                   setShowMenu(false);
                 }}
+                theEnd={() => {
+                  setShowMenu(false);
+                }}
               />
             ) : (
               <LoginForm

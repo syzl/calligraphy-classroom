@@ -5,10 +5,18 @@ import { ClickParam } from 'antd/lib/menu';
 import { logout } from '../../lib/auth';
 import { useContext } from 'react';
 import { IdentityContext } from '../identityCtx';
+import { useRouter } from 'next/router';
 
-export const UserMenu = function({ onLogout }: { onLogout?: Function }) {
+export const UserMenu = function({
+  onLogout,
+  theEnd,
+}: {
+  onLogout?: Function;
+  theEnd?: Function;
+}) {
   const apolloClient = useApolloClient();
   const { setIdentity } = useContext(IdentityContext);
+  const router = useRouter();
 
   const signout = () => {
     logout();
@@ -27,6 +35,11 @@ export const UserMenu = function({ onLogout }: { onLogout?: Function }) {
         signout();
         message.info('已登出');
         onLogout && onLogout();
+        break;
+      case 'home':
+        router.push('/');
+        theEnd && theEnd()
+        break;
     }
   }
 
@@ -35,6 +48,10 @@ export const UserMenu = function({ onLogout }: { onLogout?: Function }) {
       onClick={handleMenuClick}
       style={{ background: '#fff', padding: 10, borderRadius: 12 }}
     >
+      <Menu.Item key="home">
+        <Icon type="home" />
+        首页
+      </Menu.Item>
       <Menu.Item key="logout">
         <Icon type="user" />
         登出

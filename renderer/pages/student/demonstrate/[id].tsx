@@ -44,7 +44,7 @@ export default withApollo(function DemonstrateDetail() {
       (result, video) => [...result, ...(video.copybooks || [])],
       [] as Copybook[],
     );
-  const [playingCache, setPlayingCache] = useState();
+  const [playingCache, setPlayingCache] = useState<boolean>();
   const [previewData, setPreviewData] = useState(
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E",
   );
@@ -190,7 +190,7 @@ export default withApollo(function DemonstrateDetail() {
                 }}
                 onDragStop={() => {
                   setDragging(false);
-                  setPlaying(playingCache);
+                  setPlaying(!!playingCache);
                 }}
               >
                 <div

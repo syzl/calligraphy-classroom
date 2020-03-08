@@ -12,7 +12,7 @@
     "start": "next start renderer",
     "build:electron": "tsc -p electron-src",
     "build:all": "yarn build && yarn build:electron",
-    "dist": "npm run build:all && electron-builder --dir",
+    "dist": "npm run build:all && electron-builder -w",
     "dist:alone": "electron-builder --dir",
     "type-check": "tsc",
     "tweak": "node bin/tweak.js"

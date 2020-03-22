@@ -45,6 +45,8 @@ export interface DemonstrateVideo {
   copybooks?: Copybook[];
   startedAt: string;
   duration: number;
+  char:string;
+  remark:string;
 
   demonstrate?: Demonstrate;
 }

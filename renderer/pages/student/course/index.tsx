@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, List, Button, Typography, Collapse } from 'antd';
+import { Card, List, Button, Typography } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import { PagedResult, Course } from '../../../interfaces';
 import { API_COURSES } from '../../../lib/gql';
@@ -7,20 +7,13 @@ import { withApollo } from '../../../lib/apollo';
 import Link from 'next/link';
 import IconWithLoading from '../../../components/IconWithLoading';
 
-const panelStyle = {
-  background: '#f7f7f7',
-  borderRadius: 4,
-  border: 0,
-  overflow: 'hidden',
-};
-
 export default withApollo(function StudentCourseView() {
   const { loading, error, data, refetch, fetchMore, updateQuery } = useQuery<{
     api_courses: PagedResult<Course>;
   }>(API_COURSES, {
     notifyOnNetworkStatusChange: true,
     variables: {
-      limit: 10,
+      limit: 20,
       page: 1,
     },
   });
@@ -51,7 +44,7 @@ export default withApollo(function StudentCourseView() {
             <Card
               size="small"
               title={item.name}
-              extra={
+              extra={ null &&
                 <Link
                   href="/student/course/[id]"
                   as={`/student/course/${item.id}`}
@@ -64,13 +57,7 @@ export default withApollo(function StudentCourseView() {
                 style={{ height: 240, overflow: 'auto' }}
                 // title={item.desc}
                 description={
-                  <Collapse bordered={false} defaultActiveKey={['1']}>
-                    <Collapse.Panel
-                      header="视频学习"
-                      key="1"
-                      style={panelStyle}
-                    >
-                      <List
+                  <List
                         size="small"
                         dataSource={item.demonstrates}
                         renderItem={demon => (
@@ -87,15 +74,13 @@ export default withApollo(function StudentCourseView() {
                             <List.Item.Meta
                               title={
                                 <Typography.Text strong>
-                                  {demon.title}
+                                  {demon.title.replace(`${item.name} `,'')}
                                 </Typography.Text>
                               }
                             />
                           </List.Item>
                         )}
                       />
-                    </Collapse.Panel>
-                  </Collapse>
                 }
               ></Card.Meta>
             </Card>

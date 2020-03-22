@@ -121,7 +121,7 @@ export default withApollo(function DemonstrateDetail() {
                       />
                     ) : null
                   }
-                  description={`${demon.duration / 1000} s`}
+                  description={demon.char ? demon.char.replace(/\.mp4$/,'') : `${demon.duration / 1000} s`}
                 />
               </List.Item>
             )}

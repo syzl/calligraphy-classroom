@@ -156,10 +156,10 @@ export default withApollo(function DemonVideoList() {
                             href="/dashboard/demonstrate/video/[id]"
                             as={`/dashboard/demonstrate/video/${item.id}`}
                           >
-                            <a>{item.id}</a>
+                            <a>{item.char? item.char.replace(/\.mp4$/,'') : item.id}</a>
                           </Link>
                         }
-                        description={item.duration}
+                        description={item.remark || item.duration}
                       />
                     </List.Item>
                   )}

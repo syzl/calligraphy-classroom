@@ -138,8 +138,8 @@ export default function RelatedDemonVideos() {
                 </Avatar>
               )
             }
-            title={item.id}
-            description={`${item.duration / 1000} s`}
+            title={item.char? item.char.replace(/\.mp4$/,'') : item.id}
+            description={item.remark || `${item.duration / 1000} s`}
           />
         </List.Item>
       )}

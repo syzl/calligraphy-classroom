@@ -33,6 +33,7 @@ export const SelfFrags = {
     name
     desc
     teacher
+    sort
     updatedAt
     createdAt`,
   demonstrate: `\
@@ -40,6 +41,7 @@ export const SelfFrags = {
     desc
     type
     subType
+    sort
     updatedAt
     createdAt`,
 };
@@ -73,6 +75,7 @@ export const GQLFragments = {
         desc
         type
         subType
+        sort
         updatedAt
         createdAt
       }
@@ -86,6 +89,7 @@ export const GQLFragments = {
         name
         desc
         teacher
+        sort
         updatedAt
         createdAt
       }
@@ -118,6 +122,8 @@ export const GQLFragments = {
         id
         startedAt
         duration
+        char
+        remark
         thumb {
           ${SelfFrags.uploadRelatedItem}
         }
@@ -135,12 +141,16 @@ export const GQLFragments = {
     fragment DevideoFragmentBase on DemonstrateVideo {
       startedAt
       duration
+      char
+      remark
     }
   `,
   de_video: gql`
     fragment DevideoFragment on DemonstrateVideo {
       startedAt
       duration
+      char
+      remark
       thumb {
         id
         ${SelfFrags.uploadRelatedItem}

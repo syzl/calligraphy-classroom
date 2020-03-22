@@ -37,6 +37,14 @@ export default withApollo(function VideoDetail() {
       label: '临摹视频时长',
       key: 'duration',
     },
+    {
+      label: '汉字',
+      key: 'char',
+    },
+    {
+      label: '备注',
+      key: 'remark',
+    },
   ];
 
   return withQueryDetail<DemonstrateVideo, 'api_demon_video'>(

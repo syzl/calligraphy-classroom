@@ -217,10 +217,10 @@ export default withApollo(function DemonstrateDetail() {
                     playing={playing}
                     onPlay={() => setPlaying(true)}
                     onPause={() => setPlaying(false)}
-                    light={`${SERVER_URL}/${targetDemon.thumb.raw.path.replace(
+                    light={targetDemon.thumb ? `${SERVER_URL}/${targetDemon.thumb.raw.path.replace(
                       /^_static\//,
                       '',
-                    )}`}
+                    )}`: undefined}
                     className="player"
                     controls={true}
                     url={`${SERVER_URL}/${targetDemon.video.raw.path.replace(

@@ -106,10 +106,10 @@ export default withApollo(function VideoDetail() {
                 <ReactPlayer
                   width="480px"
                   height="300px"
-                  light={`${SERVER_URL}/${detail.thumb.raw.path.replace(
+                  light={detail.thumb ? `${SERVER_URL}/${detail.thumb.raw.path.replace(
                     /^_static\//,
                     '',
-                  )}`}
+                  )}` : undefined}
                   url={`${SERVER_URL}/${detail.video.raw.path.replace(
                     /^_static\//,
                     '',

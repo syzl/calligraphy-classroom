@@ -27,7 +27,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^8.0.1",
+    "electron": "^15.5.5",
     "electron-builder": "^22.3.2",
     "@types/cookie": "^0.3.3",
     "@types/js-cookie": "^2.2.4",
